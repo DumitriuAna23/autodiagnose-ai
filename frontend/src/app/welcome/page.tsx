@@ -6,14 +6,26 @@ type Language = "en" | "ro";
 
 export default function WelcomePage() {
   const [language, setLanguage] = useState<Language>("en");
+  const [apiOnline, setApiOnline] = useState(false);
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language");
+  const savedLanguage = localStorage.getItem("language");
 
-    if (savedLanguage === "ro" || savedLanguage === "en") {
-      setLanguage(savedLanguage);
-    }
-  }, []);
+  if (savedLanguage === "ro" || savedLanguage === "en") {
+    setLanguage(savedLanguage);
+  }
+
+  fetch("http://127.0.0.1:8000/health")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "ok") {
+        setApiOnline(true);
+      }
+    })
+    .catch(() => {
+      setApiOnline(false);
+    });
+}, []);
 
   const content = {
     en: {
@@ -49,7 +61,17 @@ export default function WelcomePage() {
         <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
           {text.description}
         </p>
+        <div className="mt-8 flex items-center gap-2 text-sm text-zinc-400">
+  <span
+    className={`h-2.5 w-2.5 rounded-full ${
+      apiOnline ? "bg-green-500" : "bg-red-500"
+    }`}
+  />
 
+  <span>
+    {apiOnline ? "Diagnostic API online" : "Diagnostic API offline"}
+  </span>
+</div>
         <button
           type="button"
           className="mt-10 rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
