@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Language = "en" | "ro";
 
 export default function WelcomePage() {
+    const router = useRouter();
   const [language, setLanguage] = useState<Language>("en");
   const [apiOnline, setApiOnline] = useState(false);
 
@@ -73,11 +75,12 @@ export default function WelcomePage() {
   </span>
 </div>
         <button
-          type="button"
-          className="mt-10 rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
-        >
-          {text.button}
-        </button>
+  type="button"
+  onClick={() => router.push("/diagnosis/vehicle")}
+  className="mt-10 rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
+>
+  {text.button}
+</button>
       </div>
     </main>
   );
