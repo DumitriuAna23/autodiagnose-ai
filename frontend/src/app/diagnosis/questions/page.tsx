@@ -15,10 +15,11 @@ type SymptomCategory =
   | "temperature"
   | "other";
 
-type Symptoms = {
+type SymptomRecord = {
+  id: string;
   primary_category: SymptomCategory;
   description: string;
-  dtc_codes: string[];
+  created_at: string;
 };
 
 type Vehicle = {
@@ -30,6 +31,12 @@ type Vehicle = {
 };
 
 type AnswerMap = Record<string, string>;
+
+type DiagnosticAnswerRecord = {
+  symptom_id: string;
+  answers: AnswerMap;
+  completed_at: string;
+};
 
 type Question = {
   id: string;
@@ -51,27 +58,38 @@ type Question = {
 export default function QuestionsPage() {
   const router = useRouter();
 
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] =
+    useState<Language>("en");
 
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [symptoms, setSymptoms] = useState<Symptoms | null>(null);
+  const [vehicle, setVehicle] =
+    useState<Vehicle | null>(null);
 
-  const [answers, setAnswers] = useState<AnswerMap>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] =
-    useState(0);
+  const [currentSymptom, setCurrentSymptom] =
+    useState<SymptomRecord | null>(null);
+
+  const [answers, setAnswers] =
+    useState<AnswerMap>({});
+
+  const [
+    currentQuestionIndex,
+    setCurrentQuestionIndex,
+  ] = useState(0);
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language");
+    const savedLanguage =
+      localStorage.getItem("language");
 
-    if (savedLanguage === "en" || savedLanguage === "ro") {
+    if (
+      savedLanguage === "en" ||
+      savedLanguage === "ro"
+    ) {
       setLanguage(savedLanguage);
     }
 
     const savedVehicle =
-      localStorage.getItem("diagnosticVehicle");
-
-    const savedSymptoms =
-      localStorage.getItem("diagnosticSymptoms");
+      localStorage.getItem(
+        "diagnosticVehicle"
+      );
 
     if (savedVehicle) {
       try {
@@ -81,11 +99,76 @@ export default function QuestionsPage() {
       }
     }
 
-    if (savedSymptoms) {
+    const currentSymptomId =
+      localStorage.getItem(
+        "currentSymptomId"
+      );
+
+    const savedSymptoms =
+      localStorage.getItem(
+        "diagnosticSymptoms"
+      );
+
+    if (
+      currentSymptomId &&
+      savedSymptoms
+    ) {
       try {
-        setSymptoms(JSON.parse(savedSymptoms));
+        const parsedSymptoms =
+          JSON.parse(savedSymptoms);
+
+        if (
+          Array.isArray(parsedSymptoms)
+        ) {
+          const symptom =
+            parsedSymptoms.find(
+              (item: SymptomRecord) =>
+                item.id ===
+                currentSymptomId
+            );
+
+          if (symptom) {
+            setCurrentSymptom(symptom);
+          }
+        }
       } catch {
-        setSymptoms(null);
+        setCurrentSymptom(null);
+      }
+    }
+
+    const savedAnswers =
+      localStorage.getItem(
+        "diagnosticAnswers"
+      );
+
+    if (
+      savedAnswers &&
+      currentSymptomId
+    ) {
+      try {
+        const parsedAnswers =
+          JSON.parse(savedAnswers);
+
+        if (
+          Array.isArray(parsedAnswers)
+        ) {
+          const existing =
+            parsedAnswers.find(
+              (
+                item: DiagnosticAnswerRecord
+              ) =>
+                item.symptom_id ===
+                currentSymptomId
+            );
+
+          if (existing) {
+            setAnswers(
+              existing.answers
+            );
+          }
+        }
+      } catch {
+        setAnswers({});
       }
     }
   }, []);
@@ -93,19 +176,21 @@ export default function QuestionsPage() {
   const content = {
     en: {
       step: "STEP 3 OF DIAGNOSIS",
+
       title: "A few more questions",
+
       description:
-        "Your answers help narrow down the possible systems and causes. If you don't know an answer, choose the unsure option instead of guessing.",
+        "These questions relate only to the symptom you just added. If you don't know an answer, choose the unsure option rather than guessing.",
 
       vehicle: "Vehicle",
-      symptom: "Reported problem",
-
-      back: "Back",
-      continue: "Continue",
-      finish: "Finish questions",
+      symptom: "Current symptom",
 
       question: "Question",
       of: "of",
+
+      back: "Back",
+      continue: "Continue",
+      finish: "Finish this symptom",
 
       safetyTitle: "Safety note",
 
@@ -116,24 +201,26 @@ export default function QuestionsPage() {
         "If the engine is overheating, there is steam, or a severe temperature warning is displayed, stop the vehicle safely and allow it to cool.",
 
       missingData:
-        "Diagnostic information is missing. Please restart the diagnostic flow.",
+        "Information for the current symptom is missing. Return to the symptoms page.",
     },
 
     ro: {
       step: "PASUL 3 AL DIAGNOZEI",
+
       title: "Mai avem câteva întrebări",
+
       description:
-        "Răspunsurile tale ne ajută să restrângem sistemele și cauzele posibile. Dacă nu știi un răspuns, alege varianta «Nu știu» în loc să ghicești.",
+        "Aceste întrebări se referă doar la simptomul pe care tocmai l-ai adăugat. Dacă nu știi un răspuns, alege «Nu știu» în loc să ghicești.",
 
       vehicle: "Vehicul",
-      symptom: "Problema raportată",
-
-      back: "Înapoi",
-      continue: "Continuă",
-      finish: "Finalizează întrebările",
+      symptom: "Simptom analizat",
 
       question: "Întrebarea",
       of: "din",
+
+      back: "Înapoi",
+      continue: "Continuă",
+      finish: "Finalizează acest simptom",
 
       safetyTitle: "Notă de siguranță",
 
@@ -144,526 +231,565 @@ export default function QuestionsPage() {
         "Dacă motorul se supraîncălzește, apare abur sau este afișată o avertizare severă de temperatură, oprește vehiculul în siguranță și lasă-l să se răcească.",
 
       missingData:
-        "Lipsesc informațiile de diagnostic. Repornește fluxul de diagnoză.",
+        "Lipsesc informațiile pentru simptomul curent. Revino la pagina de simptome.",
     },
   };
 
   const text = content[language];
 
-  const questions = useMemo<Question[]>(() => {
-    if (!symptoms) {
-      return [];
-    }
+  const questions =
+    useMemo<Question[]>(() => {
+      if (!currentSymptom) {
+        return [];
+      }
 
-    const commonQuestions: Question[] = [
-      {
-        id: "onset",
-        question: {
-          en: "How did the problem begin?",
-          ro: "Cum a început problema?",
-        },
-        options: [
-          {
-            value: "sudden",
-            en: "Suddenly",
-            ro: "Brusc",
-          },
-          {
-            value: "gradual",
-            en: "Gradually",
-            ro: "Treptat",
-          },
-          {
-            value: "unknown",
-            en: "I'm not sure",
-            ro: "Nu știu",
-          },
-        ],
-      },
+      const commonQuestions: Question[] = [
+        {
+          id: "onset",
 
-      {
-        id: "frequency",
-        question: {
-          en: "How often does the problem happen?",
-          ro: "Cât de des apare problema?",
-        },
-        options: [
-          {
-            value: "always",
-            en: "Almost all the time",
-            ro: "Aproape tot timpul",
-          },
-          {
-            value: "intermittent",
-            en: "It comes and goes",
-            ro: "Apare și dispare",
-          },
-          {
-            value: "once",
-            en: "It happened only once",
-            ro: "S-a întâmplat o singură dată",
-          },
-          {
-            value: "unknown",
-            en: "I'm not sure",
-            ro: "Nu știu",
-          },
-        ],
-      },
-    ];
-
-    const warningQuestion: Question = {
-      id: "warning_light",
-      question: {
-        en: "Is a warning light currently displayed on the dashboard?",
-        ro: "Este aprins vreun martor în bord?",
-      },
-      options: [
-        {
-          value: "yes",
-          en: "Yes",
-          ro: "Da",
-        },
-        {
-          value: "no",
-          en: "No",
-          ro: "Nu",
-        },
-        {
-          value: "unknown",
-          en: "I'm not sure",
-          ro: "Nu știu",
-        },
-      ],
-    };
-
-    const warningFollowUp: Question = {
-      id: "warning_behavior",
-      question: {
-        en: "How does the warning light behave?",
-        ro: "Cum se comportă martorul?",
-      },
-      options: [
-        {
-          value: "steady",
-          en: "It stays on continuously",
-          ro: "Rămâne aprins continuu",
-        },
-        {
-          value: "flashing",
-          en: "It flashes",
-          ro: "Clipește",
-        },
-        {
-          value: "intermittent",
-          en: "It appears and disappears",
-          ro: "Apare și dispare",
-        },
-        {
-          value: "unknown",
-          en: "I'm not sure",
-          ro: "Nu știu",
-        },
-      ],
-
-      showWhen: (currentAnswers) =>
-        currentAnswers.warning_light === "yes",
-    };
-
-    const categoryQuestions: Record<
-      SymptomCategory,
-      Question[]
-    > = {
-      power: [
-        {
-          id: "power_condition",
           question: {
-            en: "When is the loss of power most noticeable?",
-            ro: "Când se simte cel mai mult lipsa de putere?",
+            en: "How did the problem begin?",
+            ro: "Cum a început problema?",
           },
+
           options: [
             {
-              value: "acceleration",
-              en: "During acceleration",
-              ro: "La accelerație",
+              value: "sudden",
+              en: "Suddenly",
+              ro: "Brusc",
             },
             {
-              value: "uphill",
-              en: "When driving uphill",
-              ro: "În rampă",
+              value: "gradual",
+              en: "Gradually",
+              ro: "Treptat",
             },
             {
-              value: "high_speed",
-              en: "At higher speed or RPM",
-              ro: "La viteză sau turație mai mare",
+              value: "unknown",
+              en: "I'm not sure",
+              ro: "Nu știu",
             },
+          ],
+        },
+
+        {
+          id: "frequency",
+
+          question: {
+            en: "How often does the problem happen?",
+            ro: "Cât de des apare problema?",
+          },
+
+          options: [
             {
               value: "always",
               en: "Almost all the time",
               ro: "Aproape tot timpul",
             },
             {
+              value: "intermittent",
+              en: "It comes and goes",
+              ro: "Apare și dispare",
+            },
+            {
+              value: "once",
+              en: "It happened only once",
+              ro: "S-a întâmplat o singură dată",
+            },
+            {
               value: "unknown",
               en: "I'm not sure",
               ro: "Nu știu",
             },
           ],
         },
+      ];
 
-        {
-          id: "limp_mode",
-          question: {
-            en: "Does the vehicle feel strongly limited, as if it will not accelerate beyond a certain point?",
-            ro: "Mașina pare puternic limitată, ca și cum nu ar mai accelera peste un anumit punct?",
+      const warningQuestion: Question = {
+        id: "warning_light",
+
+        question: {
+          en: "Is a warning light currently displayed on the dashboard?",
+          ro: "Este aprins vreun martor în bord?",
+        },
+
+        options: [
+          {
+            value: "yes",
+            en: "Yes",
+            ro: "Da",
           },
-          options: [
-            {
-              value: "yes",
-              en: "Yes",
-              ro: "Da",
-            },
-            {
-              value: "no",
-              en: "No",
-              ro: "Nu",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
-
-      starting: [
-        {
-          id: "crank_behavior",
-          question: {
-            en: "What happens when you try to start the vehicle?",
-            ro: "Ce se întâmplă când încerci să pornești mașina?",
+          {
+            value: "no",
+            en: "No",
+            ro: "Nu",
           },
-          options: [
-            {
-              value: "cranks",
-              en: "The engine turns but does not start",
-              ro: "Motorul se învârte, dar nu pornește",
-            },
-            {
-              value: "click",
-              en: "I hear clicking",
-              ro: "Se aud clicuri",
-            },
-            {
-              value: "nothing",
-              en: "Almost nothing happens",
-              ro: "Aproape nu se întâmplă nimic",
-            },
-            {
-              value: "starts_then_stalls",
-              en: "It starts and then stops",
-              ro: "Pornește și apoi se oprește",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-
-        {
-          id: "temperature_start",
-          question: {
-            en: "Is starting more difficult when the vehicle is cold or warm?",
-            ro: "Pornește mai greu când mașina este rece sau caldă?",
+          {
+            value: "unknown",
+            en: "I'm not sure",
+            ro: "Nu știu",
           },
-          options: [
-            {
-              value: "cold",
-              en: "Cold",
-              ro: "Rece",
-            },
-            {
-              value: "warm",
-              en: "Warm",
-              ro: "Caldă",
-            },
-            {
-              value: "both",
-              en: "Both",
-              ro: "În ambele situații",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
+        ],
+      };
 
-      noise: [
-        {
-          id: "noise_condition",
-          question: {
-            en: "When is the noise or vibration most noticeable?",
-            ro: "Când se observă cel mai mult zgomotul sau vibrația?",
+      const warningFollowUp: Question = {
+        id: "warning_behavior",
+
+        question: {
+          en: "How does the warning light behave?",
+          ro: "Cum se comportă martorul?",
+        },
+
+        options: [
+          {
+            value: "steady",
+            en: "It stays on continuously",
+            ro: "Rămâne aprins continuu",
           },
-          options: [
-            {
-              value: "idle",
-              en: "While stationary / idling",
-              ro: "Pe loc / la ralanti",
-            },
-            {
-              value: "acceleration",
-              en: "During acceleration",
-              ro: "La accelerație",
-            },
-            {
-              value: "braking",
-              en: "During braking",
-              ro: "La frânare",
-            },
-            {
-              value: "turning",
-              en: "While turning",
-              ro: "În viraje",
-            },
-            {
-              value: "speed",
-              en: "It increases with vehicle speed",
-              ro: "Crește odată cu viteza",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
-
-      smoke: [
-        {
-          id: "smoke_color",
-          question: {
-            en: "What color is the smoke?",
-            ro: "Ce culoare are fumul?",
+          {
+            value: "flashing",
+            en: "It flashes",
+            ro: "Clipește",
           },
-          options: [
-            {
-              value: "black",
-              en: "Black",
-              ro: "Negru",
-            },
-            {
-              value: "white",
-              en: "White",
-              ro: "Alb",
-            },
-            {
-              value: "blue",
-              en: "Blue / blue-grey",
-              ro: "Albastru / albăstrui",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-
-        {
-          id: "smoke_location",
-          question: {
-            en: "Where does the smoke appear to come from?",
-            ro: "De unde pare să provină fumul?",
+          {
+            value: "intermittent",
+            en: "It appears and disappears",
+            ro: "Apare și dispare",
           },
-          options: [
-            {
-              value: "exhaust",
-              en: "Exhaust",
-              ro: "Eșapament",
-            },
-            {
-              value: "engine_bay",
-              en: "Engine compartment",
-              ro: "Compartimentul motor",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
-
-      warning: [
-        {
-          id: "performance_change",
-          question: {
-            en: "Did the vehicle's behavior change when the warning appeared?",
-            ro: "S-a schimbat comportamentul mașinii când a apărut martorul?",
+          {
+            value: "unknown",
+            en: "I'm not sure",
+            ro: "Nu știu",
           },
-          options: [
-            {
-              value: "yes",
-              en: "Yes",
-              ro: "Da",
-            },
-            {
-              value: "no",
-              en: "No",
-              ro: "Nu",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
+        ],
 
-      brakes: [
-        {
-          id: "brake_behavior",
-          question: {
-            en: "What best describes the braking or steering problem?",
-            ro: "Ce descrie cel mai bine problema de frânare sau direcție?",
+        showWhen: (
+          currentAnswers
+        ) =>
+          currentAnswers.warning_light ===
+          "yes",
+      };
+
+      const categoryQuestions: Record<
+        SymptomCategory,
+        Question[]
+      > = {
+        power: [
+          {
+            id: "power_condition",
+
+            question: {
+              en: "When is the loss of power most noticeable?",
+              ro: "Când se simte cel mai mult lipsa de putere?",
+            },
+
+            options: [
+              {
+                value: "acceleration",
+                en: "During acceleration",
+                ro: "La accelerație",
+              },
+              {
+                value: "uphill",
+                en: "When driving uphill",
+                ro: "În rampă",
+              },
+              {
+                value: "high_speed",
+                en: "At higher speed or RPM",
+                ro: "La viteză sau turație mai mare",
+              },
+              {
+                value: "always",
+                en: "Almost all the time",
+                ro: "Aproape tot timpul",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
           },
-          options: [
-            {
-              value: "soft_pedal",
-              en: "Brake pedal feels unusually soft",
-              ro: "Pedala de frână este neobișnuit de moale",
-            },
-            {
-              value: "hard_pedal",
-              en: "Brake pedal feels unusually hard",
-              ro: "Pedala de frână este neobișnuit de tare",
-            },
-            {
-              value: "pulling",
-              en: "Vehicle pulls to one side",
-              ro: "Mașina trage într-o parte",
-            },
-            {
-              value: "steering",
-              en: "Steering feels abnormal",
-              ro: "Direcția se simte anormal",
-            },
-            {
-              value: "noise",
-              en: "Noise during braking",
-              ro: "Zgomot la frânare",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
 
-      temperature: [
-        {
-          id: "temperature_behavior",
-          question: {
-            en: "What are you observing?",
-            ro: "Ce observi?",
+          {
+            id: "limp_mode",
+
+            question: {
+              en: "Does the vehicle feel strongly limited, as if it will not accelerate beyond a certain point?",
+              ro: "Mașina pare puternic limitată, ca și cum nu ar mai accelera peste un anumit punct?",
+            },
+
+            options: [
+              {
+                value: "yes",
+                en: "Yes",
+                ro: "Da",
+              },
+              {
+                value: "no",
+                en: "No",
+                ro: "Nu",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
           },
-          options: [
-            {
-              value: "gauge_high",
-              en: "Temperature gauge rises unusually high",
-              ro: "Indicatorul de temperatură urcă neobișnuit de mult",
-            },
-            {
-              value: "warning",
-              en: "Temperature warning appears",
-              ro: "Apare martorul de temperatură",
-            },
-            {
-              value: "steam",
-              en: "Steam is visible",
-              ro: "Se vede abur",
-            },
-            {
-              value: "coolant_loss",
-              en: "Coolant appears to be leaking or disappearing",
-              ro: "Lichidul de răcire pare să curgă sau să dispară",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
+        ],
 
-      other: [
-        {
-          id: "problem_area",
-          question: {
-            en: "Where do you notice the problem most?",
-            ro: "În ce zonă observi cel mai mult problema?",
+        starting: [
+          {
+            id: "crank_behavior",
+
+            question: {
+              en: "What happens when you try to start the vehicle?",
+              ro: "Ce se întâmplă când încerci să pornești mașina?",
+            },
+
+            options: [
+              {
+                value: "cranks",
+                en: "The engine turns but does not start",
+                ro: "Motorul se învârte, dar nu pornește",
+              },
+              {
+                value: "click",
+                en: "I hear clicking",
+                ro: "Se aud clicuri",
+              },
+              {
+                value: "nothing",
+                en: "Almost nothing happens",
+                ro: "Aproape nu se întâmplă nimic",
+              },
+              {
+                value: "starts_then_stalls",
+                en: "It starts and then stops",
+                ro: "Pornește și apoi se oprește",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
           },
-          options: [
-            {
-              value: "engine",
-              en: "Engine / acceleration",
-              ro: "Motor / accelerație",
-            },
-            {
-              value: "driving",
-              en: "While driving",
-              ro: "În timpul deplasării",
-            },
-            {
-              value: "electrical",
-              en: "Electrical equipment",
-              ro: "Echipamente electrice",
-            },
-            {
-              value: "inside",
-              en: "Inside the cabin",
-              ro: "În interiorul mașinii",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ],
-    };
 
-    return [
-      ...commonQuestions,
-      ...categoryQuestions[symptoms.primary_category],
-      warningQuestion,
-      warningFollowUp,
-    ];
-  }, [symptoms]);
+          {
+            id: "temperature_start",
 
-  const visibleQuestions = questions.filter((question) => {
-    if (!question.showWhen) {
-      return true;
-    }
+            question: {
+              en: "Is starting more difficult when the vehicle is cold or warm?",
+              ro: "Pornește mai greu când mașina este rece sau caldă?",
+            },
 
-    return question.showWhen(answers);
-  });
+            options: [
+              {
+                value: "cold",
+                en: "Cold",
+                ro: "Rece",
+              },
+              {
+                value: "warm",
+                en: "Warm",
+                ro: "Caldă",
+              },
+              {
+                value: "both",
+                en: "Both",
+                ro: "În ambele situații",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+
+        noise: [
+          {
+            id: "noise_condition",
+
+            question: {
+              en: "When is the noise or vibration most noticeable?",
+              ro: "Când se observă cel mai mult zgomotul sau vibrația?",
+            },
+
+            options: [
+              {
+                value: "idle",
+                en: "While stationary / idling",
+                ro: "Pe loc / la ralanti",
+              },
+              {
+                value: "acceleration",
+                en: "During acceleration",
+                ro: "La accelerație",
+              },
+              {
+                value: "braking",
+                en: "During braking",
+                ro: "La frânare",
+              },
+              {
+                value: "turning",
+                en: "While turning",
+                ro: "În viraje",
+              },
+              {
+                value: "speed",
+                en: "It increases with vehicle speed",
+                ro: "Crește odată cu viteza",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+
+        smoke: [
+          {
+            id: "smoke_color",
+
+            question: {
+              en: "What color is the smoke?",
+              ro: "Ce culoare are fumul?",
+            },
+
+            options: [
+              {
+                value: "black",
+                en: "Black",
+                ro: "Negru",
+              },
+              {
+                value: "white",
+                en: "White",
+                ro: "Alb",
+              },
+              {
+                value: "blue",
+                en: "Blue / blue-grey",
+                ro: "Albastru / albăstrui",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+
+          {
+            id: "smoke_location",
+
+            question: {
+              en: "Where does the smoke appear to come from?",
+              ro: "De unde pare să provină fumul?",
+            },
+
+            options: [
+              {
+                value: "exhaust",
+                en: "Exhaust",
+                ro: "Eșapament",
+              },
+              {
+                value: "engine_bay",
+                en: "Engine compartment",
+                ro: "Compartimentul motor",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+
+        warning: [
+          {
+            id: "performance_change",
+
+            question: {
+              en: "Did the vehicle's behavior change when the warning appeared?",
+              ro: "S-a schimbat comportamentul mașinii când a apărut martorul?",
+            },
+
+            options: [
+              {
+                value: "yes",
+                en: "Yes",
+                ro: "Da",
+              },
+              {
+                value: "no",
+                en: "No",
+                ro: "Nu",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+
+        brakes: [
+          {
+            id: "brake_behavior",
+
+            question: {
+              en: "What best describes the braking or steering problem?",
+              ro: "Ce descrie cel mai bine problema de frânare sau direcție?",
+            },
+
+            options: [
+              {
+                value: "soft_pedal",
+                en: "Brake pedal feels unusually soft",
+                ro: "Pedala de frână este neobișnuit de moale",
+              },
+              {
+                value: "hard_pedal",
+                en: "Brake pedal feels unusually hard",
+                ro: "Pedala de frână este neobișnuit de tare",
+              },
+              {
+                value: "pulling",
+                en: "Vehicle pulls to one side",
+                ro: "Mașina trage într-o parte",
+              },
+              {
+                value: "steering",
+                en: "Steering feels abnormal",
+                ro: "Direcția se simte anormal",
+              },
+              {
+                value: "noise",
+                en: "Noise during braking",
+                ro: "Zgomot la frânare",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+
+        temperature: [
+          {
+            id: "temperature_behavior",
+
+            question: {
+              en: "What are you observing?",
+              ro: "Ce observi?",
+            },
+
+            options: [
+              {
+                value: "gauge_high",
+                en: "Temperature gauge rises unusually high",
+                ro: "Indicatorul de temperatură urcă neobișnuit de mult",
+              },
+              {
+                value: "warning",
+                en: "Temperature warning appears",
+                ro: "Apare martorul de temperatură",
+              },
+              {
+                value: "steam",
+                en: "Steam is visible",
+                ro: "Se vede abur",
+              },
+              {
+                value: "coolant_loss",
+                en: "Coolant appears to be leaking or disappearing",
+                ro: "Lichidul de răcire pare să curgă sau să dispară",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+
+        other: [
+          {
+            id: "problem_area",
+
+            question: {
+              en: "Where do you notice the problem most?",
+              ro: "În ce zonă observi cel mai mult problema?",
+            },
+
+            options: [
+              {
+                value: "engine",
+                en: "Engine / acceleration",
+                ro: "Motor / accelerație",
+              },
+              {
+                value: "driving",
+                en: "While driving",
+                ro: "În timpul deplasării",
+              },
+              {
+                value: "electrical",
+                en: "Electrical equipment",
+                ro: "Echipamente electrice",
+              },
+              {
+                value: "inside",
+                en: "Inside the cabin",
+                ro: "În interiorul mașinii",
+              },
+              {
+                value: "unknown",
+                en: "I'm not sure",
+                ro: "Nu știu",
+              },
+            ],
+          },
+        ],
+      };
+
+      return [
+        ...commonQuestions,
+        ...categoryQuestions[
+          currentSymptom.primary_category
+        ],
+        warningQuestion,
+        warningFollowUp,
+      ];
+    }, [currentSymptom]);
+
+  const visibleQuestions =
+    questions.filter((question) => {
+      if (!question.showWhen) {
+        return true;
+      }
+
+      return question.showWhen(answers);
+    });
 
   const currentQuestion =
-    visibleQuestions[currentQuestionIndex];
+    visibleQuestions[
+      currentQuestionIndex
+    ];
 
   const handleAnswer = (
     questionId: string,
@@ -675,12 +801,75 @@ export default function QuestionsPage() {
     }));
   };
 
+  const saveCurrentSymptomAnswers =
+    () => {
+      if (!currentSymptom) {
+        return;
+      }
+
+      const savedAnswers =
+        localStorage.getItem(
+          "diagnosticAnswers"
+        );
+
+      let previousAnswers: DiagnosticAnswerRecord[] =
+        [];
+
+      if (savedAnswers) {
+        try {
+          const parsedAnswers =
+            JSON.parse(savedAnswers);
+
+          if (
+            Array.isArray(parsedAnswers)
+          ) {
+            previousAnswers =
+              parsedAnswers;
+          }
+        } catch {
+          previousAnswers = [];
+        }
+      }
+
+      const newAnswerRecord: DiagnosticAnswerRecord =
+        {
+          symptom_id:
+            currentSymptom.id,
+
+          answers,
+
+          completed_at:
+            new Date().toISOString(),
+        };
+
+      const answersWithoutCurrent =
+        previousAnswers.filter(
+          (item) =>
+            item.symptom_id !==
+            currentSymptom.id
+        );
+
+      localStorage.setItem(
+        "diagnosticAnswers",
+        JSON.stringify([
+          ...answersWithoutCurrent,
+          newAnswerRecord,
+        ])
+      );
+
+      router.push(
+        "/diagnosis/symptom-complete"
+      );
+    };
+
   const goNext = () => {
     if (!currentQuestion) {
       return;
     }
 
-    if (!answers[currentQuestion.id]) {
+    if (
+      !answers[currentQuestion.id]
+    ) {
       return;
     }
 
@@ -695,35 +884,50 @@ export default function QuestionsPage() {
       return;
     }
 
-    const diagnosticAnswers = {
-      answers,
-      completed_at: new Date().toISOString(),
-    };
-
-    localStorage.setItem(
-      "diagnosticAnswers",
-      JSON.stringify(diagnosticAnswers)
-    );
-
-    router.push("/diagnosis/review");
+    saveCurrentSymptomAnswers();
   };
 
   const goBack = () => {
-    if (currentQuestionIndex > 0) {
+    if (
+      currentQuestionIndex > 0
+    ) {
       setCurrentQuestionIndex(
         currentQuestionIndex - 1
       );
-    } else {
-      router.push("/diagnosis/symptoms");
+
+      return;
     }
+
+    router.push(
+      "/diagnosis/symptoms"
+    );
   };
 
-  if (!vehicle || !symptoms) {
+  if (
+    !vehicle ||
+    !currentSymptom
+  ) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
-        <p className="text-zinc-400">
-          {text.missingData}
-        </p>
+        <div className="text-center">
+          <p className="text-zinc-400">
+            {text.missingData}
+          </p>
+
+          <button
+            type="button"
+            onClick={() =>
+              router.push(
+                "/diagnosis/symptoms"
+              )
+            }
+            className="mt-6 rounded-xl bg-white px-5 py-3 font-semibold text-black"
+          >
+            {language === "ro"
+              ? "Înapoi la simptome"
+              : "Back to symptoms"}
+          </button>
+        </div>
       </main>
     );
   }
@@ -751,7 +955,8 @@ export default function QuestionsPage() {
             </p>
 
             <p className="mt-2 font-semibold">
-              {vehicle.manufacturer} {vehicle.model}
+              {vehicle.manufacturer}{" "}
+              {vehicle.model}
             </p>
           </div>
 
@@ -761,13 +966,16 @@ export default function QuestionsPage() {
             </p>
 
             <p className="mt-2 text-sm text-zinc-300">
-              {symptoms.description}
+              {
+                currentSymptom.description
+              }
             </p>
           </div>
         </div>
 
-        {/* SAFETY NOTE */}
-        {symptoms.primary_category === "brakes" && (
+        {/* SAFETY */}
+        {currentSymptom.primary_category ===
+          "brakes" && (
           <div className="mt-6 rounded-xl border border-red-900 bg-red-950/30 p-4">
             <p className="font-semibold text-red-300">
               {text.safetyTitle}
@@ -779,7 +987,7 @@ export default function QuestionsPage() {
           </div>
         )}
 
-        {symptoms.primary_category ===
+        {currentSymptom.primary_category ===
           "temperature" && (
           <div className="mt-6 rounded-xl border border-amber-900 bg-amber-950/30 p-4">
             <p className="font-semibold text-amber-300">
@@ -803,7 +1011,11 @@ export default function QuestionsPage() {
             </p>
 
             <h2 className="mt-3 text-2xl font-semibold">
-              {currentQuestion.question[language]}
+              {
+                currentQuestion.question[
+                  language
+                ]
+              }
             </h2>
 
             <div className="mt-6 grid gap-3">
@@ -819,8 +1031,9 @@ export default function QuestionsPage() {
                       )
                     }
                     className={`rounded-xl border p-4 text-left transition ${
-                      answers[currentQuestion.id] ===
-                      option.value
+                      answers[
+                        currentQuestion.id
+                      ] === option.value
                         ? "border-white bg-white text-black"
                         : "border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-600"
                     }`}
@@ -844,7 +1057,9 @@ export default function QuestionsPage() {
                 type="button"
                 onClick={goNext}
                 disabled={
-                  !answers[currentQuestion.id]
+                  !answers[
+                    currentQuestion.id
+                  ]
                 }
                 className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
               >

@@ -24,11 +24,22 @@ type Vehicle = {
   vehicle_match: "exact" | "partial";
 };
 
+type SymptomRecord = {
+  id: string;
+  primary_category: Exclude<SymptomCategory, "">;
+  description: string;
+  created_at: string;
+};
+
 export default function SymptomsPage() {
   const router = useRouter();
 
   const [language, setLanguage] = useState<Language>("en");
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+
+  const [existingSymptoms, setExistingSymptoms] = useState<
+    SymptomRecord[]
+  >([]);
 
   const [category, setCategory] =
     useState<SymptomCategory>("");
@@ -55,16 +66,36 @@ export default function SymptomsPage() {
         setVehicle(null);
       }
     }
+
+    const savedSymptoms =
+      localStorage.getItem("diagnosticSymptoms");
+
+    if (savedSymptoms) {
+      try {
+        const parsedSymptoms = JSON.parse(savedSymptoms);
+
+        if (Array.isArray(parsedSymptoms)) {
+          setExistingSymptoms(parsedSymptoms);
+        } else {
+          setExistingSymptoms([]);
+        }
+      } catch {
+        setExistingSymptoms([]);
+      }
+    }
   }, []);
 
   const content = {
     en: {
       step: "STEP 2 OF DIAGNOSIS",
       title: "What are you noticing?",
+
       description:
-        "You do not need technical automotive knowledge. Choose the option that best matches what you notice and describe the problem in your own words.",
+        "You can add more than one symptom. Describe one problem at a time, answer a few questions about it, then add another symptom if needed.",
 
       vehicle: "Vehicle",
+
+      previousSymptoms: "Symptoms already added",
 
       chooseCategory: "Choose the closest symptom",
 
@@ -77,17 +108,24 @@ export default function SymptomsPage() {
       temperature: "Overheating or temperature problem",
       other: "Something else",
 
+      duplicate:
+        "You already added a symptom from this category. You can continue if this is a different problem or manifestation.",
+
       describe: "Describe what happens",
+
       describePlaceholder:
         "Example: The car feels weak when I accelerate uphill and sometimes the engine warning light comes on.",
 
       descriptionHelp:
         "Write what you see, hear, feel or smell. You don't need to know the technical cause.",
 
-      dtc: "Diagnostic trouble code (optional)",
-      dtcPlaceholder: "Example: P0299",
+      dtc: "Diagnostic trouble code(s) — optional",
+
+      dtcPlaceholder:
+        "Example: P0299 or P0299, P0401",
+
       dtcHelp:
-        "If you scanned the vehicle and received a code such as P0300 or P0299, enter it here. If you don't have one, leave this field empty.",
+        "DTC codes belong to the whole diagnostic case. You may enter one or more codes separated by spaces or commas.",
 
       requiredCategory:
         "Select the symptom that most closely matches the problem.",
@@ -96,18 +134,21 @@ export default function SymptomsPage() {
         "Describe what you notice before continuing.",
 
       invalidDtc:
-        "The DTC code does not appear to be valid. Example format: P0299.",
+        "One or more DTC codes do not appear valid. Example: P0299.",
 
-      continue: "Continue",
+      continue: "Continue to questions",
     },
 
     ro: {
       step: "PASUL 2 AL DIAGNOZEI",
       title: "Ce observi la mașină?",
+
       description:
-        "Nu trebuie să cunoști termeni tehnici auto. Alege varianta care seamănă cel mai mult cu problema și descrie ce se întâmplă în propriile cuvinte.",
+        "Poți adăuga mai multe simptome. Descrie câte o problemă pe rând, răspunde la câteva întrebări despre ea, apoi poți adăuga alt simptom.",
 
       vehicle: "Vehicul",
+
+      previousSymptoms: "Simptome deja adăugate",
 
       chooseCategory: "Alege simptomul cel mai apropiat",
 
@@ -120,17 +161,24 @@ export default function SymptomsPage() {
       temperature: "Supraîncălzire sau problemă de temperatură",
       other: "Altă problemă",
 
+      duplicate:
+        "Ai adăugat deja un simptom din această categorie. Poți continua dacă este o problemă sau manifestare diferită.",
+
       describe: "Descrie ce se întâmplă",
+
       describePlaceholder:
-        "Exemplu: Mașina nu mai trage bine când accelerez în rampă și uneori se aprinde martorul motor.",
+        "Exemplu: Mașina nu mai trage când accelerez în rampă și uneori se aprinde martorul motor.",
 
       descriptionHelp:
         "Scrie ce vezi, auzi, simți sau miroși. Nu trebuie să știi cauza tehnică.",
 
-      dtc: "Cod de eroare DTC (opțional)",
-      dtcPlaceholder: "Exemplu: P0299",
+      dtc: "Coduri de eroare DTC — opțional",
+
+      dtcPlaceholder:
+        "Exemplu: P0299 sau P0299, P0401",
+
       dtcHelp:
-        "Dacă ai scanat mașina și ai primit un cod precum P0300 sau P0299, introdu-l aici. Dacă nu ai un cod, lasă câmpul gol.",
+        "Codurile DTC aparțin întregului caz de diagnostic. Poți introduce unul sau mai multe coduri separate prin spațiu sau virgulă.",
 
       requiredCategory:
         "Selectează simptomul care seamănă cel mai mult cu problema.",
@@ -139,16 +187,16 @@ export default function SymptomsPage() {
         "Descrie ce observi înainte de a continua.",
 
       invalidDtc:
-        "Codul DTC nu pare valid. Exemplu de format: P0299.",
+        "Unul sau mai multe coduri DTC nu par valide. Exemplu: P0299.",
 
-      continue: "Continuă",
+      continue: "Continuă către întrebări",
     },
   };
 
   const text = content[language];
 
   const categories: {
-    id: SymptomCategory;
+    id: Exclude<SymptomCategory, "">;
     label: string;
   }[] = [
     {
@@ -185,13 +233,34 @@ export default function SymptomsPage() {
     },
   ];
 
-  const normalizeDtc = (value: string) => {
-    return value.trim().toUpperCase();
+  const getCategoryLabel = (
+    symptomCategory: Exclude<SymptomCategory, "">
+  ) => {
+    const categoryItem = categories.find(
+      (item) => item.id === symptomCategory
+    );
+
+    return categoryItem?.label ?? symptomCategory;
+  };
+
+  const parseDtcCodes = (value: string) => {
+    return value
+      .toUpperCase()
+      .split(/[\s,;]+/)
+      .map((code) => code.trim())
+      .filter(Boolean);
   };
 
   const isValidDtc = (value: string) => {
     return /^[PBCU][0-9A-F]{4}$/.test(value);
   };
+
+  const duplicateCategory =
+    category !== "" &&
+    existingSymptoms.some(
+      (symptom) =>
+        symptom.primary_category === category
+    );
 
   const handleSubmit = (
     event: FormEvent<HTMLFormElement>
@@ -210,31 +279,67 @@ export default function SymptomsPage() {
       return;
     }
 
-    const normalizedDtc = normalizeDtc(dtcInput);
+    const dtcCodes = parseDtcCodes(dtcInput);
 
-    if (
-      normalizedDtc &&
-      !isValidDtc(normalizedDtc)
-    ) {
+    const invalidDtcExists =
+      dtcCodes.some((code) => !isValidDtc(code));
+
+    if (invalidDtcExists) {
       setError(text.invalidDtc);
       return;
     }
 
-    const symptoms = {
+    const symptomId = `symptom-${Date.now()}`;
+
+    const newSymptom: SymptomRecord = {
+      id: symptomId,
       primary_category: category,
-
       description: description.trim(),
-
-      dtc_codes: normalizedDtc
-        ? [normalizedDtc]
-        : [],
-
       created_at: new Date().toISOString(),
     };
 
+    const updatedSymptoms = [
+      ...existingSymptoms,
+      newSymptom,
+    ];
+
     localStorage.setItem(
       "diagnosticSymptoms",
-      JSON.stringify(symptoms)
+      JSON.stringify(updatedSymptoms)
+    );
+
+    localStorage.setItem(
+      "currentSymptomId",
+      symptomId
+    );
+
+    const savedDtcCodes =
+      localStorage.getItem("diagnosticDtcCodes");
+
+    let previousDtcCodes: string[] = [];
+
+    if (savedDtcCodes) {
+      try {
+        const parsedCodes = JSON.parse(savedDtcCodes);
+
+        if (Array.isArray(parsedCodes)) {
+          previousDtcCodes = parsedCodes;
+        }
+      } catch {
+        previousDtcCodes = [];
+      }
+    }
+
+    const combinedDtcCodes = Array.from(
+      new Set([
+        ...previousDtcCodes,
+        ...dtcCodes,
+      ])
+    );
+
+    localStorage.setItem(
+      "diagnosticDtcCodes",
+      JSON.stringify(combinedDtcCodes)
     );
 
     router.push("/diagnosis/questions");
@@ -255,7 +360,7 @@ export default function SymptomsPage() {
           {text.description}
         </p>
 
-        {/* VEHICLE SUMMARY */}
+        {/* VEHICLE */}
         {vehicle && (
           <div className="mt-8 rounded-xl border border-zinc-800 bg-zinc-900/60 px-5 py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
@@ -275,11 +380,42 @@ export default function SymptomsPage() {
           </div>
         )}
 
+        {/* PREVIOUS SYMPTOMS */}
+        {existingSymptoms.length > 0 && (
+          <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              {text.previousSymptoms}
+            </p>
+
+            <div className="mt-4 space-y-3">
+              {existingSymptoms.map(
+                (symptom, index) => (
+                  <div
+                    key={symptom.id}
+                    className="rounded-lg bg-zinc-900 p-4"
+                  >
+                    <p className="font-medium">
+                      {index + 1}.{" "}
+                      {getCategoryLabel(
+                        symptom.primary_category
+                      )}
+                    </p>
+
+                    <p className="mt-1 text-sm text-zinc-500">
+                      {symptom.description}
+                    </p>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="mt-10 space-y-10"
         >
-          {/* SYMPTOM CATEGORY */}
+          {/* CATEGORY */}
           <section>
             <h2 className="text-lg font-semibold">
               {text.chooseCategory}
@@ -303,6 +439,12 @@ export default function SymptomsPage() {
                 </button>
               ))}
             </div>
+
+            {duplicateCategory && (
+              <div className="mt-4 rounded-xl border border-amber-900 bg-amber-950/20 px-4 py-3 text-sm text-amber-200">
+                {text.duplicate}
+              </div>
+            )}
           </section>
 
           {/* DESCRIPTION */}
@@ -316,9 +458,7 @@ export default function SymptomsPage() {
               onChange={(event) =>
                 setDescription(event.target.value)
               }
-              placeholder={
-                text.describePlaceholder
-              }
+              placeholder={text.describePlaceholder}
               rows={5}
               className="mt-4 w-full resize-none rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 leading-6 outline-none transition focus:border-zinc-500"
             />
@@ -349,7 +489,6 @@ export default function SymptomsPage() {
             </p>
           </section>
 
-          {/* ERROR */}
           {error && (
             <div className="rounded-xl border border-red-900 bg-red-950/30 px-4 py-3 text-sm text-red-300">
               {error}
