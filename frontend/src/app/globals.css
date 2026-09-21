@@ -24,3 +24,375 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+:root {
+  --app-bg: #060912;
+  --app-surface: #0a0f1a;
+  --app-surface-elevated: #0d1421;
+
+  --app-border: rgba(255, 255, 255, 0.06);
+  --app-border-strong: rgba(96, 165, 250, 0.18);
+
+  --app-blue: #3b82f6;
+  --app-cyan: #22d3ee;
+
+  --app-text: #f8fafc;
+  --app-text-secondary: #94a3b8;
+}
+
+
+body {
+  background:
+    radial-gradient(
+      circle at 75% -10%,
+      rgba(37, 99, 235, 0.10),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 100% 60%,
+      rgba(6, 182, 212, 0.035),
+      transparent 28%
+    ),
+    var(--app-bg);
+
+  color: var(--app-text);
+}
+
+
+.premium-surface {
+  border: 1px solid var(--app-border);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.012)
+    );
+  backdrop-filter: blur(20px);
+}
+
+
+.premium-shadow {
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+/* =========================================================
+   AUTODIAGNOSE AI — VISUAL SYSTEM
+   ========================================================= */
+
+:root {
+  /* Backgrounds */
+  --ad-bg: #060912;
+  --ad-bg-soft: #080d17;
+  --ad-surface: #0b111d;
+  --ad-surface-raised: #0e1624;
+
+  /* Borders */
+  --ad-border: rgba(255, 255, 255, 0.06);
+  --ad-border-hover: rgba(255, 255, 255, 0.11);
+  --ad-border-blue: rgba(96, 165, 250, 0.18);
+
+  /* Text */
+  --ad-text-primary: #f8fafc;
+  --ad-text-secondary: #94a3b8;
+  --ad-text-muted: #64748b;
+  --ad-text-faint: #475569;
+
+  /* Brand */
+  --ad-blue: #3b82f6;
+  --ad-blue-soft: #60a5fa;
+  --ad-cyan: #22d3ee;
+
+  /* Semantic */
+  --ad-success: #34d399;
+  --ad-warning: #fbbf24;
+  --ad-danger: #f87171;
+
+  /* Radius */
+  --ad-radius-sm: 12px;
+  --ad-radius-md: 18px;
+  --ad-radius-lg: 24px;
+  --ad-radius-xl: 32px;
+}
+
+
+/* ---------------------------------------------------------
+   PAGE BACKGROUND
+   --------------------------------------------------------- */
+
+body {
+  background:
+    radial-gradient(
+      circle at 72% -12%,
+      rgba(37, 99, 235, 0.10),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 100% 62%,
+      rgba(34, 211, 238, 0.035),
+      transparent 28%
+    ),
+    var(--ad-bg);
+
+  color: var(--ad-text-primary);
+}
+
+
+/* ---------------------------------------------------------
+   PAGE LAYOUT
+   --------------------------------------------------------- */
+
+.ad-page {
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
+
+  padding:
+    40px
+    48px
+    64px;
+}
+
+@media (max-width: 1024px) {
+  .ad-page {
+    padding:
+      32px
+      28px
+      48px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ad-page {
+    padding:
+      24px
+      18px
+      40px;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   TYPOGRAPHY
+   --------------------------------------------------------- */
+
+.ad-eyebrow {
+  font-size: 11px;
+  line-height: 1.3;
+
+  font-weight: 600;
+
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  color: rgba(96, 165, 250, 0.72);
+}
+
+
+.ad-title-xl {
+  max-width: 760px;
+
+  font-size: clamp(
+    2.35rem,
+    5vw,
+    3.5rem
+  );
+
+  line-height: 1.04;
+
+  font-weight: 650;
+
+  letter-spacing: -0.045em;
+
+  color: var(--ad-text-primary);
+}
+
+
+.ad-title-lg {
+  font-size: clamp(
+    1.75rem,
+    3vw,
+    2.35rem
+  );
+
+  line-height: 1.12;
+
+  font-weight: 650;
+
+  letter-spacing: -0.035em;
+
+  color: var(--ad-text-primary);
+}
+
+
+.ad-title-md {
+  font-size: 1.25rem;
+  line-height: 1.3;
+
+  font-weight: 600;
+
+  letter-spacing: -0.02em;
+
+  color: var(--ad-text-primary);
+}
+
+
+.ad-description {
+  max-width: 680px;
+
+  font-size: 16px;
+  line-height: 1.75;
+
+  font-weight: 400;
+
+  color: var(--ad-text-secondary);
+}
+
+
+.ad-body {
+  font-size: 14px;
+  line-height: 1.65;
+
+  color: var(--ad-text-secondary);
+}
+
+
+.ad-meta {
+  font-size: 11px;
+  line-height: 1.4;
+
+  font-weight: 500;
+
+  letter-spacing: 0.06em;
+
+  color: var(--ad-text-muted);
+}
+
+
+.ad-technical {
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+
+  letter-spacing: -0.02em;
+}
+
+
+/* ---------------------------------------------------------
+   SURFACES
+   --------------------------------------------------------- */
+
+.ad-surface {
+  border:
+    1px
+    solid
+    var(--ad-border);
+
+  border-radius:
+    var(--ad-radius-lg);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.032),
+      rgba(255, 255, 255, 0.012)
+    );
+
+  box-shadow:
+    inset
+    0
+    1px
+    0
+    rgba(255, 255, 255, 0.025);
+}
+
+
+.ad-surface-raised {
+  border:
+    1px
+    solid
+    var(--ad-border);
+
+  border-radius:
+    var(--ad-radius-lg);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14, 22, 36, 0.96),
+      rgba(8, 13, 23, 0.96)
+    );
+
+  box-shadow:
+    0
+    24px
+    80px
+    rgba(0, 0, 0, 0.26),
+    inset
+    0
+    1px
+    0
+    rgba(255, 255, 255, 0.025);
+}
+
+
+.ad-surface-interactive {
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.ad-surface-interactive:hover {
+  border-color:
+    var(--ad-border-hover);
+
+  background-color:
+    rgba(255, 255, 255, 0.028);
+}
+
+
+/* ---------------------------------------------------------
+   SECTION SPACING
+   --------------------------------------------------------- */
+
+.ad-section {
+  margin-top: 56px;
+}
+
+.ad-section-compact {
+  margin-top: 32px;
+}
+
+
+/* ---------------------------------------------------------
+   DIVIDERS
+   --------------------------------------------------------- */
+
+.ad-divider {
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.07),
+      transparent
+    );
+}
+
+
+/* ---------------------------------------------------------
+   SMALL GLOW
+   --------------------------------------------------------- */
+
+.ad-blue-glow {
+  box-shadow:
+    0
+    0
+    34px
+    rgba(59, 130, 246, 0.12);
+}
