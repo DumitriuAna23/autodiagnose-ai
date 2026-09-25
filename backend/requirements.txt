@@ -15,3 +15,5 @@ openai
 python-dotenv
 psycopg[binary]
 SQLAlchemy
+
+pwdlib[argon2]
