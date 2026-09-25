@@ -28,6 +28,13 @@ from app.guest_schemas import (
     GuestSessionResponse,
 )
 from app.models import GuestSession
+from app.rate_limit import (
+    GUEST_IP_LIMITER,
+    get_client_identifier,
+)
+from app.session_cleanup import (
+    cleanup_expired_sessions,
+)
 
 
 router = APIRouter(
@@ -51,9 +58,22 @@ GUEST_SESSION_DURATION = timedelta(
     status_code=status.HTTP_201_CREATED,
 )
 def start_guest_session(
+    request: Request,
     response: Response,
     db: Session = Depends(get_db),
 ) -> GuestSessionResponse:
+    cleanup_expired_sessions(
+        db
+    )
+
+    client_id = get_client_identifier(
+        request
+    )
+
+    GUEST_IP_LIMITER.check(
+        key=client_id
+    )
+
     session_token = (
         generate_session_token()
     )
@@ -98,6 +118,10 @@ def get_current_guest_session(
     request: Request,
     db: Session = Depends(get_db),
 ) -> GuestSession:
+    cleanup_expired_sessions(
+        db
+    )
+
     session_token = request.cookies.get(
         GUEST_COOKIE_NAME
     )

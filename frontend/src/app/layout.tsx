@@ -12,6 +12,7 @@ import "./globals.css";
 
 import CookieConsent from "@/components/privacy/CookieConsent";
 import PWARegister from "@/components/pwa/PWARegister";
+import BackendWakeStatus from "@/components/system/BackendWakeStatus";
 
 
 const geistSans =
@@ -140,6 +141,8 @@ export default function RootLayout({
         "
       >
         {children}
+
+        <BackendWakeStatus />
 
         <CookieConsent />
 

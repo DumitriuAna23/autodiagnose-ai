@@ -33,7 +33,16 @@ from app.models import (
     GuestSession,
     User,
 )
+from app.rate_limit import (
+    LOGIN_ACCOUNT_LIMITER,
+    LOGIN_IP_LIMITER,
+    REGISTER_IP_LIMITER,
+    get_client_identifier,
+)
 from app.routers.guest import GUEST_COOKIE_NAME
+from app.session_cleanup import (
+    cleanup_expired_sessions,
+)
 
 
 router = APIRouter(
@@ -187,6 +196,18 @@ def register(
     response: Response,
     db: Session = Depends(get_db),
 ) -> UserResponse:
+    cleanup_expired_sessions(
+        db
+    )
+
+    client_id = get_client_identifier(
+        request
+    )
+
+    REGISTER_IP_LIMITER.check(
+        key=client_id
+    )
+
     normalized_email = (
         register_data.email
         .strip()
@@ -232,10 +253,6 @@ def register(
         user
     )
 
-    # If the person used AutoDiagnose AI
-    # as a guest before creating the account,
-    # move those diagnostic cases to the
-    # newly created account.
     claim_guest_diagnostics(
         request=request,
         response=response,
@@ -243,7 +260,6 @@ def register(
         db=db,
     )
 
-    # Automatically sign in the new user.
     create_auth_session(
         user=user,
         response=response,
@@ -272,10 +288,31 @@ def login(
     response: Response,
     db: Session = Depends(get_db),
 ) -> UserResponse:
+    cleanup_expired_sessions(
+        db
+    )
+
+    client_id = get_client_identifier(
+        request
+    )
+
     normalized_email = (
         login_data.email
         .strip()
         .lower()
+    )
+
+    LOGIN_IP_LIMITER.check(
+        key=client_id
+    )
+
+    account_limit_key = (
+        f"{client_id}:"
+        f"{normalized_email}"
+    )
+
+    LOGIN_ACCOUNT_LIMITER.check(
+        key=account_limit_key
     )
 
     user = db.scalar(
@@ -321,9 +358,10 @@ def login(
             ),
         )
 
-    # If this browser previously used Guest
-    # Mode, transfer those diagnostics to the
-    # existing account.
+    LOGIN_ACCOUNT_LIMITER.reset(
+        key=account_limit_key
+    )
+
     claim_guest_diagnostics(
         request=request,
         response=response,
@@ -353,6 +391,10 @@ def get_current_user(
     request: Request,
     db: Session = Depends(get_db),
 ) -> User:
+    cleanup_expired_sessions(
+        db
+    )
+
     session_token = request.cookies.get(
         SESSION_COOKIE_NAME
     )
@@ -443,8 +485,7 @@ def get_me(
             .preferred_language
         ),
         account_status=(
-            current_user
-            .account_status
+            current_user.account_status
         ),
     )
 

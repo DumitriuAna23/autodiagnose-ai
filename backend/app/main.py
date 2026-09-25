@@ -10,6 +10,7 @@ from fastapi.middleware.cors import (
 )
 
 from app.config import (
+    APP_ENV,
     FRONTEND_ORIGINS,
 )
 from app.database import (
@@ -40,6 +41,10 @@ from app.schemas import (
     DiagnosticCaseHistoryItem,
     DiagnosticCaseResponse,
 )
+from app.security_middleware import (
+    OriginProtectionMiddleware,
+    SecurityHeadersMiddleware,
+)
 
 
 app = FastAPI(
@@ -49,27 +54,31 @@ app = FastAPI(
 
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=(
-        FRONTEND_ORIGINS
+    OriginProtectionMiddleware,
+    allowed_origins=FRONTEND_ORIGINS,
+)
+
+
+app.add_middleware(
+    SecurityHeadersMiddleware,
+    production=(
+        APP_ENV == "production"
     ),
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=FRONTEND_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-app.include_router(
-    auth_router
-)
-
-app.include_router(
-    guest_router
-)
-
-app.include_router(
-    account_router
-)
+app.include_router(auth_router)
+app.include_router(guest_router)
+app.include_router(account_router)
 
 
 initialize_database()
@@ -102,9 +111,7 @@ def create_diagnostic_case(
         get_request_owner
     ),
 ) -> DiagnosticCaseResponse:
-    case_id = str(
-        uuid4()
-    )
+    case_id = str(uuid4())
 
     save_diagnostic_case(
         case_id=case_id,
@@ -146,16 +153,12 @@ def list_diagnostic_cases(
     owner: RequestOwner = Depends(
         get_request_owner
     ),
-) -> list[
-    DiagnosticCaseHistoryItem
-]:
-    records = (
-        list_diagnostic_case_records(
-            user_id=owner.user_id,
-            guest_session_id=(
-                owner.guest_session_id
-            ),
-        )
+) -> list[DiagnosticCaseHistoryItem]:
+    records = list_diagnostic_case_records(
+        user_id=owner.user_id,
+        guest_session_id=(
+            owner.guest_session_id
+        ),
     )
 
     history: list[
@@ -170,7 +173,6 @@ def list_diagnostic_cases(
                     record["payload"]
                 )
             )
-
         except Exception:
             continue
 
@@ -178,11 +180,9 @@ def list_diagnostic_cases(
         top_finding = None
         top_score = None
 
-        analysis_payload = (
-            record[
-                "analysis_payload"
-            ]
-        )
+        analysis_payload = record[
+            "analysis_payload"
+        ]
 
         if analysis_payload:
             try:
@@ -211,21 +211,18 @@ def list_diagnostic_cases(
                         top_result
                         .confidence
                     )
-
             except Exception:
                 pass
 
         history.append(
             DiagnosticCaseHistoryItem(
-                case_id=(
-                    record["case_id"]
-                ),
-                created_at=(
-                    record["created_at"]
-                ),
-                analyzed_at=(
-                    record["analyzed_at"]
-                ),
+                case_id=record["case_id"],
+                created_at=record[
+                    "created_at"
+                ],
+                analyzed_at=record[
+                    "analyzed_at"
+                ],
                 language=(
                     diagnostic_case
                     .language
@@ -245,12 +242,8 @@ def list_diagnostic_cases(
                 findings_count=(
                     findings_count
                 ),
-                top_finding=(
-                    top_finding
-                ),
-                top_score=(
-                    top_score
-                ),
+                top_finding=top_finding,
+                top_score=top_score,
             )
         )
 
@@ -267,14 +260,12 @@ def get_diagnostic_case(
         get_request_owner
     ),
 ) -> DiagnosticCaseCreate:
-    payload = (
-        get_diagnostic_case_payload(
-            case_id=case_id,
-            user_id=owner.user_id,
-            guest_session_id=(
-                owner.guest_session_id
-            ),
-        )
+    payload = get_diagnostic_case_payload(
+        case_id=case_id,
+        user_id=owner.user_id,
+        guest_session_id=(
+            owner.guest_session_id
+        ),
     )
 
     if payload is None:
@@ -288,9 +279,7 @@ def get_diagnostic_case(
 
     return (
         DiagnosticCaseCreate
-        .model_validate_json(
-            payload
-        )
+        .model_validate_json(payload)
     )
 
 
@@ -307,14 +296,12 @@ def analyze_diagnostic_case(
         get_request_owner
     ),
 ) -> DiagnosticAnalysisResponse:
-    payload = (
-        get_diagnostic_case_payload(
-            case_id=case_id,
-            user_id=owner.user_id,
-            guest_session_id=(
-                owner.guest_session_id
-            ),
-        )
+    payload = get_diagnostic_case_payload(
+        case_id=case_id,
+        user_id=owner.user_id,
+        guest_session_id=(
+            owner.guest_session_id
+        ),
     )
 
     if payload is None:
@@ -346,38 +333,29 @@ def analyze_diagnostic_case(
 
     diagnostic_case = (
         DiagnosticCaseCreate
-        .model_validate_json(
-            payload
-        )
+        .model_validate_json(payload)
     )
 
     (
         findings,
         data_quality_warnings,
         next_best_steps,
-    ) = analyze_case(
-        diagnostic_case
-    )
+    ) = analyze_case(diagnostic_case)
 
-    analysis = (
-        DiagnosticAnalysisResponse(
-            case_id=case_id,
-            findings=findings,
-            data_quality_warnings=(
-                data_quality_warnings
-            ),
-            next_best_steps=(
-                next_best_steps
-            ),
-        )
+    analysis = DiagnosticAnalysisResponse(
+        case_id=case_id,
+        findings=findings,
+        data_quality_warnings=(
+            data_quality_warnings
+        ),
+        next_best_steps=next_best_steps,
     )
 
     analysis_saved = (
         save_diagnostic_analysis(
             case_id=case_id,
             analysis_payload=(
-                analysis
-                .model_dump_json()
+                analysis.model_dump_json()
             ),
             user_id=owner.user_id,
             guest_session_id=(
