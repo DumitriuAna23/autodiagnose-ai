@@ -14,3 +14,4 @@ uvicorn==0.52.4
 openai
 python-dotenv
 psycopg[binary]
+SQLAlchemy
