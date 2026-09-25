@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from sqlalchemy import URL
+from sqlalchemy.engine import make_url
 
 
 load_dotenv()
@@ -132,7 +133,7 @@ if raw_database_url:
             ]
         )
 
-    DATABASE_URL = (
+    DATABASE_URL = make_url(
         normalized_database_url
     )
 
