@@ -55,8 +55,20 @@ export default function DiagnosticInsights({
 
   const completed =
     cases.filter(
-      (item) =>
-        item.status === "completed"
+      (item) => {
+        const reportReadyCase =
+          item as DiagnosticCaseRecord & {
+            analyzed_at?: string | null;
+          };
+
+        return (
+          item.status ===
+            "completed" ||
+          Boolean(
+            reportReadyCase.analyzed_at
+          )
+        );
+      }
     ).length;
 
 
@@ -100,6 +112,9 @@ export default function DiagnosticInsights({
     );
 
 
+  // Seven local calendar days, including today.
+  // Counts are based on created_at and update whenever the dashboard
+  // refreshes its case list.
   const activity =
     days.map((day) => {
       const count =
@@ -176,8 +191,8 @@ export default function DiagnosticInsights({
         overflow-hidden
         rounded-[24px]
         border
-        border-white/[0.055]
-        bg-white/[0.018]
+        border-blue-400/[0.11]
+        bg-[#05080e]
         p-5
         sm:p-6
       "
@@ -311,7 +326,7 @@ export default function DiagnosticInsights({
                   p-[7px]
                 "
                 style={{
-                  background: `conic-gradient(#3b82f6 0 ${completionRate}%, rgba(255,255,255,0.055) ${completionRate}% 100%)`,
+                  background: `conic-gradient(#60a5fa 0 ${completionRate}%, rgba(255,255,255,0.055) ${completionRate}% 100%)`,
                 }}
               >
                 <div
@@ -325,7 +340,7 @@ export default function DiagnosticInsights({
                     rounded-full
                     border
                     border-white/[0.05]
-                    bg-[#080d17]
+                    bg-[#05080e]
                   "
                 >
                   <span
@@ -359,8 +374,8 @@ export default function DiagnosticInsights({
                   className="
                     rounded-xl
                     border
-                    border-white/[0.05]
-                    bg-white/[0.018]
+                    border-blue-400/[0.09]
+                    bg-[#070b12]
                     px-3.5
                     py-3
                   "
@@ -385,7 +400,7 @@ export default function DiagnosticInsights({
                           h-1.5
                           w-1.5
                           rounded-full
-                          bg-emerald-400
+                          bg-blue-400
                         "
                       />
 
@@ -416,8 +431,8 @@ export default function DiagnosticInsights({
                   className="
                     rounded-xl
                     border
-                    border-white/[0.05]
-                    bg-white/[0.018]
+                    border-blue-400/[0.09]
+                    bg-[#070b12]
                     px-3.5
                     py-3
                   "
@@ -442,7 +457,7 @@ export default function DiagnosticInsights({
                           h-1.5
                           w-1.5
                           rounded-full
-                          bg-amber-400
+                          bg-blue-400
                         "
                       />
 
@@ -559,40 +574,66 @@ export default function DiagnosticInsights({
                             justify-center
                           "
                         >
-                          <motion.div
-                            initial={{
-                              opacity: 0,
-                            }}
-                            animate={{
-                              opacity:
-                                item.count > 0
-                                  ? 1
-                                  : 0.28,
-                            }}
-                            transition={{
-                              duration: 0.25,
-                              delay:
-                                index * 0.025,
-                            }}
+                          <div
                             className="
-                              w-full
-                              max-w-5
-                              rounded-full
-                              bg-gradient-to-t
-                              from-blue-500/40
-                              to-cyan-300/80
+                              flex
+                              h-full
+                              flex-col
+                              items-center
+                              justify-end
                             "
-                            style={{
-                              height,
-                            }}
-                          />
+                          >
+                            <span
+                              className="
+                                mb-1
+                                text-[9px]
+                                font-semibold
+                                text-blue-100/65
+                              "
+                            >
+                              {
+                                item.count
+                              }
+                            </span>
+
+                            <motion.div
+                              initial={{
+                                opacity: 0,
+                              }}
+                              animate={{
+                                opacity:
+                                  item.count > 0
+                                    ? 1
+                                    : 0.28,
+                              }}
+                              transition={{
+                                duration: 0.25,
+                                delay:
+                                  index * 0.025,
+                              }}
+                              className="
+                                relative
+                                w-full
+                                max-w-5
+                                rounded-full
+                                bg-gradient-to-t
+                                from-blue-600/65
+                                to-cyan-300/90
+                                shadow-[0_0_12px_rgba(59,130,246,0.15)]
+                              "
+                              style={{
+                                height,
+                              }}
+                            />
+                          </div>
                         </div>
 
                         <span
                           className="
-                            text-[9px]
+                            text-[10px]
+                            font-semibold
                             uppercase
-                            text-zinc-700
+                            text-zinc-500
                           "
                         >
                           {formatDay(

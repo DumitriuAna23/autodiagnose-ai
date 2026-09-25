@@ -20,6 +20,7 @@ class RegisterRequest(BaseModel):
         "en",
     ] = "ro"
 
+
 class LoginRequest(BaseModel):
     email: EmailStr
 
@@ -27,6 +28,8 @@ class LoginRequest(BaseModel):
         min_length=8,
         max_length=128,
     )
+
+
 class UserResponse(BaseModel):
     id: str
     email: EmailStr

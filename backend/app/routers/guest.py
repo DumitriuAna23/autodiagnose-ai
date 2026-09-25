@@ -15,6 +15,10 @@ from fastapi import (
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.config import (
+    COOKIE_SAMESITE,
+    COOKIE_SECURE,
+)
 from app.core.security import (
     generate_session_token,
     hash_session_token,
@@ -75,8 +79,8 @@ def start_guest_session(
         key=GUEST_COOKIE_NAME,
         value=session_token,
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
         max_age=int(
             GUEST_SESSION_DURATION
             .total_seconds()

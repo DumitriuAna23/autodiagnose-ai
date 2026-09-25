@@ -9,6 +9,9 @@ from fastapi.middleware.cors import (
     CORSMiddleware,
 )
 
+from app.config import (
+    FRONTEND_ORIGINS,
+)
 from app.database import (
     get_diagnostic_analysis_payload,
     get_diagnostic_case_payload,
@@ -21,6 +24,9 @@ from app.diagnostic_engine import analyze_case
 from app.ownership import (
     RequestOwner,
     get_request_owner,
+)
+from app.routers.account import (
+    router as account_router,
 )
 from app.routers.auth import (
     router as auth_router,
@@ -44,10 +50,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=(
+        FRONTEND_ORIGINS
+    ),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,6 +65,10 @@ app.include_router(
 
 app.include_router(
     guest_router
+)
+
+app.include_router(
+    account_router
 )
 
 

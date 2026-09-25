@@ -1,9 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-type Language = "en" | "ro";
+import {
+  useRouter,
+} from "next/navigation";
+
+import styles from "./report-print.module.css";
+
+import {
+  API_BASE_URL,
+} from "@/lib/config";
+
+
+type Language =
+  | "ro"
+  | "en";
+
 
 type DiagnosticEvidence = {
   label: string;
@@ -11,16 +28,19 @@ type DiagnosticEvidence = {
   source: string;
 };
 
+
 type TechnicalReference = {
   reference_type:
     | "knowledge_base_rule"
     | "obd_dtc"
     | "standard_family";
+
   identifier: string;
   title: string;
   note: string | null;
   matched_in_case: boolean;
 };
+
 
 type DiagnosticFinding = {
   probable_cause: string;
@@ -44,18 +64,17 @@ type DiagnosticFinding = {
     | "strong";
 
   evidence_sources_count?: number;
-
   rule_id?: string;
-
-  technical_references?:
-    TechnicalReference[];
+  technical_references?: TechnicalReference[];
 };
+
 
 type DataQualityWarning = {
   code: string;
   level: "info" | "warning";
   message: string;
 };
+
 
 type NextBestDiagnosticStep = {
   id: string;
@@ -66,14 +85,14 @@ type NextBestDiagnosticStep = {
   related_cause: string | null;
 };
 
+
 type DiagnosticAnalysis = {
   case_id: string;
   findings: DiagnosticFinding[];
-  data_quality_warnings?:
-    DataQualityWarning[];
-  next_best_steps?:
-    NextBestDiagnosticStep[];
+  data_quality_warnings?: DataQualityWarning[];
+  next_best_steps?: NextBestDiagnosticStep[];
 };
+
 
 type DiagnosticCase = {
   language: Language;
@@ -88,9 +107,8 @@ type DiagnosticCase = {
   };
 
   vehicle_context?: {
-    additional_information:
-      string | null;
-  } | null;
+    additional_information?: string | null;
+  };
 
   symptoms: {
     id: string;
@@ -103,123 +121,47 @@ type DiagnosticCase = {
   adaptive_answers: {
     question_id: string;
     question: string;
-    answer:
-      | string
-      | string[];
-    symptom_id:
-      | string
-      | null;
+    answer: string | string[];
+    symptom_id: string | null;
   }[];
 
-  additional_notes:
-    | string
-    | null;
+  additional_notes: string | null;
 };
 
 
-function getSeverityLabel(
-  severity: string,
-  language: Language
+
+
+/*
+ * Future public support address.
+ * When the mailbox is created, change only this constant.
+ */
+const CONTACT_EMAIL =
+  "support@autodiagnose.ai";
+
+
+function clampScore(
+  score: number
 ) {
-  const labels: Record<
-    string,
-    {
-      ro: string;
-      en: string;
-    }
-  > = {
-    low: {
-      ro: "Scăzută",
-      en: "Low",
-    },
-
-    medium: {
-      ro: "Medie",
-      en: "Medium",
-    },
-
-    high: {
-      ro: "Ridicată",
-      en: "High",
-    },
-  };
-
-  return (
-    labels[severity]?.[language] ??
-    severity
+  return Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(score)
+    )
   );
 }
 
 
-function getUrgencyLabel(
-  urgency: DiagnosticFinding["urgency"],
-  language: Language
-) {
-  const labels = {
-    monitor: {
-      ro: "Monitorizează",
-      en: "Monitor",
-    },
-
-    service_soon: {
-      ro: "Verificare recomandată",
-      en: "Service soon",
-    },
-
-    stop_driving: {
-      ro: "Oprește deplasarea",
-      en: "Stop driving",
-    },
-  };
-
-  return labels[urgency][language];
-}
-
-
-function getEvidenceStrengthLabel(
-  strength:
-    | DiagnosticFinding["evidence_strength"]
-    | undefined,
-  language: Language
-) {
-  const labels = {
-    limited: {
-      ro: "Limitată",
-      en: "Limited",
-    },
-
-    moderate: {
-      ro: "Moderată",
-      en: "Moderate",
-    },
-
-    strong: {
-      ro: "Puternică",
-      en: "Strong",
-    },
-  };
-
-  if (
-    strength !== "limited" &&
-    strength !== "moderate" &&
-    strength !== "strong"
-  ) {
-    return labels.limited[language];
-  }
-
-  return labels[strength][language];
-}
-
-
 function formatFuel(
-  fuel: string | null,
+  value: string | null,
   language: Language
 ) {
-  if (!fuel) {
+  if (!value) {
     return language === "ro"
       ? "Necunoscut"
       : "Unknown";
   }
+
 
   const labels: Record<
     string,
@@ -249,67 +191,202 @@ function formatFuel(
     },
   };
 
+
   return (
-    labels[fuel]?.[language] ??
-    fuel
+    labels[value]?.[
+      language
+    ] ?? value
   );
 }
 
 
-function formatAnswer(
-  answer:
-    | string
-    | string[]
+function formatSeverity(
+  value: string,
+  language: Language
 ) {
-  if (Array.isArray(answer)) {
-    return answer.join(", ");
+  const labels: Record<
+    string,
+    {
+      ro: string;
+      en: string;
+    }
+  > = {
+    low: {
+      ro: "Scăzută",
+      en: "Low",
+    },
+
+    medium: {
+      ro: "Medie",
+      en: "Medium",
+    },
+
+    high: {
+      ro: "Ridicată",
+      en: "High",
+    },
+  };
+
+
+  return (
+    labels[value]?.[
+      language
+    ] ?? value
+  );
+}
+
+
+function formatUrgency(
+  value:
+    DiagnosticFinding[
+      "urgency"
+    ],
+  language: Language
+) {
+  const labels = {
+    monitor: {
+      ro: "Monitorizare",
+      en: "Monitor",
+    },
+
+    service_soon: {
+      ro: "Verificare recomandată",
+      en: "Service soon",
+    },
+
+    stop_driving: {
+      ro: "Oprește deplasarea",
+      en: "Stop driving",
+    },
+  };
+
+
+  return labels[
+    value
+  ][language];
+}
+
+
+function formatStrength(
+  value:
+    DiagnosticFinding[
+      "evidence_strength"
+    ],
+  language: Language
+) {
+  const labels = {
+    limited: {
+      ro: "Limitată",
+      en: "Limited",
+    },
+
+    moderate: {
+      ro: "Moderată",
+      en: "Moderate",
+    },
+
+    strong: {
+      ro: "Puternică",
+      en: "Strong",
+    },
+  };
+
+
+  if (
+    value !== "limited" &&
+    value !== "moderate" &&
+    value !== "strong"
+  ) {
+    return language === "ro"
+      ? "Nespecificată"
+      : "Not specified";
   }
 
-  return answer;
+
+  return labels[
+    value
+  ][language];
+}
+
+
+function formatGeneratedDate(
+  value: Date,
+  language: Language
+) {
+  return new Intl.DateTimeFormat(
+    language === "ro"
+      ? "ro-RO"
+      : "en-GB",
+    {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }
+  ).format(value);
 }
 
 
 export default function DiagnosticReportPage() {
-  const router = useRouter();
+  const router =
+    useRouter();
 
-  const [language, setLanguage] =
-    useState<Language>("en");
-
-  const [
-    diagnosticCase,
-    setDiagnosticCase,
-  ] = useState<DiagnosticCase | null>(
-    null
-  );
 
   const [
-    analysis,
-    setAnalysis,
-  ] = useState<DiagnosticAnalysis | null>(
-    null
-  );
+    language,
+    setLanguage,
+  ] =
+    useState<Language>(
+      "en"
+    );
+
 
   const [
     caseId,
     setCaseId,
-  ] = useState<string | null>(
-    null
-  );
+  ] =
+    useState<
+      string | null
+    >(null);
+
+
+  const [
+    diagnosticCase,
+    setDiagnosticCase,
+  ] =
+    useState<
+      DiagnosticCase | null
+    >(null);
+
+
+  const [
+    analysis,
+    setAnalysis,
+  ] =
+    useState<
+      DiagnosticAnalysis | null
+    >(null);
+
 
   const [
     loading,
     setLoading,
-  ] = useState(true);
+  ] =
+    useState(true);
+
 
   const [
     error,
     setError,
-  ] = useState(false);
+  ] =
+    useState(false);
+
 
   const [
     generatedAt,
     setGeneratedAt,
-  ] = useState("");
+  ] =
+    useState<Date>(
+      new Date()
+    );
 
 
   useEffect(() => {
@@ -317,6 +394,7 @@ export default function DiagnosticReportPage() {
       localStorage.getItem(
         "language"
       );
+
 
     if (
       savedLanguage === "ro" ||
@@ -327,138 +405,512 @@ export default function DiagnosticReportPage() {
       );
     }
 
+
+    const queryCaseId =
+      new URLSearchParams(
+        window.location.search
+      ).get(
+        "caseId"
+      );
+
+
     const savedCaseId =
+      queryCaseId ??
       localStorage.getItem(
         "diagnosticCaseId"
       );
 
+
     if (!savedCaseId) {
-      setError(true);
-      setLoading(false);
+      setError(
+        true
+      );
+
+      setLoading(
+        false
+      );
+
       return;
     }
 
-    setCaseId(
-      savedCaseId
+
+    const currentCaseId:
+      string =
+      savedCaseId;
+
+
+    localStorage.setItem(
+      "diagnosticCaseId",
+      currentCaseId
     );
 
-    const loadReport =
-      async () => {
-        try {
-          const caseResponse =
-            await fetch(
-              `http://127.0.0.1:8000/api/diagnostic-cases/${encodeURIComponent(
-                savedCaseId
-              )}`,
-    {
-      credentials: "include",
-    }
-            );
 
-          if (
-            !caseResponse.ok
-          ) {
-            throw new Error(
-              "Case load failed."
-            );
-          }
+    setCaseId(
+      currentCaseId
+    );
 
-          const caseData:
-            DiagnosticCase =
-              await caseResponse.json();
 
-          setDiagnosticCase(
-            caseData
+    async function loadReport() {
+      try {
+        const caseResponse =
+          await fetch(
+            `${API_BASE_URL}/api/diagnostic-cases/${encodeURIComponent(
+              currentCaseId
+            )}`,
+            {
+              method: "GET",
+              credentials:
+                "include",
+            }
           );
 
-          setLanguage(
-            caseData.language
-          );
 
-          const analysisResponse =
-            await fetch(
-              `http://127.0.0.1:8000/api/diagnostic-cases/${encodeURIComponent(
-                savedCaseId
-              )}/analyze`,
-              {
-                method: "POST",
-                credentials: "include",
-              }
-            );
-
-          if (
-            !analysisResponse.ok
-          ) {
-            throw new Error(
-              "Analysis load failed."
-            );
-          }
-
-          const analysisData:
-            DiagnosticAnalysis =
-              await analysisResponse.json();
-
-          setAnalysis(
-            analysisData
-          );
-
-          const locale =
-            caseData.language === "ro"
-              ? "ro-RO"
-              : "en-GB";
-
-          const dateText =
-            new Intl.DateTimeFormat(
-              locale,
-              {
-                dateStyle: "long",
-                timeStyle: "short",
-              }
-            ).format(
-              new Date()
-            );
-
-          setGeneratedAt(
-            dateText
-          );
-
-          document.title =
-            `AutoDiagnose-AI-Report-${savedCaseId.slice(
-              0,
-              8
-            )}`;
-        } catch (
-          loadError
+        if (
+          !caseResponse.ok
         ) {
-          console.error(
-            "Failed to load diagnostic report:",
-            loadError
+          throw new Error(
+            "CASE_LOAD_FAILED"
+          );
+        }
+
+
+        const caseData:
+          DiagnosticCase =
+          await caseResponse.json();
+
+
+        setDiagnosticCase(
+          caseData
+        );
+
+        setLanguage(
+          caseData.language
+        );
+
+
+        const analysisResponse =
+          await fetch(
+            `${API_BASE_URL}/api/diagnostic-cases/${encodeURIComponent(
+              currentCaseId
+            )}/analyze`,
+            {
+              method: "POST",
+              credentials:
+                "include",
+            }
           );
 
-          setError(true);
-        } finally {
-          setLoading(false);
-        }
-      };
 
-    loadReport();
+        if (
+          !analysisResponse.ok
+        ) {
+          throw new Error(
+            "ANALYSIS_LOAD_FAILED"
+          );
+        }
+
+
+        const analysisData:
+          DiagnosticAnalysis =
+          await analysisResponse.json();
+
+
+        setAnalysis(
+          analysisData
+        );
+
+        setGeneratedAt(
+          new Date()
+        );
+
+      } catch (
+        loadError
+      ) {
+        console.error(
+          "Failed to load diagnostic report:",
+          loadError
+        );
+
+
+        setError(
+          true
+        );
+
+      } finally {
+        setLoading(
+          false
+        );
+      }
+    }
+
+
+    void loadReport();
+
   }, []);
 
 
-  const handlePrint =
-    () => {
-      window.print();
-    };
+  const content = {
+    en: {
+      report:
+        "DIAGNOSTIC REPORT",
+
+      reportTitle:
+        "Vehicle diagnostic assessment",
+
+      generated:
+        "Generated",
+
+      caseId:
+        "Case ID",
+
+      vehicle:
+        "Vehicle",
+
+      year:
+        "Year",
+
+      fuel:
+        "Fuel",
+
+      engine:
+        "Engine",
+
+      mileage:
+        "Mileage",
+
+      notProvided:
+        "Not provided",
+
+      executiveSummary:
+        "Diagnostic summary",
+
+      primaryFinding:
+        "Primary finding",
+
+      relevance:
+        "Relevance",
+
+      severity:
+        "Severity",
+
+      urgency:
+        "Urgency",
+
+      evidence:
+        "Evidence",
+
+      safety:
+        "Safety note",
+
+      otherFindings:
+        "Additional hypotheses",
+
+      findingsHint:
+        "Other possible causes ranked by relevance.",
+
+      symptoms:
+        "Reported symptoms",
+
+      dtc:
+        "DTC evidence",
+
+      noDtc:
+        "No DTC codes were entered.",
+
+      nextSteps:
+        "Recommended diagnostic path",
+
+      checks:
+        "Recommended checks",
+
+      technicalBasis:
+        "Technical traceability",
+
+      dataQuality:
+        "Data quality notes",
+
+      noWarnings:
+        "No important data-quality warnings were detected.",
+
+      context:
+        "Vehicle context",
+
+      diagnosticNotice:
+        "Important diagnostic notice",
+
+      disclaimer:
+        "AutoDiagnose AI is a decision-support tool. The findings in this report are indicative and must be confirmed through physical inspection, measurements and manufacturer service information before repair decisions are made.",
+
+      contact:
+        "Support",
+
+      contactText:
+        "Questions about this report or AutoDiagnose AI:",
+
+      print:
+        "Print / Save as PDF",
+
+      back:
+        "Back to analysis",
+
+      history:
+        "History",
+
+      loadError:
+        "The report could not be loaded.",
+
+      loadErrorDescription:
+        "Check that you are signed in and that the backend is running, then try again.",
+
+      retry:
+        "Back to analysis",
+
+      sources:
+        "evidence sources",
+
+      symptom:
+        "Symptom",
+
+      pageNote:
+        "Generated by AutoDiagnose AI · Vehicle Intelligence",
+
+      reportStatus:
+        "Analysis completed",
+    },
+
+    ro: {
+      report:
+        "RAPORT DE DIAGNOSTIC",
+
+      reportTitle:
+        "Evaluare diagnostică a vehiculului",
+
+      generated:
+        "Generat",
+
+      caseId:
+        "ID caz",
+
+      vehicle:
+        "Vehicul",
+
+      year:
+        "An",
+
+      fuel:
+        "Combustibil",
+
+      engine:
+        "Motor",
+
+      mileage:
+        "Kilometraj",
+
+      notProvided:
+        "Neintrodus",
+
+      executiveSummary:
+        "Rezumat diagnostic",
+
+      primaryFinding:
+        "Rezultat principal",
+
+      relevance:
+        "Relevanță",
+
+      severity:
+        "Severitate",
+
+      urgency:
+        "Urgență",
+
+      evidence:
+        "Dovezi",
+
+      safety:
+        "Notă de siguranță",
+
+      otherFindings:
+        "Ipoteze suplimentare",
+
+      findingsHint:
+        "Alte cauze posibile ordonate după relevanță.",
+
+      symptoms:
+        "Simptome raportate",
+
+      dtc:
+        "Dovezi DTC",
+
+      noDtc:
+        "Nu au fost introduse coduri DTC.",
+
+      nextSteps:
+        "Traseu recomandat de diagnostic",
+
+      checks:
+        "Verificări recomandate",
+
+      technicalBasis:
+        "Trasabilitate tehnică",
+
+      dataQuality:
+        "Observații privind datele",
+
+      noWarnings:
+        "Nu au fost detectate avertismente importante privind calitatea datelor.",
+
+      context:
+        "Context vehicul",
+
+      diagnosticNotice:
+        "Notă importantă de diagnostic",
+
+      disclaimer:
+        "AutoDiagnose AI este un instrument de suport pentru decizie. Concluziile din acest raport sunt orientative și trebuie confirmate prin inspecție fizică, măsurători și documentația de service a producătorului înainte de luarea deciziilor de reparație.",
+
+      contact:
+        "Contact",
+
+      contactText:
+        "Întrebări despre raport sau AutoDiagnose AI:",
+
+      print:
+        "Printează / Salvează PDF",
+
+      back:
+        "Înapoi la analiză",
+
+      history:
+        "Istoric",
+
+      loadError:
+        "Raportul nu a putut fi încărcat.",
+
+      loadErrorDescription:
+        "Verifică dacă ești autentificat și dacă backend-ul este pornit, apoi încearcă din nou.",
+
+      retry:
+        "Înapoi la analiză",
+
+      sources:
+        "surse de dovezi",
+
+      symptom:
+        "Simptom",
+
+      pageNote:
+        "Generat de AutoDiagnose AI · Vehicle Intelligence",
+
+      reportStatus:
+        "Analiză finalizată",
+    },
+  };
 
 
-  if (loading) {
+  const text =
+    content[language];
+
+
+  const findings =
+    analysis?.findings ??
+    [];
+
+
+  const primaryFinding =
+    findings[0] ??
+    null;
+
+
+  const secondaryFindings =
+    findings.slice(
+      1
+    );
+
+
+  const nextSteps =
+    analysis
+      ?.next_best_steps ??
+    [];
+
+
+  const warnings =
+    analysis
+      ?.data_quality_warnings ??
+    [];
+
+
+  const vehicleName =
+    diagnosticCase
+      ? `${diagnosticCase.vehicle.make} ${diagnosticCase.vehicle.model}`.trim()
+      : "";
+
+
+  const vehicleContext =
+    diagnosticCase
+      ?.vehicle_context
+      ?.additional_information
+      ?.trim() ?? "";
+
+
+  const primaryReferences =
+    useMemo(
+      () =>
+        primaryFinding
+          ?.technical_references ??
+        [],
+      [primaryFinding]
+    );
+
+
+  if (
+    loading
+  ) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
-        <p className="text-zinc-400">
-          {language === "ro"
-            ? "Se pregătește raportul..."
-            : "Preparing report..."}
-        </p>
+      <main
+        className="
+          flex
+          min-h-screen
+          items-center
+          justify-center
+          bg-[#060912]
+          px-6
+          text-white
+        "
+      >
+        <div
+          className="
+            ad-surface
+            w-full
+            max-w-lg
+            rounded-[28px]
+            p-8
+            text-center
+          "
+        >
+          <div
+            className="
+              mx-auto
+              h-10
+              w-10
+              animate-pulse
+              rounded-full
+              border
+              border-blue-400/25
+              bg-blue-500/[0.08]
+            "
+          />
+
+          <p
+            className="
+              mt-5
+              text-[15px]
+              text-zinc-300
+            "
+          >
+            AutoDiagnose AI
+          </p>
+        </div>
       </main>
     );
   }
@@ -471,21 +923,71 @@ export default function DiagnosticReportPage() {
     !caseId
   ) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
+      <main
+        className="
+          flex
+          min-h-screen
+          items-center
+          justify-center
+          bg-[#060912]
+          px-6
+          text-white
+        "
+      >
+        <div
+          className="
+            ad-surface
+            w-full
+            max-w-lg
+            rounded-[28px]
+            p-8
+            text-center
+          "
+        >
+          <div
+            className="
+              mx-auto
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-xl
+              border
+              border-red-400/15
+              bg-red-400/[0.06]
+              text-red-200
+            "
+          >
+            !
+          </div>
 
-        <div className="max-w-xl text-center">
 
-          <h1 className="text-3xl font-bold">
-            {language === "ro"
-              ? "Raportul nu a putut fi încărcat"
-              : "The report could not be loaded"}
+          <h1
+            className="
+              mt-5
+              text-2xl
+              font-semibold
+              text-white
+            "
+          >
+            {text.loadError}
           </h1>
 
-          <p className="mt-4 leading-7 text-zinc-400">
-            {language === "ro"
-              ? "Întoarce-te la rezultatele diagnosticului și încearcă din nou."
-              : "Return to the diagnostic results and try again."}
+
+          <p
+            className="
+              mt-3
+              text-[15px]
+              leading-7
+              text-zinc-400
+            "
+          >
+            {
+              text.loadErrorDescription
+            }
           </p>
+
 
           <button
             type="button"
@@ -494,814 +996,1806 @@ export default function DiagnosticReportPage() {
                 "/diagnosis/analysis"
               )
             }
-            className="mt-6 rounded-xl bg-white px-6 py-3 font-semibold text-black"
+            className="
+              mt-6
+              rounded-xl
+              bg-blue-500
+              px-5
+              py-3
+              text-sm
+              font-semibold
+              text-white
+              transition
+              hover:bg-blue-400
+            "
           >
-            {language === "ro"
-              ? "Înapoi la rezultate"
-              : "Back to results"}
+            ← {text.retry}
           </button>
-
         </div>
-
       </main>
     );
   }
 
 
-  const vehicleInfo =
-    diagnosticCase
-      .vehicle_context
-      ?.additional_information
-      ?.trim();
-
   return (
-    <main className="min-h-screen bg-zinc-950 px-6 py-12 text-white print:bg-white print:px-0 print:py-0 print:text-black">
+    <>
+      <main
+        id="diagnostic-report-root"
+        className={`${styles.root} 
+          min-h-screen
+          bg-[#060912]
+          px-5
+          py-8
+          text-white
+          sm:px-7
+          lg:px-9
+          print:min-h-0
+          print:bg-white
+          print:p-0
+          print:text-black
+        `}
+      >
+        <div
+          className="
+            mx-auto
+            w-full
+            max-w-[1120px]
+            print:max-w-none
+          "
+        >
 
-      <div className="mx-auto w-full max-w-4xl print:max-w-none">
+          {/* SCREEN ACTIONS */}
 
-        {/* SCREEN ACTIONS */}
-
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between print:hidden">
-
-          <button
-            type="button"
-            onClick={() =>
-              router.push(
-                "/diagnosis/analysis"
-              )
-            }
-            className="rounded-xl border border-zinc-700 px-5 py-3 font-semibold transition hover:bg-zinc-900"
+          <div
+            className="
+              mb-5
+              flex
+              flex-wrap
+              items-center
+              justify-between
+              gap-3
+              print:hidden
+            "
           >
-            {language === "ro"
-              ? "Înapoi la rezultate"
-              : "Back to results"}
-          </button>
-
-          <button
-            type="button"
-            onClick={
-              handlePrint
-            }
-            className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
-          >
-            {language === "ro"
-              ? "Printează / Salvează ca PDF"
-              : "Print / Save as PDF"}
-          </button>
-
-        </div>
-
-
-        {/* REPORT HEADER */}
-
-        <header className="border-b border-zinc-800 pb-8 print:border-zinc-300">
-
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-cyan-400 print:text-black">
-            AutoDiagnose AI
-          </p>
-
-          <h1 className="mt-3 text-4xl font-bold print:text-3xl">
-            {language === "ro"
-              ? "Raport de diagnostic"
-              : "Diagnostic Report"}
-          </h1>
-
-          <div className="mt-5 grid gap-2 text-sm text-zinc-400 print:text-zinc-700 sm:grid-cols-2">
-
-            <p>
-              <span className="font-semibold text-zinc-300 print:text-black">
-                {language === "ro"
-                  ? "Case ID:"
-                  : "Case ID:"}
-              </span>{" "}
-              <span className="font-mono">
-                {caseId}
-              </span>
-            </p>
-
-            <p>
-              <span className="font-semibold text-zinc-300 print:text-black">
-                {language === "ro"
-                  ? "Generat:"
-                  : "Generated:"}
-              </span>{" "}
-              {generatedAt}
-            </p>
-
-          </div>
-
-        </header>
-
-
-        {/* VEHICLE */}
-
-        <section className="mt-8 break-inside-avoid rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 print:border-zinc-300 print:bg-white">
-
-          <h2 className="text-xl font-bold">
-            {language === "ro"
-              ? "Vehicul"
-              : "Vehicle"}
-          </h2>
-
-          <p className="mt-4 text-2xl font-bold">
-            {
-              diagnosticCase
-                .vehicle.make
-            }{" "}
-            {
-              diagnosticCase
-                .vehicle.model
-            }
-          </p>
-
-          <div className="mt-4 grid gap-3 text-sm text-zinc-400 print:text-zinc-700 sm:grid-cols-2">
-
-            <p>
-              <span className="font-semibold text-zinc-300 print:text-black">
-                {language === "ro"
-                  ? "An:"
-                  : "Year:"}
-              </span>{" "}
-              {
-                diagnosticCase
-                  .vehicle.year ??
-                (language === "ro"
-                  ? "Necunoscut"
-                  : "Unknown")
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  "/diagnosis/analysis"
+                )
               }
-            </p>
+              className="
+                rounded-xl
+                border
+                border-white/[0.08]
+                bg-white/[0.025]
+                px-4
+                py-2.5
+                text-[13px]
+                font-semibold
+                text-zinc-200
+                transition
+                hover:bg-white/[0.05]
+              "
+            >
+              ← {text.back}
+            </button>
 
-            <p>
-              <span className="font-semibold text-zinc-300 print:text-black">
-                {language === "ro"
-                  ? "Combustibil:"
-                  : "Fuel:"}
-              </span>{" "}
-              {formatFuel(
-                diagnosticCase
-                  .vehicle.fuel_type,
-                language
-              )}
-            </p>
 
-            {diagnosticCase
-              .vehicle.engine && (
-              <p>
-                <span className="font-semibold text-zinc-300 print:text-black">
-                  {language === "ro"
-                    ? "Motor:"
-                    : "Engine:"}
-                </span>{" "}
-                {
-                  diagnosticCase
-                    .vehicle.engine
+            <div
+              className="
+                flex
+                flex-wrap
+                gap-2
+              "
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  router.push(
+                    "/diagnosis/history"
+                  )
                 }
-              </p>
-            )}
+                className="
+                  rounded-xl
+                  border
+                  border-white/[0.08]
+                  bg-white/[0.025]
+                  px-4
+                  py-2.5
+                  text-[13px]
+                  font-semibold
+                  text-zinc-200
+                  transition
+                  hover:bg-white/[0.05]
+                "
+              >
+                {text.history}
+              </button>
 
-            {diagnosticCase
-              .vehicle.mileage_km !==
-              null && (
-              <p>
-                <span className="font-semibold text-zinc-300 print:text-black">
-                  {language === "ro"
-                    ? "Kilometraj:"
-                    : "Mileage:"}
-                </span>{" "}
-                {
-                  diagnosticCase
-                    .vehicle.mileage_km
-                } km
-              </p>
-            )}
 
+              <button
+                type="button"
+                onClick={() =>
+                  window.print()
+                }
+                className="
+                  rounded-xl
+                  bg-blue-500
+                  px-4
+                  py-2.5
+                  text-[13px]
+                  font-semibold
+                  text-white
+                  shadow-[0_12px_30px_rgba(37,99,235,0.20)]
+                  transition
+                  hover:bg-blue-400
+                "
+              >
+                {text.print}
+              </button>
+            </div>
           </div>
 
-          {vehicleInfo && (
-            <div className="mt-5 border-t border-zinc-800 pt-4 print:border-zinc-300">
 
-              <p className="text-sm font-semibold">
-                {language === "ro"
-                  ? "Informații suplimentare"
-                  : "Additional vehicle information"}
-              </p>
+          {/* REPORT SHEET */}
 
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-zinc-400 print:text-zinc-700">
-                {vehicleInfo}
-              </p>
+          <article
+            className={`${styles.sheet}
+              report-sheet
+              overflow-hidden
+              rounded-[28px]
+              border
+              border-white/[0.07]
+              bg-[#080d18]
+              shadow-[0_24px_70px_rgba(0,0,0,0.26)]
+              print:overflow-visible
+              print:rounded-none
+              print:border-0
+              print:bg-white
+              print:shadow-none
+            `}
+          >
 
+            {/* REPORT HEADER */}
+
+            <div
+              className="
+                relative
+                overflow-hidden
+                border-b
+                border-white/[0.06]
+                p-6
+                sm:p-8
+                print:border-slate-300
+                print:p-0
+                print:pb-[5mm]
+              "
+            >
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  -right-16
+                  -top-20
+                  h-64
+                  w-64
+                  rounded-full
+                  bg-blue-500/[0.12]
+                  blur-[90px]
+                  print:hidden
+                "
+              />
+
+
+              <div
+                className="
+                  relative
+                  flex
+                  flex-col
+                  gap-6
+                  sm:flex-row
+                  sm:items-start
+                  sm:justify-between
+                  print:flex-row
+                  print:items-start
+                  print:gap-4
+                "
+              >
+                <div>
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-3
+                    "
+                  >
+                    <div
+                      className="
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
+                        rounded-xl
+                        border
+                        border-blue-400/20
+                        bg-blue-500/[0.08]
+                        text-sm
+                        font-bold
+                        text-blue-100
+                        print:h-8
+                        print:w-8
+                        print:rounded-md
+                        print:border-slate-300
+                        print:bg-slate-100
+                        print:text-slate-900
+                      "
+                    >
+                      A
+                    </div>
+
+
+                    <div>
+                      <p
+                        className="
+                          text-[18px]
+                          font-semibold
+                          tracking-[-0.02em]
+                          text-white
+                          print:text-[15pt]
+                          print:text-slate-950
+                        "
+                      >
+                        AutoDiagnose AI
+                      </p>
+
+                      <p
+                        className="
+                          mt-0.5
+                          text-[11px]
+                          font-medium
+                          uppercase
+                          tracking-[0.16em]
+                          text-blue-200/60
+                          print:text-[7.5pt]
+                          print:text-slate-500
+                        "
+                      >
+                        Vehicle Intelligence
+                      </p>
+                    </div>
+                  </div>
+
+
+                  <p
+                    className="
+                      mt-6
+                      text-[11px]
+                      font-semibold
+                      uppercase
+                      tracking-[0.18em]
+                      text-blue-200/65
+                      print:mt-[4mm]
+                      print:text-[7.5pt]
+                      print:text-slate-500
+                    "
+                  >
+                    {text.report}
+                  </p>
+
+
+                  <h1
+                    className="
+                      mt-2
+                      text-[2rem]
+                      font-semibold
+                      tracking-[-0.04em]
+                      text-white
+                      sm:text-[2.35rem]
+                      print:mt-[1mm]
+                      print:text-[20pt]
+                      print:leading-tight
+                      print:text-slate-950
+                    "
+                  >
+                    {text.reportTitle}
+                  </h1>
+
+
+                  <p
+                    className="
+                      mt-2
+                      text-[15px]
+                      font-medium
+                      text-zinc-300
+                      print:mt-[1mm]
+                      print:text-[10pt]
+                      print:text-slate-700
+                    "
+                  >
+                    {vehicleName}
+                  </p>
+                </div>
+
+
+                <div
+                  className="
+                    grid
+                    min-w-[260px]
+                    gap-2
+                    rounded-2xl
+                    border
+                    border-white/[0.06]
+                    bg-black/15
+                    p-4
+                    print:min-w-[58mm]
+                    print:gap-[1mm]
+                    print:rounded-none
+                    print:border-0
+                    print:bg-transparent
+                    print:p-0
+                    print:text-right
+                  "
+                >
+                  <p
+                    className="
+                      text-[12px]
+                      text-zinc-400
+                      print:text-[8pt]
+                      print:text-slate-600
+                    "
+                  >
+                    <span
+                      className="
+                        font-semibold
+                        text-zinc-200
+                        print:text-slate-800
+                      "
+                    >
+                      {text.generated}:
+                    </span>{" "}
+                    {formatGeneratedDate(
+                      generatedAt,
+                      language
+                    )}
+                  </p>
+
+
+                  <p
+                    className="
+                      break-all
+                      font-mono
+                      text-[11px]
+                      text-zinc-500
+                      print:text-[7pt]
+                      print:text-slate-500
+                    "
+                  >
+                    {text.caseId}:{" "}
+                    {caseId}
+                  </p>
+
+
+                  <span
+                    className="
+                      mt-1
+                      w-fit
+                      rounded-full
+                      border
+                      border-emerald-400/15
+                      bg-emerald-400/[0.05]
+                      px-2.5
+                      py-1
+                      text-[10px]
+                      font-semibold
+                      text-emerald-200
+                      sm:ml-auto
+                      print:ml-auto
+                      print:rounded
+                      print:border-emerald-700
+                      print:bg-transparent
+                      print:px-2
+                      print:py-0.5
+                      print:text-[7pt]
+                      print:text-emerald-800
+                    "
+                  >
+                    {text.reportStatus}
+                  </span>
+                </div>
+              </div>
             </div>
-          )}
-
-        </section>
 
 
-        {/* INPUT DATA */}
+            {/* REPORT BODY */}
 
-        <section className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 print:border-zinc-300 print:bg-white">
+            <div
+              className="
+                space-y-5
+                p-6
+                sm:p-8
+                print:space-y-[4mm]
+                print:p-0
+                print:pt-[4mm]
+              "
+            >
 
-          <h2 className="text-xl font-bold">
-            {language === "ro"
-              ? "Date introduse"
-              : "Reported data"}
-          </h2>
+              {/* VEHICLE SNAPSHOT */}
 
-          <div className="mt-5">
-
-            <h3 className="font-semibold">
-              {language === "ro"
-                ? "Simptome"
-                : "Symptoms"}
-            </h3>
-
-            <div className="mt-3 space-y-3">
-
-              {diagnosticCase
-                .symptoms.map(
-                  (
-                    symptom,
-                    index
-                  ) => (
+              <section
+                className={`${styles.block}
+                  report-block
+                  grid
+                  gap-3
+                  sm:grid-cols-5
+                  print:grid-cols-5
+                  print:gap-[2mm]
+                  `}
+              >
+                {[
+                  {
+                    label:
+                      text.vehicle,
+                    value:
+                      vehicleName,
+                  },
+                  {
+                    label:
+                      text.year,
+                    value:
+                      diagnosticCase.vehicle.year ??
+                      text.notProvided,
+                  },
+                  {
+                    label:
+                      text.fuel,
+                    value:
+                      formatFuel(
+                        diagnosticCase.vehicle.fuel_type,
+                        language
+                      ),
+                  },
+                  {
+                    label:
+                      text.engine,
+                    value:
+                      diagnosticCase.vehicle.engine ??
+                      text.notProvided,
+                  },
+                  {
+                    label:
+                      text.mileage,
+                    value:
+                      diagnosticCase.vehicle.mileage_km
+                        ? `${diagnosticCase.vehicle.mileage_km.toLocaleString()} km`
+                        : text.notProvided,
+                  },
+                ].map(
+                  (item) => (
                     <div
                       key={
-                        symptom.id
+                        item.label
                       }
-                      className="break-inside-avoid rounded-xl border border-zinc-800 p-4 print:border-zinc-300"
+                      className="
+                        rounded-2xl
+                        border
+                        border-white/[0.055]
+                        bg-white/[0.016]
+                        p-4
+                        print:rounded
+                        print:border-slate-300
+                        print:bg-white
+                        print:p-[2.5mm]
+                      "
                     >
-                      <p className="text-sm font-semibold">
-                        {index + 1}.{" "}
-                        {
-                          symptom.category
-                        }
+                      <p
+                        className="
+                          text-[10px]
+                          font-semibold
+                          uppercase
+                          tracking-[0.10em]
+                          text-zinc-500
+                          print:text-[6.7pt]
+                          print:text-slate-500
+                        "
+                      >
+                        {item.label}
                       </p>
 
-                      <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-zinc-400 print:text-zinc-700">
-                        {
-                          symptom.description
-                        }
+                      <p
+                        className="
+                          mt-1.5
+                          text-[14px]
+                          font-semibold
+                          leading-5
+                          text-zinc-100
+                          print:mt-[0.5mm]
+                          print:text-[8.5pt]
+                          print:leading-tight
+                          print:text-slate-950
+                        "
+                      >
+                        {item.value}
                       </p>
                     </div>
                   )
                 )}
-
-            </div>
-
-          </div>
+              </section>
 
 
-          <div className="mt-6">
+              {/* PRIMARY FINDING */}
 
-            <h3 className="font-semibold">
-              DTC
-            </h3>
-
-            {diagnosticCase
-              .dtc_codes.length >
-              0 ? (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {diagnosticCase
-                  .dtc_codes.map(
-                    (code) => (
-                      <span
-                        key={code}
-                        className="rounded-lg border border-zinc-700 px-3 py-1 font-mono text-sm print:border-zinc-400"
-                      >
-                        {code}
-                      </span>
-                    )
-                  )}
-              </div>
-            ) : (
-              <p className="mt-2 text-sm text-zinc-500 print:text-zinc-700">
-                {language === "ro"
-                  ? "Nu au fost introduse coduri DTC."
-                  : "No DTC codes were entered."}
-              </p>
-            )}
-
-          </div>
-
-
-          {diagnosticCase
-            .adaptive_answers.length >
-            0 && (
-            <div className="mt-6">
-
-              <h3 className="font-semibold">
-                {language === "ro"
-                  ? "Răspunsuri adaptive"
-                  : "Adaptive answers"}
-              </h3>
-
-              <div className="mt-3 space-y-3">
-
-                {diagnosticCase
-                  .adaptive_answers.map(
-                    (
-                      answer,
-                      index
-                    ) => (
-                      <div
-                        key={`${answer.question_id}-${index}`}
-                        className="break-inside-avoid rounded-xl border border-zinc-800 p-4 print:border-zinc-300"
-                      >
-                        <p className="text-sm font-semibold">
-                          {
-                            answer.question
-                          }
-                        </p>
-
-                        <p className="mt-2 text-sm text-zinc-400 print:text-zinc-700">
-                          {formatAnswer(
-                            answer.answer
-                          )}
-                        </p>
-                      </div>
-                    )
-                  )}
-
-              </div>
-
-            </div>
-          )}
-
-        </section>
-
-
-        {/* DATA QUALITY */}
-
-        {(analysis
-          .data_quality_warnings
-          ?.length ?? 0) >
-          0 && (
-          <section className="mt-6 break-inside-avoid rounded-2xl border border-amber-800 bg-amber-950/20 p-6 print:border-zinc-400 print:bg-white">
-
-            <h2 className="text-xl font-bold text-amber-200 print:text-black">
-              {language === "ro"
-                ? "Avertismente privind datele"
-                : "Data quality warnings"}
-            </h2>
-
-            <div className="mt-4 space-y-3">
-
-              {analysis
-                .data_quality_warnings
-                ?.map(
-                  (
-                    warning,
-                    index
-                  ) => (
-                    <p
-                      key={`${warning.code}-${index}`}
-                      className="text-sm leading-6 text-amber-100/80 print:text-zinc-700"
-                    >
-                      •{" "}
-                      {
-                        warning.message
-                      }
-                    </p>
-                  )
-                )}
-
-            </div>
-
-          </section>
-        )}
-
-
-        {/* FINDINGS */}
-
-        <section className="mt-8">
-
-          <h2 className="text-2xl font-bold">
-            {language === "ro"
-              ? "Rezultatele diagnosticului"
-              : "Diagnostic findings"}
-          </h2>
-
-          <div className="mt-5 space-y-6">
-
-            {analysis
-              .findings.map(
-                (
-                  finding,
-                  index
-                ) => (
-                  <article
-                    key={`${finding.probable_cause}-${index}`}
-                    className="break-inside-avoid rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 print:border-zinc-300 print:bg-white"
+              {primaryFinding && (
+                <section
+                  className={`${styles.block}
+                    report-block
+                    rounded-[24px]
+                    border
+                    border-blue-400/15
+                    bg-blue-500/[0.035]
+                    p-5
+                    sm:p-6
+                    print:rounded
+                    print:border-slate-400
+                    print:bg-slate-50
+                    print:p-[4mm]
+                  `}
+                >
+                  <div
+                    className="
+                      grid
+                      gap-5
+                      lg:grid-cols-[minmax(0,1fr)_180px]
+                      lg:items-start
+                      print:grid-cols-[minmax(0,1fr)_38mm]
+                      print:gap-[5mm]
+                    "
                   >
-
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
-                      <div>
-
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
-                          {language === "ro"
-                            ? `Cauza posibilă #${index + 1}`
-                            : `Possible cause #${index + 1}`}
-                        </p>
-
-                        <h3 className="mt-2 text-xl font-bold">
-                          {
-                            finding
-                              .probable_cause
-                          }
-                        </h3>
-
-                      </div>
-
-                      <div className="shrink-0 rounded-xl border border-cyan-900 bg-cyan-950/20 px-4 py-3 text-center print:border-zinc-400 print:bg-white">
-
-                        <p className="text-xs text-zinc-500">
-                          {language === "ro"
-                            ? "Scor"
-                            : "Score"}
-                        </p>
-
-                        <p className="mt-1 text-2xl font-bold text-cyan-300 print:text-black">
-                          {
-                            finding
-                              .confidence
-                          }
-                          /100
-                        </p>
-
-                      </div>
-
-                    </div>
+                    <div>
+                      <p
+                        className="
+                          text-[11px]
+                          font-semibold
+                          uppercase
+                          tracking-[0.16em]
+                          text-blue-200/70
+                          print:text-[7pt]
+                          print:text-slate-500
+                        "
+                      >
+                        {text.executiveSummary}
+                      </p>
 
 
-                    <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
-
-                      <div className="rounded-xl border border-zinc-800 p-4 print:border-zinc-300">
-
-                        <p className="text-xs uppercase tracking-wide text-zinc-500">
-                          {language === "ro"
-                            ? "Dovezi"
-                            : "Evidence"}
-                        </p>
-
-                        <p className="mt-2 font-semibold">
-                          {getEvidenceStrengthLabel(
-                            finding
-                              .evidence_strength,
-                            language
-                          )}
-                        </p>
-
-                        <p className="mt-1 text-xs text-zinc-500 print:text-zinc-700">
-                          {
-                            finding
-                              .evidence_sources_count ??
-                            0
-                          }{" "}
-                          {language === "ro"
-                            ? "surse independente"
-                            : "independent sources"}
-                        </p>
-
-                      </div>
-
-
-                      <div className="rounded-xl border border-zinc-800 p-4 print:border-zinc-300">
-
-                        <p className="text-xs uppercase tracking-wide text-zinc-500">
-                          {language === "ro"
-                            ? "Severitate"
-                            : "Severity"}
-                        </p>
-
-                        <p className="mt-2 font-semibold">
-                          {getSeverityLabel(
-                            finding.severity,
-                            language
-                          )}
-                        </p>
-
-                      </div>
-
-
-                      <div className="rounded-xl border border-zinc-800 p-4 print:border-zinc-300">
-
-                        <p className="text-xs uppercase tracking-wide text-zinc-500">
-                          {language === "ro"
-                            ? "Urgență"
-                            : "Urgency"}
-                        </p>
-
-                        <p className="mt-2 font-semibold">
-                          {getUrgencyLabel(
-                            finding.urgency,
-                            language
-                          )}
-                        </p>
-
-                      </div>
-
-                    </div>
-
-
-                    <div className="mt-5">
-
-                      <h4 className="font-semibold">
-                        {language === "ro"
-                          ? "Descriere"
-                          : "Description"}
-                      </h4>
-
-                      <p className="mt-2 text-sm leading-6 text-zinc-400 print:text-zinc-700">
+                      <h2
+                        className="
+                          mt-2
+                          text-[1.55rem]
+                          font-semibold
+                          leading-tight
+                          tracking-[-0.03em]
+                          text-white
+                          print:mt-[1mm]
+                          print:text-[14pt]
+                          print:text-slate-950
+                        "
+                      >
                         {
-                          finding
+                          primaryFinding
+                            .probable_cause
+                        }
+                      </h2>
+
+
+                      <p
+                        className="
+                          mt-3
+                          text-[15px]
+                          leading-7
+                          text-zinc-300
+                          print:mt-[2mm]
+                          print:text-[8.5pt]
+                          print:leading-[1.35]
+                          print:text-slate-700
+                        "
+                      >
+                        {
+                          primaryFinding
                             .description
                         }
                       </p>
 
+
+                      <div
+                        className="
+                          mt-4
+                          flex
+                          flex-wrap
+                          gap-2
+                          print:mt-[2.5mm]
+                          print:gap-[1.5mm]
+                        "
+                      >
+                        {[
+                          `${text.severity}: ${formatSeverity(
+                            primaryFinding.severity,
+                            language
+                          )}`,
+                          `${text.urgency}: ${formatUrgency(
+                            primaryFinding.urgency,
+                            language
+                          )}`,
+                          `${text.evidence}: ${formatStrength(
+                            primaryFinding.evidence_strength,
+                            language
+                          )}`,
+                        ].map(
+                          (label) => (
+                            <span
+                              key={
+                                label
+                              }
+                              className="
+                                rounded-full
+                                border
+                                border-white/[0.08]
+                                bg-white/[0.025]
+                                px-3
+                                py-1.5
+                                text-[12px]
+                                font-semibold
+                                text-zinc-200
+                                print:rounded
+                                print:border-slate-300
+                                print:bg-white
+                                print:px-[2mm]
+                                print:py-[0.6mm]
+                                print:text-[7pt]
+                                print:text-slate-800
+                              "
+                            >
+                              {label}
+                            </span>
+                          )
+                        )}
+                      </div>
+
+
+                      {primaryFinding
+                        .safety_message && (
+                        <div
+                          className="
+                            mt-4
+                            rounded-xl
+                            border
+                            border-amber-400/15
+                            bg-amber-400/[0.05]
+                            px-4
+                            py-3
+                            text-[14px]
+                            leading-6
+                            text-amber-100
+                            print:mt-[2.5mm]
+                            print:rounded
+                            print:border-amber-500
+                            print:bg-amber-50
+                            print:px-[3mm]
+                            print:py-[2mm]
+                            print:text-[8pt]
+                            print:leading-[1.3]
+                            print:text-amber-950
+                          "
+                        >
+                          <strong>
+                            {text.safety}:{" "}
+                          </strong>
+
+                          {
+                            primaryFinding
+                              .safety_message
+                          }
+                        </div>
+                      )}
                     </div>
 
 
-                    {finding
-                      .safety_message && (
-                      <div className="mt-5 rounded-xl border border-amber-900 bg-amber-950/20 p-4 print:border-zinc-400 print:bg-white">
+                    <div
+                      className="
+                        rounded-2xl
+                        border
+                        border-white/[0.06]
+                        bg-black/15
+                        p-4
+                        text-center
+                        print:rounded
+                        print:border-slate-300
+                        print:bg-white
+                        print:p-[3mm]
+                      "
+                    >
+                      <p
+                        className="
+                          text-[38px]
+                          font-semibold
+                          tracking-[-0.05em]
+                          text-blue-200
+                          print:text-[23pt]
+                          print:text-slate-950
+                        "
+                      >
+                        {clampScore(
+                          primaryFinding
+                            .confidence
+                        )}
+                      </p>
 
-                        <p className="text-xs font-bold uppercase tracking-wide text-amber-300 print:text-black">
-                          {language === "ro"
-                            ? "Siguranță"
-                            : "Safety"}
-                        </p>
+                      <p
+                        className="
+                          -mt-1
+                          text-[12px]
+                          text-zinc-500
+                          print:text-[7pt]
+                          print:text-slate-500
+                        "
+                      >
+                        / 100
+                      </p>
 
-                        <p className="mt-2 text-sm leading-6 text-amber-100/80 print:text-zinc-700">
-                          {
-                            finding
-                              .safety_message
-                          }
-                        </p>
-
+                      <div
+                        className="
+                          mt-3
+                          h-1.5
+                          overflow-hidden
+                          rounded-full
+                          bg-white/[0.06]
+                          print:mt-[2mm]
+                          print:bg-slate-200
+                        "
+                      >
+                        <div
+                          className="
+                            h-full
+                            rounded-full
+                            bg-blue-400
+                            print:bg-slate-700
+                          "
+                          style={{
+                            width:
+                              `${clampScore(
+                                primaryFinding
+                                  .confidence
+                              )}%`,
+                          }}
+                        />
                       </div>
-                    )}
+
+                      <p
+                        className="
+                          mt-3
+                          text-[12px]
+                          font-semibold
+                          text-zinc-200
+                          print:mt-[1.5mm]
+                          print:text-[7.5pt]
+                          print:text-slate-800
+                        "
+                      >
+                        {text.relevance}
+                      </p>
+
+                      <p
+                        className="
+                          mt-1
+                          text-[11px]
+                          text-zinc-500
+                          print:text-[6.8pt]
+                          print:text-slate-500
+                        "
+                      >
+                        {
+                          primaryFinding
+                            .evidence_sources_count ??
+                          0
+                        }{" "}
+                        {text.sources}
+                      </p>
+                    </div>
+                  </div>
+                </section>
+              )}
 
 
-                    <div className="mt-5">
+              {/* COMPACT TWO-COLUMN CONTENT */}
 
-                      <h4 className="font-semibold">
-                        {language === "ro"
-                          ? "De ce a primit acest scor"
-                          : "Why it received this score"}
-                      </h4>
+              <div
+                className="
+                  grid
+                  gap-5
+                  lg:grid-cols-2
+                  print:grid-cols-2
+                  print:gap-[4mm]
+                "
+              >
 
-                      <div className="mt-3 space-y-2">
+                {/* SYMPTOMS + DTC */}
 
-                        {finding
-                          .score_breakdown.map(
+                <section
+                  className={`${styles.block}
+                    report-block
+                    rounded-[22px]
+                    border
+                    border-white/[0.06]
+                    bg-white/[0.014]
+                    p-5
+                    print:rounded
+                    print:border-slate-300
+                    print:bg-white
+                    print:p-[3.5mm]
+                  `}
+                >
+                  <h3
+                    className="
+                      text-[15px]
+                      font-semibold
+                      text-white
+                      print:text-[10pt]
+                      print:text-slate-950
+                    "
+                  >
+                    {text.symptoms}
+                  </h3>
+
+
+                  <div
+                    className="
+                      mt-3
+                      space-y-2
+                      print:mt-[2mm]
+                      print:space-y-[1.5mm]
+                    "
+                  >
+                    {diagnosticCase
+                      .symptoms
+                      .map(
+                        (
+                          symptom,
+                          index
+                        ) => (
+                          <div
+                            key={
+                              symptom.id
+                            }
+                            className="
+                              flex
+                              gap-3
+                              rounded-xl
+                              border
+                              border-white/[0.045]
+                              bg-black/10
+                              px-3
+                              py-2.5
+                              print:rounded
+                              print:border-slate-200
+                              print:bg-white
+                              print:px-[2.5mm]
+                              print:py-[1.5mm]
+                            "
+                          >
+                            <span
+                              className="
+                                text-[12px]
+                                font-semibold
+                                text-blue-200
+                                print:text-[7.5pt]
+                                print:text-slate-500
+                              "
+                            >
+                              {index +
+                                1}.
+                            </span>
+
+                            <p
+                              className="
+                                text-[13px]
+                                leading-5
+                                text-zinc-300
+                                print:text-[8pt]
+                                print:leading-[1.25]
+                                print:text-slate-800
+                              "
+                            >
+                              {
+                                symptom.description
+                              }
+                            </p>
+                          </div>
+                        )
+                      )}
+                  </div>
+
+
+                  <div
+                    className="
+                      mt-4
+                      border-t
+                      border-white/[0.05]
+                      pt-4
+                      print:mt-[2.5mm]
+                      print:border-slate-300
+                      print:pt-[2.5mm]
+                    "
+                  >
+                    <p
+                      className="
+                        text-[11px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.12em]
+                        text-zinc-500
+                        print:text-[7pt]
+                        print:text-slate-500
+                      "
+                    >
+                      {text.dtc}
+                    </p>
+
+
+                    {diagnosticCase
+                      .dtc_codes
+                      .length >
+                    0 ? (
+                      <div
+                        className="
+                          mt-2
+                          flex
+                          flex-wrap
+                          gap-2
+                          print:mt-[1.5mm]
+                          print:gap-[1mm]
+                        "
+                      >
+                        {diagnosticCase
+                          .dtc_codes
+                          .map(
                             (
-                              evidence,
-                              evidenceIndex
+                              code
+                            ) => (
+                              <span
+                                key={
+                                  code
+                                }
+                                className="
+                                  rounded-lg
+                                  border
+                                  border-cyan-300/15
+                                  bg-cyan-300/[0.045]
+                                  px-2.5
+                                  py-1.5
+                                  font-mono
+                                  text-[12px]
+                                  font-semibold
+                                  text-cyan-100
+                                  print:rounded
+                                  print:border-slate-300
+                                  print:bg-slate-50
+                                  print:px-[2mm]
+                                  print:py-[0.7mm]
+                                  print:text-[7.5pt]
+                                  print:text-slate-900
+                                "
+                              >
+                                {code}
+                              </span>
+                            )
+                          )}
+                      </div>
+                    ) : (
+                      <p
+                        className="
+                          mt-2
+                          text-[13px]
+                          text-zinc-400
+                          print:text-[8pt]
+                          print:text-slate-600
+                        "
+                      >
+                        {text.noDtc}
+                      </p>
+                    )}
+                  </div>
+                </section>
+
+
+                {/* NEXT STEPS */}
+
+                <section
+                  className={`${styles.block}
+                    report-block
+                    rounded-[22px]
+                    border
+                    border-white/[0.06]
+                    bg-white/[0.014]
+                    p-5
+                    print:rounded
+                    print:border-slate-300
+                    print:bg-white
+                    print:p-[3.5mm]
+                  `}
+                >
+                  <h3
+                    className="
+                      text-[15px]
+                      font-semibold
+                      text-white
+                      print:text-[10pt]
+                      print:text-slate-950
+                    "
+                  >
+                    {text.nextSteps}
+                  </h3>
+
+
+                  <div
+                    className="
+                      mt-3
+                      space-y-2.5
+                      print:mt-[2mm]
+                      print:space-y-[1.5mm]
+                    "
+                  >
+                    {nextSteps
+                      .slice(
+                        0,
+                        5
+                      )
+                      .map(
+                        (
+                          step
+                        ) => (
+                          <div
+                            key={
+                              step.id
+                            }
+                            className="
+                              flex
+                              gap-3
+                              rounded-xl
+                              border
+                              border-white/[0.045]
+                              bg-black/10
+                              px-3
+                              py-3
+                              print:rounded
+                              print:border-slate-200
+                              print:bg-white
+                              print:px-[2.5mm]
+                              print:py-[1.5mm]
+                            "
+                          >
+                            <span
+                              className="
+                                flex
+                                h-6
+                                w-6
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-full
+                                border
+                                border-violet-300/15
+                                bg-violet-300/[0.06]
+                                text-[11px]
+                                font-semibold
+                                text-violet-100
+                                print:h-5
+                                print:w-5
+                                print:border-slate-400
+                                print:bg-white
+                                print:text-[7pt]
+                                print:text-slate-800
+                              "
+                            >
+                              {
+                                step.priority
+                              }
+                            </span>
+
+
+                            <div>
+                              <p
+                                className="
+                                  text-[13px]
+                                  font-semibold
+                                  text-zinc-100
+                                  print:text-[8pt]
+                                  print:text-slate-900
+                                "
+                              >
+                                {
+                                  step.title
+                                }
+                              </p>
+
+                              <p
+                                className="
+                                  mt-1
+                                  text-[12px]
+                                  leading-5
+                                  text-zinc-400
+                                  print:mt-[0.5mm]
+                                  print:text-[7.5pt]
+                                  print:leading-[1.25]
+                                  print:text-slate-700
+                                "
+                              >
+                                {
+                                  step.action
+                                }
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      )}
+                  </div>
+                </section>
+              </div>
+
+
+              {/* RECOMMENDED CHECKS */}
+
+              {primaryFinding &&
+                primaryFinding
+                  .recommended_checks
+                  .length >
+                  0 && (
+                <section
+                  className={`${styles.block}
+                    report-block
+                    rounded-[22px]
+                    border
+                    border-white/[0.06]
+                    bg-white/[0.014]
+                    p-5
+                    print:rounded
+                    print:border-slate-300
+                    print:bg-white
+                    print:p-[3.5mm]
+                  `}
+                >
+                  <h3
+                    className="
+                      text-[15px]
+                      font-semibold
+                      text-white
+                      print:text-[10pt]
+                      print:text-slate-950
+                    "
+                  >
+                    {text.checks}
+                  </h3>
+
+
+                  <div
+                    className="
+                      mt-3
+                      grid
+                      gap-2
+                      sm:grid-cols-2
+                      print:mt-[2mm]
+                      print:grid-cols-2
+                      print:gap-[1.5mm]
+                    "
+                  >
+                    {primaryFinding
+                      .recommended_checks
+                      .map(
+                        (
+                          check,
+                          index
+                        ) => (
+                          <div
+                            key={
+                              index
+                            }
+                            className="
+                              flex
+                              gap-3
+                              rounded-xl
+                              border
+                              border-white/[0.045]
+                              bg-black/10
+                              px-3
+                              py-2.5
+                              print:rounded
+                              print:border-slate-200
+                              print:bg-white
+                              print:px-[2.5mm]
+                              print:py-[1.5mm]
+                            "
+                          >
+                            <span
+                              className="
+                                text-[12px]
+                                font-semibold
+                                text-blue-200
+                                print:text-[7.5pt]
+                                print:text-slate-500
+                              "
+                            >
+                              {index +
+                                1}.
+                            </span>
+
+                            <p
+                              className="
+                                text-[13px]
+                                leading-5
+                                text-zinc-300
+                                print:text-[8pt]
+                                print:leading-[1.25]
+                                print:text-slate-800
+                              "
+                            >
+                              {check}
+                            </p>
+                          </div>
+                        )
+                      )}
+                  </div>
+                </section>
+              )}
+
+
+              {/* SECONDARY FINDINGS */}
+
+              {secondaryFindings.length >
+                0 && (
+                <section
+                  className={`${styles.block}
+                    report-block
+                    rounded-[22px]
+                    border
+                    border-white/[0.06]
+                    bg-white/[0.014]
+                    p-5
+                    print:rounded
+                    print:border-slate-300
+                    print:bg-white
+                    print:p-[3.5mm]
+                  `}
+                >
+                  <div
+                    className="
+                      flex
+                      items-end
+                      justify-between
+                      gap-4
+                    "
+                  >
+                    <div>
+                      <h3
+                        className="
+                          text-[15px]
+                          font-semibold
+                          text-white
+                          print:text-[10pt]
+                          print:text-slate-950
+                        "
+                      >
+                        {
+                          text.otherFindings
+                        }
+                      </h3>
+
+                      <p
+                        className="
+                          mt-1
+                          text-[12px]
+                          text-zinc-400
+                          print:text-[7.5pt]
+                          print:text-slate-600
+                        "
+                      >
+                        {
+                          text.findingsHint
+                        }
+                      </p>
+                    </div>
+                  </div>
+
+
+                  <div
+                    className="
+                      mt-3
+                      overflow-hidden
+                      rounded-xl
+                      border
+                      border-white/[0.05]
+                      print:mt-[2mm]
+                      print:rounded
+                      print:border-slate-300
+                    "
+                  >
+                    {secondaryFindings.map(
+                      (
+                        finding,
+                        index
+                      ) => (
+                        <div
+                          key={`${finding.probable_cause}-${index}`}
+                          className="
+                            grid
+                            gap-2
+                            border-b
+                            border-white/[0.045]
+                            px-4
+                            py-3
+                            last:border-b-0
+                            sm:grid-cols-[36px_minmax(0,1fr)_80px_100px]
+                            sm:items-center
+                            print:grid-cols-[8mm_minmax(0,1fr)_18mm_24mm]
+                            print:gap-[2mm]
+                            print:border-slate-200
+                            print:px-[2.5mm]
+                            print:py-[1.5mm]
+                          "
+                        >
+                          <span
+                            className="
+                              text-[12px]
+                              font-semibold
+                              text-zinc-500
+                              print:text-[7pt]
+                              print:text-slate-500
+                            "
+                          >
+                            #{index +
+                              2}
+                          </span>
+
+
+                          <p
+                            className="
+                              text-[13px]
+                              font-semibold
+                              text-zinc-100
+                              print:text-[8pt]
+                              print:text-slate-900
+                            "
+                          >
+                            {
+                              finding
+                                .probable_cause
+                            }
+                          </p>
+
+
+                          <p
+                            className="
+                              text-[12px]
+                              font-semibold
+                              text-blue-200
+                              print:text-[7.5pt]
+                              print:text-slate-800
+                            "
+                          >
+                            {clampScore(
+                              finding
+                                .confidence
+                            )}
+                            /100
+                          </p>
+
+
+                          <p
+                            className="
+                              text-[12px]
+                              text-zinc-400
+                              print:text-[7.5pt]
+                              print:text-slate-600
+                            "
+                          >
+                            {formatStrength(
+                              finding
+                                .evidence_strength,
+                              language
+                            )}
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </section>
+              )}
+
+
+              {/* CONTEXT / DATA QUALITY / TECHNICAL */}
+
+              {(vehicleContext ||
+                warnings.length >
+                  0 ||
+                primaryReferences.length >
+                  0) && (
+                <div
+                  className="
+                    grid
+                    gap-5
+                    lg:grid-cols-2
+                    print:grid-cols-2
+                    print:gap-[4mm]
+                  "
+                >
+                  {(vehicleContext ||
+                    warnings.length >
+                      0) && (
+                    <section
+                      className="
+                        report-block
+                        rounded-[22px]
+                        border
+                        border-white/[0.06]
+                        bg-white/[0.014]
+                        p-5
+                        print:rounded
+                        print:border-slate-300
+                        print:bg-white
+                        print:p-[3.5mm]
+                      "
+                    >
+                      {vehicleContext && (
+                        <>
+                          <h3
+                            className="
+                              text-[15px]
+                              font-semibold
+                              text-white
+                              print:text-[10pt]
+                              print:text-slate-950
+                            "
+                          >
+                            {text.context}
+                          </h3>
+
+                          <p
+                            className="
+                              mt-2
+                              text-[13px]
+                              leading-6
+                              text-zinc-300
+                              print:mt-[1.5mm]
+                              print:text-[8pt]
+                              print:leading-[1.3]
+                              print:text-slate-700
+                            "
+                          >
+                            {vehicleContext}
+                          </p>
+                        </>
+                      )}
+
+
+                      {warnings.length >
+                        0 && (
+                        <div
+                          className={
+                            vehicleContext
+                              ? "mt-4 border-t border-white/[0.05] pt-4 print:mt-[2.5mm] print:border-slate-300 print:pt-[2.5mm]"
+                              : ""
+                          }
+                        >
+                          <h3
+                            className="
+                              text-[14px]
+                              font-semibold
+                              text-white
+                              print:text-[9pt]
+                              print:text-slate-950
+                            "
+                          >
+                            {
+                              text.dataQuality
+                            }
+                          </h3>
+
+
+                          <div
+                            className="
+                              mt-2
+                              space-y-2
+                              print:mt-[1.5mm]
+                              print:space-y-[1mm]
+                            "
+                          >
+                            {warnings.map(
+                              (
+                                warning,
+                                index
+                              ) => (
+                                <p
+                                  key={`${warning.code}-${index}`}
+                                  className="
+                                    text-[12px]
+                                    leading-5
+                                    text-amber-100
+                                    print:text-[7.5pt]
+                                    print:leading-[1.25]
+                                    print:text-amber-900
+                                  "
+                                >
+                                  •{" "}
+                                  {
+                                    warning.message
+                                  }
+                                </p>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </section>
+                  )}
+
+
+                  {primaryReferences.length >
+                    0 && (
+                    <section
+                      className="
+                        report-block
+                        rounded-[22px]
+                        border
+                        border-white/[0.06]
+                        bg-white/[0.014]
+                        p-5
+                        print:rounded
+                        print:border-slate-300
+                        print:bg-white
+                        print:p-[3.5mm]
+                      "
+                    >
+                      <h3
+                        className="
+                          text-[15px]
+                          font-semibold
+                          text-white
+                          print:text-[10pt]
+                          print:text-slate-950
+                        "
+                      >
+                        {
+                          text.technicalBasis
+                        }
+                      </h3>
+
+
+                      <div
+                        className="
+                          mt-3
+                          space-y-2
+                          print:mt-[2mm]
+                          print:space-y-[1.5mm]
+                        "
+                      >
+                        {primaryReferences
+                          .slice(
+                            0,
+                            5
+                          )
+                          .map(
+                            (
+                              reference,
+                              index
                             ) => (
                               <div
-                                key={`${evidence.source}-${evidenceIndex}`}
-                                className="flex items-start justify-between gap-4 rounded-lg border border-zinc-800 px-3 py-2 text-sm print:border-zinc-300"
+                                key={`${reference.identifier}-${index}`}
+                                className="
+                                  rounded-xl
+                                  border
+                                  border-white/[0.045]
+                                  bg-black/10
+                                  px-3
+                                  py-2.5
+                                  print:rounded
+                                  print:border-slate-200
+                                  print:bg-white
+                                  print:px-[2.5mm]
+                                  print:py-[1.5mm]
+                                "
                               >
-                                <span className="text-zinc-400 print:text-zinc-700">
+                                <p
+                                  className="
+                                    text-[12px]
+                                    font-semibold
+                                    text-zinc-200
+                                    print:text-[7.8pt]
+                                    print:text-slate-900
+                                  "
+                                >
                                   {
-                                    evidence
-                                      .label
+                                    reference.title
                                   }
-                                </span>
+                                </p>
 
-                                <span className="font-semibold">
-                                  +{
-                                    evidence
-                                      .points
+                                <p
+                                  className="
+                                    mt-1
+                                    font-mono
+                                    text-[11px]
+                                    text-cyan-200/75
+                                    print:mt-[0.5mm]
+                                    print:text-[7pt]
+                                    print:text-slate-600
+                                  "
+                                >
+                                  {
+                                    reference.identifier
                                   }
-                                </span>
+                                </p>
                               </div>
                             )
                           )}
-
                       </div>
-
-                    </div>
-
-
-                    <div className="mt-5">
-
-                      <h4 className="font-semibold">
-                        {language === "ro"
-                          ? "Verificări recomandate"
-                          : "Recommended checks"}
-                      </h4>
-
-                      <ul className="mt-3 space-y-2 text-sm leading-6 text-zinc-400 print:text-zinc-700">
-
-                        {finding
-                          .recommended_checks.map(
-                            (
-                              check,
-                              checkIndex
-                            ) => (
-                              <li
-                                key={
-                                  checkIndex
-                                }
-                              >
-                                • {check}
-                              </li>
-                            )
-                          )}
-
-                      </ul>
-
-                    </div>
-
-
-                    {(finding.rule_id ||
-                      (finding
-                        .technical_references
-                        ?.length ??
-                        0) >
-                        0) && (
-                      <div className="mt-5 border-t border-zinc-800 pt-5 print:border-zinc-300">
-
-                        <h4 className="font-semibold">
-                          {language === "ro"
-                            ? "Referințe tehnice și trasabilitate"
-                            : "Technical references and traceability"}
-                        </h4>
-
-                        {finding
-                          .rule_id && (
-                          <p className="mt-3 text-sm">
-                            <span className="text-zinc-500 print:text-zinc-700">
-                              {language === "ro"
-                                ? "Regulă: "
-                                : "Rule: "}
-                            </span>
-
-                            <span className="font-mono">
-                              {
-                                finding
-                                  .rule_id
-                              }
-                            </span>
-                          </p>
-                        )}
-
-                        <div className="mt-3 space-y-3">
-
-                          {finding
-                            .technical_references
-                            ?.map(
-                              (
-                                reference,
-                                referenceIndex
-                              ) => (
-                                <div
-                                  key={`${reference.identifier}-${referenceIndex}`}
-                                  className="break-inside-avoid rounded-lg border border-zinc-800 p-4 print:border-zinc-300"
-                                >
-
-                                  <p className="text-sm font-semibold">
-                                    {
-                                      reference
-                                        .title
-                                    }
-                                  </p>
-
-                                  <p className="mt-1 font-mono text-xs text-cyan-300 print:text-black">
-                                    {
-                                      reference
-                                        .identifier
-                                    }
-                                  </p>
-
-                                  {reference
-                                    .note && (
-                                    <p className="mt-2 whitespace-pre-line text-xs leading-5 text-zinc-500 print:text-zinc-700">
-                                      {
-                                        reference
-                                          .note
-                                      }
-                                    </p>
-                                  )}
-
-                                </div>
-                              )
-                            )}
-
-                        </div>
-
-                      </div>
-                    )}
-
-                  </article>
-                )
+                    </section>
+                  )}
+                </div>
               )}
 
-          </div>
 
-        </section>
+              {/* DISCLAIMER + CONTACT */}
 
-
-        {/* NEXT BEST STEPS */}
-
-        {(analysis
-          .next_best_steps
-          ?.length ?? 0) >
-          0 && (
-          <section className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 print:border-zinc-300 print:bg-white">
-
-            <h2 className="text-2xl font-bold">
-              {language === "ro"
-                ? "Ce verifici în continuare"
-                : "What to check next"}
-            </h2>
-
-            <div className="mt-5 space-y-4">
-
-              {analysis
-                .next_best_steps
-                ?.map(
-                  (step) => (
-                    <div
-                      key={step.id}
-                      className="break-inside-avoid rounded-xl border border-zinc-800 p-4 print:border-zinc-300"
+              <section
+                className={`${styles.block}
+                  report-block
+                  rounded-[22px]
+                  border
+                  border-white/[0.06]
+                  bg-white/[0.012]
+                  p-5
+                  print:rounded
+                  print:border-slate-300
+                  print:bg-white
+                  print:p-[3.5mm]
+                  `}
+              >
+                <div
+                  className="
+                    grid
+                    gap-5
+                    lg:grid-cols-[minmax(0,1fr)_260px]
+                    print:grid-cols-[minmax(0,1fr)_54mm]
+                    print:gap-[5mm]
+                  "
+                >
+                  <div>
+                    <h3
+                      className="
+                        text-[14px]
+                        font-semibold
+                        text-zinc-100
+                        print:text-[9pt]
+                        print:text-slate-950
+                      "
                     >
+                      {
+                        text.diagnosticNotice
+                      }
+                    </h3>
 
-                      <p className="font-semibold">
-                        {step.priority}.{" "}
-                        {step.title}
-                      </p>
+                    <p
+                      className="
+                        mt-2
+                        text-[12px]
+                        leading-5
+                        text-zinc-400
+                        print:mt-[1mm]
+                        print:text-[7.3pt]
+                        print:leading-[1.25]
+                        print:text-slate-600
+                      "
+                    >
+                      {text.disclaimer}
+                    </p>
+                  </div>
 
-                      {step
-                        .related_cause && (
-                        <p className="mt-1 text-xs text-zinc-500 print:text-zinc-700">
-                          {language === "ro"
-                            ? "Legat de: "
-                            : "Related to: "}
-                          {
-                            step
-                              .related_cause
-                          }
-                        </p>
-                      )}
 
-                      <p className="mt-3 text-sm leading-6 text-zinc-300 print:text-zinc-700">
-                        {step.action}
-                      </p>
+                  <div
+                    className="
+                      rounded-xl
+                      border
+                      border-blue-400/10
+                      bg-blue-500/[0.035]
+                      px-4
+                      py-3
+                      print:rounded
+                      print:border-slate-300
+                      print:bg-slate-50
+                      print:px-[3mm]
+                      print:py-[2mm]
+                    "
+                  >
+                    <p
+                      className="
+                        text-[11px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.12em]
+                        text-blue-200/70
+                        print:text-[7pt]
+                        print:text-slate-500
+                      "
+                    >
+                      {text.contact}
+                    </p>
 
-                      <p className="mt-2 text-xs leading-5 text-zinc-500 print:text-zinc-700">
-                        {step.reason}
-                      </p>
+                    <p
+                      className="
+                        mt-1.5
+                        text-[12px]
+                        leading-5
+                        text-zinc-400
+                        print:mt-[0.7mm]
+                        print:text-[7.2pt]
+                        print:text-slate-600
+                      "
+                    >
+                      {text.contactText}
+                    </p>
 
-                    </div>
-                  )
-                )}
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}`}
+                      className="
+                        mt-1
+                        block
+                        break-all
+                        text-[13px]
+                        font-semibold
+                        text-blue-200
+                        hover:underline
+                        print:text-[7.8pt]
+                        print:text-slate-900
+                        print:no-underline
+                      "
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
+                  </div>
+                </div>
+              </section>
 
+
+              {/* PRINT FOOTER */}
+
+              <div
+                className="
+                  hidden
+                  print:flex
+                  print:items-center
+                  print:justify-between
+                  print:border-t
+                  print:border-slate-300
+                  print:pt-[2mm]
+                  print:text-[6.5pt]
+                  print:text-slate-500
+                "
+              >
+                <span>
+                  {text.pageNote}
+                </span>
+
+                <span
+                  className="
+                    font-mono
+                  "
+                >
+                  {caseId}
+                </span>
+              </div>
             </div>
-
-          </section>
-        )}
-
-
-        {/* DISCLAIMER */}
-
-        <section className="mt-8 break-inside-avoid border-t border-zinc-800 pt-6 text-sm leading-6 text-zinc-500 print:border-zinc-300 print:text-zinc-700">
-
-          <p className="font-semibold text-zinc-300 print:text-black">
-            {language === "ro"
-              ? "Notă importantă"
-              : "Important note"}
-          </p>
-
-          <p className="mt-2">
-            {language === "ro"
-              ? "AutoDiagnose AI oferă suport orientativ pentru diagnostic pe baza informațiilor introduse. Scorurile reprezintă relevanța regulilor pentru datele cazului și nu probabilități statistice. Raportul nu înlocuiește inspecția tehnică, măsurătorile, documentația de service a producătorului sau diagnosticul realizat de un specialist calificat."
-              : "AutoDiagnose AI provides indicative diagnostic support based on the information entered. Scores represent rule relevance to the case data and are not statistical probabilities. This report does not replace technical inspection, measurements, manufacturer service information, or diagnosis by a qualified professional."}
-          </p>
-
-        </section>
-
-
-        {/* PRINT HELP */}
-
-        <div className="mt-8 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5 text-sm text-zinc-400 print:hidden">
-
-          <p className="font-semibold text-white">
-            {language === "ro"
-              ? "Cum salvezi PDF-ul"
-              : "How to save the PDF"}
-          </p>
-
-          <p className="mt-2 leading-6">
-            {language === "ro"
-              ? "Apasă „Printează / Salvează ca PDF”, apoi alege opțiunea „Save as PDF / Salvează ca PDF” din fereastra de printare a browserului."
-              : "Press “Print / Save as PDF”, then select “Save as PDF” in your browser's print dialog."}
-          </p>
-
+          </article>
         </div>
+      </main>
 
-      </div>
 
-    </main>
+    </>
   );
 }

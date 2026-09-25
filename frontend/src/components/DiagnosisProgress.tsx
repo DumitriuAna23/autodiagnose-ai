@@ -275,7 +275,10 @@ export default function DiagnosisProgress() {
           className="
             mt-7
             overflow-x-auto
+            overflow-y-hidden
             pb-1
+            [scrollbar-width:none]
+            [&::-webkit-scrollbar]:hidden
           "
         >
 

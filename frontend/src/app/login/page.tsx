@@ -23,53 +23,136 @@ export default function LoginPage() {
 
 
   async function handleLogin() {
-    if (!email.trim()) {
-      setError(
-        "Please enter your email."
-      );
-      return;
-    }
+  const normalizedEmail =
+    email.trim();
 
-    if (!password) {
-      setError(
-        "Please enter your password."
-      );
-      return;
-    }
+  const emailPattern =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    setError(null);
-    setIsLoading(true);
 
-    try {
-      await login(
-        email.trim(),
-        password
-      );
+  // EMAIL EMPTY
+  if (!normalizedEmail) {
+    setError(
+      "Please enter your email."
+    );
 
-      /*
-       * We intentionally use a full navigation
-       * after authentication.
-       *
-       * The HttpOnly authentication cookie is
-       * already stored by the browser.
-       */
-      window.location.replace(
-        "/dashboard"
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(
-          error.message
-        );
-      } else {
-        setError(
-          "Something went wrong."
-        );
+    return;
+  }
+
+
+  // INVALID EMAIL FORMAT
+  if (
+    !emailPattern.test(
+      normalizedEmail
+    )
+  ) {
+    setError(
+      "Please enter a valid email address."
+    );
+
+    return;
+  }
+
+
+  // PASSWORD EMPTY
+  if (!password) {
+    setError(
+      "Please enter your password."
+    );
+
+    return;
+  }
+
+
+  // PASSWORD TOO SHORT
+  if (password.length < 8) {
+    setError(
+      "Password must contain at least 8 characters."
+    );
+
+    return;
+  }
+
+
+  setError(null);
+  setIsLoading(true);
+
+
+  try {
+    await login(
+      normalizedEmail,
+      password
+    );
+
+
+    /*
+     * Full navigation after authentication
+     * ensures the HttpOnly session cookie
+     * is available to the protected app.
+     */
+    window.location.replace(
+      "/dashboard"
+    );
+
+  } catch (error) {
+    if (
+      error instanceof Error
+    ) {
+      switch (
+        error.message
+      ) {
+        case "INVALID_EMAIL":
+          setError(
+            "Please enter a valid email address."
+          );
+          break;
+
+
+        case "PASSWORD_TOO_SHORT":
+          setError(
+            "Password must contain at least 8 characters."
+          );
+          break;
+
+
+        case "INVALID_CREDENTIALS":
+          setError(
+            "Incorrect email or password."
+          );
+          break;
+
+
+        case "ACCOUNT_INACTIVE":
+          setError(
+            "This account is not active."
+          );
+          break;
+
+
+        case "SERVER_UNAVAILABLE":
+        case "Failed to fetch":
+          setError(
+            "We could not connect to the server. Please try again."
+          );
+          break;
+
+
+        default:
+          setError(
+            "Sign in could not be completed. Please try again."
+          );
       }
 
-      setIsLoading(false);
+    } else {
+      setError(
+        "Something went wrong. Please try again."
+      );
     }
+
+
+    setIsLoading(false);
   }
+}
 
 
   function handlePasswordKeyDown(

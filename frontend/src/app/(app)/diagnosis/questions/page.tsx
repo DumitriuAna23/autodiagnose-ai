@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Language = "en" | "ro";
+type Language = "ro" | "en";
 
 type SymptomCategory =
   | "power"
@@ -19,1058 +19,650 @@ type SymptomRecord = {
   id: string;
   primary_category: SymptomCategory;
   description: string;
-  created_at: string;
+  created_at?: string;
 };
 
-type Vehicle = {
-  manufacturer: string;
-  model: string;
-  fuel: string;
-  year: number | null;
-  vehicle_match: "exact" | "partial";
+type AdaptiveAnswer = {
+  question_id: string;
+  question: string;
+  answer: string | string[];
+  symptom_id?: string;
 };
 
-type AnswerMap = Record<string, string>;
-
-type DiagnosticAnswerRecord = {
-  symptom_id: string;
-  answers: AnswerMap;
-  completed_at: string;
+type QuestionOption = {
+  value: string;
+  label: { ro: string; en: string };
+  hint?: { ro: string; en: string };
 };
 
-type Question = {
+type AdaptiveQuestion = {
   id: string;
+  title: { ro: string; en: string };
+  description: { ro: string; en: string };
+  options: QuestionOption[];
+};
 
-  question: {
-    en: string;
-    ro: string;
-  };
+const questions: AdaptiveQuestion[] = [
+  {
+    id: "onset",
+    title: {
+      ro: "Cum a început problema?",
+      en: "How did the problem begin?",
+    },
+    description: {
+      ro: "Momentul apariției poate diferenția o defecțiune bruscă de una care s-a agravat în timp.",
+      en: "The onset can help distinguish a sudden fault from one that developed gradually.",
+    },
+    options: [
+      {
+        value: "sudden",
+        label: { ro: "Brusc", en: "Suddenly" },
+        hint: { ro: "A apărut dintr-o dată", en: "It appeared all at once" },
+      },
+      {
+        value: "gradual",
+        label: { ro: "Treptat", en: "Gradually" },
+        hint: { ro: "S-a accentuat în timp", en: "It became worse over time" },
+      },
+      {
+        value: "after_event",
+        label: { ro: "După un eveniment", en: "After an event" },
+        hint: { ro: "După reparație, alimentare, impact etc.", en: "After repair, refueling, impact, etc." },
+      },
+      {
+        value: "unknown",
+        label: { ro: "Nu știu", en: "I don't know" },
+      },
+    ],
+  },
+  {
+    id: "frequency",
+    title: {
+      ro: "Cât de des apare?",
+      en: "How often does it happen?",
+    },
+    description: {
+      ro: "Frecvența ajută motorul de diagnostic să diferențieze problemele permanente de cele intermitente.",
+      en: "Frequency helps the diagnostic engine distinguish persistent faults from intermittent ones.",
+    },
+    options: [
+      {
+        value: "always",
+        label: { ro: "Tot timpul", en: "Always" },
+        hint: { ro: "Problema este prezentă constant", en: "The problem is constantly present" },
+      },
+      {
+        value: "intermittent",
+        label: { ro: "Intermitent", en: "Intermittently" },
+        hint: { ro: "Apare și dispare", en: "It comes and goes" },
+      },
+      {
+        value: "once",
+        label: { ro: "S-a întâmplat o singură dată", en: "It happened once" },
+      },
+      {
+        value: "unknown",
+        label: { ro: "Nu știu", en: "I don't know" },
+      },
+    ],
+  },
+  {
+    id: "performance_change",
+    title: {
+      ro: "S-a schimbat comportamentul mașinii?",
+      en: "Has the vehicle's performance changed?",
+    },
+    description: {
+      ro: "Poate fi vorba de putere redusă, răspuns mai lent, ralanti instabil sau alt comportament diferit.",
+      en: "This can include reduced power, slower response, unstable idle or other noticeable behavior changes.",
+    },
+    options: [
+      {
+        value: "yes",
+        label: { ro: "Da", en: "Yes" },
+        hint: { ro: "Comportamentul este clar diferit", en: "The vehicle clearly behaves differently" },
+      },
+      {
+        value: "no",
+        label: { ro: "Nu", en: "No" },
+        hint: { ro: "Mașina se comportă normal în rest", en: "The vehicle otherwise behaves normally" },
+      },
+      {
+        value: "unknown",
+        label: { ro: "Nu sunt sigur", en: "I'm not sure" },
+      },
+    ],
+  },
+  {
+    id: "conditions",
+    title: {
+      ro: "Când este cel mai evident simptomul?",
+      en: "When is the symptom most noticeable?",
+    },
+    description: {
+      ro: "Alege situația care se apropie cel mai mult. Dacă nu poți identifica una, poți selecta „Nu știu”.",
+      en: "Choose the situation that fits best. If you cannot identify one, select “I don't know”.",
+    },
+    options: [
+      { value: "acceleration", label: { ro: "La accelerație", en: "During acceleration" } },
+      { value: "idle", label: { ro: "La ralanti", en: "At idle" } },
+      { value: "cold_start", label: { ro: "La pornirea la rece", en: "During cold start" } },
+      { value: "hot_engine", label: { ro: "Cu motorul cald", en: "With the engine warm" } },
+      { value: "braking", label: { ro: "La frânare", en: "During braking" } },
+      { value: "turning", label: { ro: "La virare", en: "While turning" } },
+      { value: "highway", label: { ro: "La viteză mai mare", en: "At higher speed" } },
+      { value: "random", label: { ro: "Fără un tipar clar", en: "No clear pattern" } },
+      { value: "unknown", label: { ro: "Nu știu", en: "I don't know" } },
+    ],
+  },
+  {
+    id: "warning_light",
+    title: {
+      ro: "Este aprins vreun martor în bord?",
+      en: "Is a dashboard warning light on?",
+    },
+    description: {
+      ro: "Un martor poate oferi un indiciu suplimentar chiar dacă nu ai un cod DTC disponibil.",
+      en: "A warning light can provide additional evidence even when no DTC code is available.",
+    },
+    options: [
+      { value: "yes", label: { ro: "Da", en: "Yes" } },
+      { value: "no", label: { ro: "Nu", en: "No" } },
+      { value: "unknown", label: { ro: "Nu sunt sigur", en: "I'm not sure" } },
+    ],
+  },
+];
 
-  options: {
-    value: string;
-    en: string;
-    ro: string;
-  }[];
-
-  showWhen?: (answers: AnswerMap) => boolean;
+const categoryLabels: Record<
+  SymptomCategory,
+  { ro: string; en: string; code: string }
+> = {
+  power: { ro: "Lipsă de putere / accelerație", en: "Loss of power / acceleration", code: "PWR" },
+  starting: { ro: "Pornire / funcționare motor", en: "Starting / engine running", code: "ENG" },
+  noise: { ro: "Zgomot / vibrații", en: "Noise / vibration", code: "NVH" },
+  smoke: { ro: "Fum / miros", en: "Smoke / smell", code: "EXH" },
+  warning: { ro: "Martor în bord", en: "Dashboard warning", code: "MIL" },
+  brakes: { ro: "Frânare / direcție", en: "Braking / steering", code: "CHS" },
+  temperature: { ro: "Temperatură / supraîncălzire", en: "Temperature / overheating", code: "TMP" },
+  other: { ro: "Alt simptom", en: "Other symptom", code: "..." },
 };
 
 export default function QuestionsPage() {
   const router = useRouter();
 
-  const [language, setLanguage] =
-    useState<Language>("en");
-
-  const [vehicle, setVehicle] =
-    useState<Vehicle | null>(null);
-
-  const [currentSymptom, setCurrentSymptom] =
-    useState<SymptomRecord | null>(null);
-
-  const [answers, setAnswers] =
-    useState<AnswerMap>({});
-
-  const [
-    currentQuestionIndex,
-    setCurrentQuestionIndex,
-  ] = useState(0);
+  const [language, setLanguage] = useState<Language>("en");
+  const [currentSymptom, setCurrentSymptom] = useState<SymptomRecord | null>(null);
+  const [totalSymptoms, setTotalSymptoms] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const savedLanguage =
-      localStorage.getItem("language");
-
-    if (
-      savedLanguage === "en" ||
-      savedLanguage === "ro"
-    ) {
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage === "ro" || savedLanguage === "en") {
       setLanguage(savedLanguage);
     }
 
-    const savedVehicle =
-      localStorage.getItem(
-        "diagnosticVehicle"
-      );
-
-    if (savedVehicle) {
-      try {
-        setVehicle(JSON.parse(savedVehicle));
-      } catch {
-        setVehicle(null);
-      }
+    const savedSymptoms = localStorage.getItem("diagnosticSymptoms");
+    if (!savedSymptoms) {
+      router.replace("/diagnosis/symptoms");
+      return;
     }
 
-    const currentSymptomId =
-      localStorage.getItem(
-        "currentSymptomId"
-      );
-
-    const savedSymptoms =
-      localStorage.getItem(
-        "diagnosticSymptoms"
-      );
-
-    if (
-      currentSymptomId &&
-      savedSymptoms
-    ) {
-      try {
-        const parsedSymptoms =
-          JSON.parse(savedSymptoms);
-
-        if (
-          Array.isArray(parsedSymptoms)
-        ) {
-          const symptom =
-            parsedSymptoms.find(
-              (item: SymptomRecord) =>
-                item.id ===
-                currentSymptomId
-            );
-
-          if (symptom) {
-            setCurrentSymptom(symptom);
-          }
-        }
-      } catch {
-        setCurrentSymptom(null);
-      }
-    }
-
-    const savedAnswers =
-      localStorage.getItem(
-        "diagnosticAnswers"
-      );
-
-    if (
-      savedAnswers &&
-      currentSymptomId
-    ) {
-      try {
-        const parsedAnswers =
-          JSON.parse(savedAnswers);
-
-        if (
-          Array.isArray(parsedAnswers)
-        ) {
-          const existing =
-            parsedAnswers.find(
-              (
-                item: DiagnosticAnswerRecord
-              ) =>
-                item.symptom_id ===
-                currentSymptomId
-            );
-
-          if (existing) {
-            setAnswers(
-              existing.answers
-            );
-          }
-        }
-      } catch {
-        setAnswers({});
-      }
-    }
-  }, []);
-
-  const content = {
-    en: {
-      step: "STEP 3 OF DIAGNOSIS",
-
-      title: "A few more questions",
-
-      description:
-        "These questions relate only to the symptom you just added. If you don't know an answer, choose the unsure option rather than guessing.",
-
-      vehicle: "Vehicle",
-      symptom: "Current symptom",
-
-      question: "Question",
-      of: "of",
-
-      back: "Back",
-      continue: "Continue",
-      finish: "Finish this symptom",
-
-      safetyTitle: "Safety note",
-
-      brakeSafety:
-        "If braking ability is significantly reduced, the pedal behaves abnormally, or the vehicle cannot be controlled safely, do not continue driving.",
-
-      temperatureSafety:
-        "If the engine is overheating, there is steam, or a severe temperature warning is displayed, stop the vehicle safely and allow it to cool.",
-
-      missingData:
-        "Information for the current symptom is missing. Return to the symptoms page.",
-    },
-
-    ro: {
-      step: "PASUL 3 AL DIAGNOZEI",
-
-      title: "Mai avem câteva întrebări",
-
-      description:
-        "Aceste întrebări se referă doar la simptomul pe care tocmai l-ai adăugat. Dacă nu știi un răspuns, alege «Nu știu» în loc să ghicești.",
-
-      vehicle: "Vehicul",
-      symptom: "Simptom analizat",
-
-      question: "Întrebarea",
-      of: "din",
-
-      back: "Înapoi",
-      continue: "Continuă",
-      finish: "Finalizează acest simptom",
-
-      safetyTitle: "Notă de siguranță",
-
-      brakeSafety:
-        "Dacă frânarea este semnificativ afectată, pedala se comportă anormal sau vehiculul nu poate fi controlat în siguranță, nu continua deplasarea.",
-
-      temperatureSafety:
-        "Dacă motorul se supraîncălzește, apare abur sau este afișată o avertizare severă de temperatură, oprește vehiculul în siguranță și lasă-l să se răcească.",
-
-      missingData:
-        "Lipsesc informațiile pentru simptomul curent. Revino la pagina de simptome.",
-    },
-  };
-
-  const text = content[language];
-
-  const questions =
-    useMemo<Question[]>(() => {
-      if (!currentSymptom) {
-        return [];
-      }
-
-      const commonQuestions: Question[] = [
-        {
-          id: "onset",
-
-          question: {
-            en: "How did the problem begin?",
-            ro: "Cum a început problema?",
-          },
-
-          options: [
-            {
-              value: "sudden",
-              en: "Suddenly",
-              ro: "Brusc",
-            },
-            {
-              value: "gradual",
-              en: "Gradually",
-              ro: "Treptat",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-
-        {
-          id: "frequency",
-
-          question: {
-            en: "How often does the problem happen?",
-            ro: "Cât de des apare problema?",
-          },
-
-          options: [
-            {
-              value: "always",
-              en: "Almost all the time",
-              ro: "Aproape tot timpul",
-            },
-            {
-              value: "intermittent",
-              en: "It comes and goes",
-              ro: "Apare și dispare",
-            },
-            {
-              value: "once",
-              en: "It happened only once",
-              ro: "S-a întâmplat o singură dată",
-            },
-            {
-              value: "unknown",
-              en: "I'm not sure",
-              ro: "Nu știu",
-            },
-          ],
-        },
-      ];
-
-      const warningQuestion: Question = {
-        id: "warning_light",
-
-        question: {
-          en: "Is a warning light currently displayed on the dashboard?",
-          ro: "Este aprins vreun martor în bord?",
-        },
-
-        options: [
-          {
-            value: "yes",
-            en: "Yes",
-            ro: "Da",
-          },
-          {
-            value: "no",
-            en: "No",
-            ro: "Nu",
-          },
-          {
-            value: "unknown",
-            en: "I'm not sure",
-            ro: "Nu știu",
-          },
-        ],
-      };
-
-      const warningFollowUp: Question = {
-        id: "warning_behavior",
-
-        question: {
-          en: "How does the warning light behave?",
-          ro: "Cum se comportă martorul?",
-        },
-
-        options: [
-          {
-            value: "steady",
-            en: "It stays on continuously",
-            ro: "Rămâne aprins continuu",
-          },
-          {
-            value: "flashing",
-            en: "It flashes",
-            ro: "Clipește",
-          },
-          {
-            value: "intermittent",
-            en: "It appears and disappears",
-            ro: "Apare și dispare",
-          },
-          {
-            value: "unknown",
-            en: "I'm not sure",
-            ro: "Nu știu",
-          },
-        ],
-
-        showWhen: (
-          currentAnswers
-        ) =>
-          currentAnswers.warning_light ===
-          "yes",
-      };
-
-      const categoryQuestions: Record<
-        SymptomCategory,
-        Question[]
-      > = {
-        power: [
-          {
-            id: "power_condition",
-
-            question: {
-              en: "When is the loss of power most noticeable?",
-              ro: "Când se simte cel mai mult lipsa de putere?",
-            },
-
-            options: [
-              {
-                value: "acceleration",
-                en: "During acceleration",
-                ro: "La accelerație",
-              },
-              {
-                value: "uphill",
-                en: "When driving uphill",
-                ro: "În rampă",
-              },
-              {
-                value: "high_speed",
-                en: "At higher speed or RPM",
-                ro: "La viteză sau turație mai mare",
-              },
-              {
-                value: "always",
-                en: "Almost all the time",
-                ro: "Aproape tot timpul",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-
-          {
-            id: "limp_mode",
-
-            question: {
-              en: "Does the vehicle feel strongly limited, as if it will not accelerate beyond a certain point?",
-              ro: "Mașina pare puternic limitată, ca și cum nu ar mai accelera peste un anumit punct?",
-            },
-
-            options: [
-              {
-                value: "yes",
-                en: "Yes",
-                ro: "Da",
-              },
-              {
-                value: "no",
-                en: "No",
-                ro: "Nu",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        starting: [
-          {
-            id: "crank_behavior",
-
-            question: {
-              en: "What happens when you try to start the vehicle?",
-              ro: "Ce se întâmplă când încerci să pornești mașina?",
-            },
-
-            options: [
-              {
-                value: "cranks",
-                en: "The engine turns but does not start",
-                ro: "Motorul se învârte, dar nu pornește",
-              },
-              {
-                value: "click",
-                en: "I hear clicking",
-                ro: "Se aud clicuri",
-              },
-              {
-                value: "nothing",
-                en: "Almost nothing happens",
-                ro: "Aproape nu se întâmplă nimic",
-              },
-              {
-                value: "starts_then_stalls",
-                en: "It starts and then stops",
-                ro: "Pornește și apoi se oprește",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-
-          {
-            id: "temperature_start",
-
-            question: {
-              en: "Is starting more difficult when the vehicle is cold or warm?",
-              ro: "Pornește mai greu când mașina este rece sau caldă?",
-            },
-
-            options: [
-              {
-                value: "cold",
-                en: "Cold",
-                ro: "Rece",
-              },
-              {
-                value: "warm",
-                en: "Warm",
-                ro: "Caldă",
-              },
-              {
-                value: "both",
-                en: "Both",
-                ro: "În ambele situații",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        noise: [
-          {
-            id: "noise_condition",
-
-            question: {
-              en: "When is the noise or vibration most noticeable?",
-              ro: "Când se observă cel mai mult zgomotul sau vibrația?",
-            },
-
-            options: [
-              {
-                value: "idle",
-                en: "While stationary / idling",
-                ro: "Pe loc / la ralanti",
-              },
-              {
-                value: "acceleration",
-                en: "During acceleration",
-                ro: "La accelerație",
-              },
-              {
-                value: "braking",
-                en: "During braking",
-                ro: "La frânare",
-              },
-              {
-                value: "turning",
-                en: "While turning",
-                ro: "În viraje",
-              },
-              {
-                value: "speed",
-                en: "It increases with vehicle speed",
-                ro: "Crește odată cu viteza",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        smoke: [
-          {
-            id: "smoke_color",
-
-            question: {
-              en: "What color is the smoke?",
-              ro: "Ce culoare are fumul?",
-            },
-
-            options: [
-              {
-                value: "black",
-                en: "Black",
-                ro: "Negru",
-              },
-              {
-                value: "white",
-                en: "White",
-                ro: "Alb",
-              },
-              {
-                value: "blue",
-                en: "Blue / blue-grey",
-                ro: "Albastru / albăstrui",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-
-          {
-            id: "smoke_location",
-
-            question: {
-              en: "Where does the smoke appear to come from?",
-              ro: "De unde pare să provină fumul?",
-            },
-
-            options: [
-              {
-                value: "exhaust",
-                en: "Exhaust",
-                ro: "Eșapament",
-              },
-              {
-                value: "engine_bay",
-                en: "Engine compartment",
-                ro: "Compartimentul motor",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        warning: [
-          {
-            id: "performance_change",
-
-            question: {
-              en: "Did the vehicle's behavior change when the warning appeared?",
-              ro: "S-a schimbat comportamentul mașinii când a apărut martorul?",
-            },
-
-            options: [
-              {
-                value: "yes",
-                en: "Yes",
-                ro: "Da",
-              },
-              {
-                value: "no",
-                en: "No",
-                ro: "Nu",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        brakes: [
-          {
-            id: "brake_behavior",
-
-            question: {
-              en: "What best describes the braking or steering problem?",
-              ro: "Ce descrie cel mai bine problema de frânare sau direcție?",
-            },
-
-            options: [
-              {
-                value: "soft_pedal",
-                en: "Brake pedal feels unusually soft",
-                ro: "Pedala de frână este neobișnuit de moale",
-              },
-              {
-                value: "hard_pedal",
-                en: "Brake pedal feels unusually hard",
-                ro: "Pedala de frână este neobișnuit de tare",
-              },
-              {
-                value: "pulling",
-                en: "Vehicle pulls to one side",
-                ro: "Mașina trage într-o parte",
-              },
-              {
-                value: "steering",
-                en: "Steering feels abnormal",
-                ro: "Direcția se simte anormal",
-              },
-              {
-                value: "noise",
-                en: "Noise during braking",
-                ro: "Zgomot la frânare",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        temperature: [
-          {
-            id: "temperature_behavior",
-
-            question: {
-              en: "What are you observing?",
-              ro: "Ce observi?",
-            },
-
-            options: [
-              {
-                value: "gauge_high",
-                en: "Temperature gauge rises unusually high",
-                ro: "Indicatorul de temperatură urcă neobișnuit de mult",
-              },
-              {
-                value: "warning",
-                en: "Temperature warning appears",
-                ro: "Apare martorul de temperatură",
-              },
-              {
-                value: "steam",
-                en: "Steam is visible",
-                ro: "Se vede abur",
-              },
-              {
-                value: "coolant_loss",
-                en: "Coolant appears to be leaking or disappearing",
-                ro: "Lichidul de răcire pare să curgă sau să dispară",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-
-        other: [
-          {
-            id: "problem_area",
-
-            question: {
-              en: "Where do you notice the problem most?",
-              ro: "În ce zonă observi cel mai mult problema?",
-            },
-
-            options: [
-              {
-                value: "engine",
-                en: "Engine / acceleration",
-                ro: "Motor / accelerație",
-              },
-              {
-                value: "driving",
-                en: "While driving",
-                ro: "În timpul deplasării",
-              },
-              {
-                value: "electrical",
-                en: "Electrical equipment",
-                ro: "Echipamente electrice",
-              },
-              {
-                value: "inside",
-                en: "Inside the cabin",
-                ro: "În interiorul mașinii",
-              },
-              {
-                value: "unknown",
-                en: "I'm not sure",
-                ro: "Nu știu",
-              },
-            ],
-          },
-        ],
-      };
-
-      return [
-        ...commonQuestions,
-        ...categoryQuestions[
-          currentSymptom.primary_category
-        ],
-        warningQuestion,
-        warningFollowUp,
-      ];
-    }, [currentSymptom]);
-
-  const visibleQuestions =
-    questions.filter((question) => {
-      if (!question.showWhen) {
-        return true;
-      }
-
-      return question.showWhen(answers);
-    });
-
-  const currentQuestion =
-    visibleQuestions[
-      currentQuestionIndex
-    ];
-
-  const handleAnswer = (
-    questionId: string,
-    value: string
-  ) => {
-    setAnswers((previousAnswers) => ({
-      ...previousAnswers,
-      [questionId]: value,
-    }));
-  };
-
-  const saveCurrentSymptomAnswers =
-    () => {
-      if (!currentSymptom) {
+    try {
+      const parsedSymptoms: SymptomRecord[] = JSON.parse(savedSymptoms);
+
+      if (!Array.isArray(parsedSymptoms) || parsedSymptoms.length === 0) {
+        router.replace("/diagnosis/symptoms");
         return;
       }
 
-      const savedAnswers =
-        localStorage.getItem(
-          "diagnosticAnswers"
-        );
+      setTotalSymptoms(parsedSymptoms.length);
 
-      let previousAnswers: DiagnosticAnswerRecord[] =
-        [];
+      const currentSymptomId = localStorage.getItem("currentSymptomId");
+      const symptom =
+        parsedSymptoms.find((item) => item.id === currentSymptomId) ??
+        parsedSymptoms[parsedSymptoms.length - 1];
+
+      setCurrentSymptom(symptom);
+
+      const savedAnswers = localStorage.getItem("diagnosticAnswers");
 
       if (savedAnswers) {
         try {
-          const parsedAnswers =
-            JSON.parse(savedAnswers);
+          const parsedAnswers: AdaptiveAnswer[] = JSON.parse(savedAnswers);
 
-          if (
-            Array.isArray(parsedAnswers)
-          ) {
-            previousAnswers =
-              parsedAnswers;
+          if (Array.isArray(parsedAnswers)) {
+            const restored: Record<string, string> = {};
+
+            parsedAnswers
+              .filter((answer) => answer.symptom_id === symptom.id)
+              .forEach((answer) => {
+                if (typeof answer.answer === "string") {
+                  restored[answer.question_id] = answer.answer;
+                }
+              });
+
+            setAnswers(restored);
           }
         } catch {
-          previousAnswers = [];
+          // Ignore invalid old local draft.
         }
       }
+    } catch {
+      router.replace("/diagnosis/symptoms");
+    }
+  }, [router]);
 
-      const newAnswerRecord: DiagnosticAnswerRecord =
-        {
-          symptom_id:
-            currentSymptom.id,
+  const text = {
+    en: {
+      eyebrow: "ADAPTIVE QUESTIONS",
+      title: "Let's narrow it down",
+      description:
+        "A few targeted questions help AutoDiagnose AI weigh the evidence more accurately.",
+      question: "Question",
+      of: "of",
+      symptomContext: "Symptom context",
+      currentSymptom: "Current symptom",
+      symptomsInCase: "Symptoms in case",
+      answered: "Answered",
+      diagnosticSignal: "Diagnostic signal",
+      signalDescription:
+        "Each answer adds context to the current symptom. You can choose “I don't know” whenever you are unsure.",
+      selectAnswer: "Choose one answer to continue.",
+      back: "Back",
+      next: "Next question",
+      finish: "Save answers",
+      noDescription: "No symptom description available.",
+      ready: "Context ready",
+      incomplete: "Waiting for answers",
+    },
+    ro: {
+      eyebrow: "ÎNTREBĂRI ADAPTIVE",
+      title: "Hai să restrângem cauzele",
+      description:
+        "Câteva întrebări țintite ajută AutoDiagnose AI să cântărească mai corect indiciile.",
+      question: "Întrebarea",
+      of: "din",
+      symptomContext: "Context simptom",
+      currentSymptom: "Simptom curent",
+      symptomsInCase: "Simptome în caz",
+      answered: "Răspunsuri",
+      diagnosticSignal: "Semnal diagnostic",
+      signalDescription:
+        "Fiecare răspuns adaugă context simptomului curent. Poți alege „Nu știu” ori de câte ori nu ești sigur.",
+      selectAnswer: "Alege un răspuns pentru a continua.",
+      back: "Înapoi",
+      next: "Următoarea întrebare",
+      finish: "Salvează răspunsurile",
+      noDescription: "Descrierea simptomului nu este disponibilă.",
+      ready: "Context complet",
+      incomplete: "Așteaptă răspunsuri",
+    },
+  }[language];
 
-          answers,
+  const currentQuestion = questions[currentQuestionIndex];
+  const currentAnswer = answers[currentQuestion.id] ?? "";
+  const answeredCount = Object.values(answers).filter(Boolean).length;
+  const progress = Math.round((answeredCount / questions.length) * 100);
 
-          completed_at:
-            new Date().toISOString(),
-        };
+  const symptomMeta = useMemo(() => {
+    if (!currentSymptom) {
+      return null;
+    }
 
-      const answersWithoutCurrent =
-        previousAnswers.filter(
-          (item) =>
-            item.symptom_id !==
-            currentSymptom.id
-        );
+    return categoryLabels[currentSymptom.primary_category];
+  }, [currentSymptom]);
 
-      localStorage.setItem(
-        "diagnosticAnswers",
-        JSON.stringify([
-          ...answersWithoutCurrent,
-          newAnswerRecord,
-        ])
-      );
+  function selectAnswer(value: string) {
+    setAnswers((current) => ({
+      ...current,
+      [currentQuestion.id]: value,
+    }));
 
-      router.push(
-        "/diagnosis/symptom-complete"
-      );
-    };
+    setError("");
+  }
 
-  const goNext = () => {
-    if (!currentQuestion) {
+  function goNext() {
+    if (!currentAnswer) {
+      setError(text.selectAnswer);
       return;
     }
 
-    if (
-      !answers[currentQuestion.id]
-    ) {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((index) => index + 1);
+      setError("");
       return;
     }
 
-    if (
-      currentQuestionIndex <
-      visibleQuestions.length - 1
-    ) {
-      setCurrentQuestionIndex(
-        currentQuestionIndex + 1
-      );
+    saveAnswers();
+  }
 
+  function goBack() {
+    if (currentQuestionIndex === 0) {
+      router.push("/diagnosis/symptoms");
       return;
     }
 
-    saveCurrentSymptomAnswers();
-  };
+    setCurrentQuestionIndex((index) => index - 1);
+    setError("");
+  }
 
-  const goBack = () => {
-    if (
-      currentQuestionIndex > 0
-    ) {
-      setCurrentQuestionIndex(
-        currentQuestionIndex - 1
-      );
-
+  function saveAnswers() {
+    if (!currentSymptom) {
+      router.replace("/diagnosis/symptoms");
       return;
     }
 
-    router.push(
-      "/diagnosis/symptoms"
+    if (!currentAnswer) {
+      setError(text.selectAnswer);
+      return;
+    }
+
+    const newAnswers: AdaptiveAnswer[] = questions.map((question) => ({
+      question_id: question.id,
+      question: question.title[language],
+      answer: answers[question.id],
+      symptom_id: currentSymptom.id,
+    }));
+
+    const saved = localStorage.getItem("diagnosticAnswers");
+    let previousAnswers: AdaptiveAnswer[] = [];
+
+    if (saved) {
+      try {
+        const parsed: AdaptiveAnswer[] = JSON.parse(saved);
+
+        if (Array.isArray(parsed)) {
+          previousAnswers = parsed.filter(
+            (answer) => answer.symptom_id !== currentSymptom.id
+          );
+        }
+      } catch {
+        previousAnswers = [];
+      }
+    }
+
+    localStorage.setItem(
+      "diagnosticAnswers",
+      JSON.stringify([
+        ...previousAnswers,
+        ...newAnswers,
+      ])
     );
-  };
 
-  if (
-    !vehicle ||
-    !currentSymptom
-  ) {
+    router.push("/diagnosis/symptom-complete");
+  }
+
+  if (!currentSymptom) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
-        <div className="text-center">
-          <p className="text-zinc-400">
-            {text.missingData}
-          </p>
-
-          <button
-            type="button"
-            onClick={() =>
-              router.push(
-                "/diagnosis/symptoms"
-              )
-            }
-            className="mt-6 rounded-xl bg-white px-5 py-3 font-semibold text-black"
-          >
-            {language === "ro"
-              ? "Înapoi la simptome"
-              : "Back to symptoms"}
-          </button>
-        </div>
+      <main className="flex min-h-screen items-center justify-center bg-[#060912] text-white">
+        <p className="text-sm text-zinc-500">AutoDiagnose AI</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-6 py-16 text-white">
-      <div className="mx-auto w-full max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-zinc-500">
-          {text.step}
-        </p>
+    <main className="min-h-screen bg-[#060912] text-white">
+      <div className="ad-page">
+        <div className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
+          <section className="ad-surface relative overflow-hidden rounded-[30px] p-6 sm:p-8 lg:p-9">
+            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-blue-500/[0.07] blur-[90px]" />
 
-        <h1 className="mt-4 text-4xl font-bold tracking-tight">
-          {text.title}
-        </h1>
+            <div className="relative">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="ad-eyebrow">{text.eyebrow}</p>
 
-        <p className="mt-4 max-w-2xl leading-7 text-zinc-400">
-          {text.description}
-        </p>
+                  <h1 className="mt-3 text-[2rem] font-semibold leading-[1.12] tracking-[-0.035em] text-white sm:text-[2.35rem]">
+                    {text.title}
+                  </h1>
 
-        {/* CONTEXT */}
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
-              {text.vehicle}
-            </p>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500 sm:text-[15px]">
+                    {text.description}
+                  </p>
+                </div>
 
-            <p className="mt-2 font-semibold">
-              {vehicle.manufacturer}{" "}
-              {vehicle.model}
-            </p>
-          </div>
+                <div className="rounded-full border border-white/[0.06] bg-white/[0.018] px-3 py-1.5 text-[10px] font-semibold text-zinc-500">
+                  {text.question} {currentQuestionIndex + 1} {text.of} {questions.length}
+                </div>
+              </div>
 
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
-              {text.symptom}
-            </p>
+              <div className="mt-7">
+                <div className="h-1 overflow-hidden rounded-full bg-white/[0.04]">
+                  <div
+                    className="h-full rounded-full bg-blue-400 transition-all duration-300"
+                    style={{
+                      width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
 
-            <p className="mt-2 text-sm text-zinc-300">
-              {
-                currentSymptom.description
-              }
-            </p>
-          </div>
-        </div>
+              <div className="mt-8 rounded-[24px] border border-white/[0.055] bg-white/[0.012] p-5 sm:p-6">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-blue-300/55">
+                  {String(currentQuestionIndex + 1).padStart(2, "0")}
+                </p>
 
-        {/* SAFETY */}
-        {currentSymptom.primary_category ===
-          "brakes" && (
-          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/30 p-4">
-            <p className="font-semibold text-red-300">
-              {text.safetyTitle}
-            </p>
+                <h2 className="mt-3 max-w-2xl text-xl font-semibold tracking-[-0.025em] text-zinc-100 sm:text-2xl">
+                  {currentQuestion.title[language]}
+                </h2>
 
-            <p className="mt-2 text-sm leading-6 text-red-200/80">
-              {text.brakeSafety}
-            </p>
-          </div>
-        )}
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500">
+                  {currentQuestion.description[language]}
+                </p>
 
-        {currentSymptom.primary_category ===
-          "temperature" && (
-          <div className="mt-6 rounded-xl border border-amber-900 bg-amber-950/30 p-4">
-            <p className="font-semibold text-amber-300">
-              {text.safetyTitle}
-            </p>
+                <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
+                  {currentQuestion.options.map((option) => {
+                    const selected = currentAnswer === option.value;
 
-            <p className="mt-2 text-sm leading-6 text-amber-200/80">
-              {text.temperatureSafety}
-            </p>
-          </div>
-        )}
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => selectAnswer(option.value)}
+                        className={`relative min-h-[76px] overflow-hidden rounded-2xl border px-4 py-3.5 text-left transition-all duration-200 ${
+                          selected
+                            ? "border-blue-400/25 bg-blue-500/[0.075]"
+                            : "border-white/[0.055] bg-black/10 hover:border-white/[0.10] hover:bg-white/[0.022]"
+                        }`}
+                      >
+                        {selected && (
+                          <span className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-blue-500/[0.12] blur-[30px]" />
+                        )}
 
-        {/* QUESTION */}
-        {currentQuestion && (
-          <section className="mt-10">
-            <p className="text-sm text-zinc-500">
-              {text.question}{" "}
-              {currentQuestionIndex + 1}{" "}
-              {text.of}{" "}
-              {visibleQuestions.length}
-            </p>
+                        <div className="relative flex items-start gap-3">
+                          <span
+                            className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                              selected
+                                ? "border-blue-300/60 bg-blue-400"
+                                : "border-white/10 bg-white/[0.015]"
+                            }`}
+                          >
+                            {selected && (
+                              <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                            )}
+                          </span>
 
-            <h2 className="mt-3 text-2xl font-semibold">
-              {
-                currentQuestion.question[
-                  language
-                ]
-              }
-            </h2>
+                          <span>
+                            <span
+                              className={`block text-sm font-medium ${
+                                selected ? "text-white" : "text-zinc-400"
+                              }`}
+                            >
+                              {option.label[language]}
+                            </span>
 
-            <div className="mt-6 grid gap-3">
-              {currentQuestion.options.map(
-                (option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() =>
-                      handleAnswer(
-                        currentQuestion.id,
-                        option.value
-                      )
-                    }
-                    className={`rounded-xl border p-4 text-left transition ${
-                      answers[
-                        currentQuestion.id
-                      ] === option.value
-                        ? "border-white bg-white text-black"
-                        : "border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-600"
-                    }`}
-                  >
-                    {option[language]}
-                  </button>
-                )
-              )}
-            </div>
+                            {option.hint && (
+                              <span className="mt-1 block text-[10px] leading-4 text-zinc-700">
+                                {option.hint[language]}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
 
-            <div className="mt-8 flex gap-3">
-              <button
-                type="button"
-                onClick={goBack}
-                className="rounded-xl border border-zinc-700 px-6 py-3 font-semibold hover:bg-zinc-900"
-              >
-                {text.back}
-              </button>
+                {error && (
+                  <div className="mt-4 rounded-xl border border-red-400/10 bg-red-400/[0.035] px-4 py-3 text-xs text-red-300">
+                    {error}
+                  </div>
+                )}
+              </div>
 
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={
-                  !answers[
-                    currentQuestion.id
-                  ]
-                }
-                className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {currentQuestionIndex ===
-                visibleQuestions.length - 1
-                  ? text.finish
-                  : text.continue}
-              </button>
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="min-h-12 rounded-xl border border-white/[0.07] bg-white/[0.018] px-5 text-sm font-medium text-zinc-400 transition hover:border-white/[0.12] hover:bg-white/[0.03] hover:text-white"
+                >
+                  ← {text.back}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-blue-500 px-5 text-sm font-semibold text-white shadow-[0_12px_35px_rgba(37,99,235,0.20)] transition-all duration-200 hover:bg-blue-400"
+                >
+                  {currentQuestionIndex === questions.length - 1
+                    ? text.finish
+                    : text.next}
+
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </button>
+              </div>
             </div>
           </section>
-        )}
+
+          <aside className="ad-surface relative overflow-hidden rounded-[30px] p-5 xl:sticky xl:top-6">
+            <div className="pointer-events-none absolute left-1/2 top-16 h-56 w-56 -translate-x-1/2 rounded-full bg-blue-500/[0.08] blur-[75px]" />
+
+            <div className="relative">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.20em] text-blue-300/55">
+                {text.symptomContext}
+              </p>
+
+              <div className="mt-4 rounded-[22px] border border-white/[0.05] bg-[#070c15] p-4">
+                <div className="flex items-start gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-400/15 bg-blue-500/[0.06] text-[9px] font-bold tracking-[0.08em] text-blue-200/75">
+                    {symptomMeta?.code}
+                  </span>
+
+                  <div className="min-w-0">
+                    <p className="text-[9px] uppercase tracking-[0.13em] text-zinc-700">
+                      {text.currentSymptom}
+                    </p>
+
+                    <p className="mt-1.5 text-sm font-semibold leading-5 text-zinc-200">
+                      {symptomMeta?.[language]}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-xs leading-5 text-zinc-600">
+                  {currentSymptom.description || text.noDescription}
+                </p>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <div className="rounded-xl border border-white/[0.045] bg-white/[0.012] p-3">
+                  <p className="text-[8px] uppercase tracking-[0.12em] text-zinc-700">
+                    {text.symptomsInCase}
+                  </p>
+                  <p className="mt-1.5 text-sm font-semibold text-zinc-300">
+                    {totalSymptoms}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-white/[0.045] bg-white/[0.012] p-3">
+                  <p className="text-[8px] uppercase tracking-[0.12em] text-zinc-700">
+                    {text.answered}
+                  </p>
+                  <p className="mt-1.5 text-sm font-semibold text-zinc-300">
+                    {answeredCount}/{questions.length}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-[22px] border border-white/[0.05] bg-white/[0.012] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[9px] uppercase tracking-[0.14em] text-zinc-700">
+                    {text.diagnosticSignal}
+                  </p>
+
+                  <span
+                    className={`h-2 w-2 rounded-full ${
+                      answeredCount === questions.length
+                        ? "bg-emerald-400"
+                        : "bg-blue-400"
+                    }`}
+                  />
+                </div>
+
+                <p className="mt-2 text-xs font-medium text-zinc-400">
+                  {answeredCount === questions.length
+                    ? text.ready
+                    : text.incomplete}
+                </p>
+
+                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/[0.04]">
+                  <div
+                    className="h-full rounded-full bg-blue-400 transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+
+                <p className="mt-4 text-[11px] leading-5 text-zinc-600">
+                  {text.signalDescription}
+                </p>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                {questions.map((question, index) => {
+                  const answered = Boolean(answers[question.id]);
+                  const active = index === currentQuestionIndex;
+
+                  return (
+                    <button
+                      key={question.id}
+                      type="button"
+                      onClick={() => setCurrentQuestionIndex(index)}
+                      className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition ${
+                        active
+                          ? "border-blue-400/15 bg-blue-500/[0.045]"
+                          : "border-white/[0.04] bg-white/[0.008] hover:bg-white/[0.018]"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[8px] font-semibold ${
+                          answered
+                            ? "bg-emerald-400/10 text-emerald-300"
+                            : active
+                              ? "bg-blue-400/10 text-blue-200"
+                              : "bg-white/[0.025] text-zinc-700"
+                        }`}
+                      >
+                        {answered ? "✓" : index + 1}
+                      </span>
+
+                      <span
+                        className={`truncate text-[10px] ${
+                          active ? "text-zinc-300" : "text-zinc-600"
+                        }`}
+                      >
+                        {question.title[language]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
     </main>
   );

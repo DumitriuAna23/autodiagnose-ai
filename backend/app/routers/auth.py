@@ -16,6 +16,10 @@ from app.auth_schemas import (
     RegisterRequest,
     UserResponse,
 )
+from app.config import (
+    COOKIE_SAMESITE,
+    COOKIE_SECURE,
+)
 from app.core.security import (
     generate_session_token,
     hash_password,
@@ -88,8 +92,8 @@ def claim_guest_diagnostics(
             key=GUEST_COOKIE_NAME,
             path="/",
             httponly=True,
-            secure=False,
-            samesite="lax",
+            secure=COOKIE_SECURE,
+            samesite=COOKIE_SAMESITE,
         )
 
         return
@@ -117,8 +121,8 @@ def claim_guest_diagnostics(
         key=GUEST_COOKIE_NAME,
         path="/",
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
     )
 
 
@@ -162,8 +166,8 @@ def create_auth_session(
         key=SESSION_COOKIE_NAME,
         value=session_token,
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
         max_age=int(
             SESSION_DURATION
             .total_seconds()
@@ -483,8 +487,8 @@ def logout(
         key=SESSION_COOKIE_NAME,
         path="/",
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
     )
 
     response.status_code = (

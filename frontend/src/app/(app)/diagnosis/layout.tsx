@@ -33,7 +33,9 @@ export default function DiagnosisLayout({
     <div className="min-h-screen bg-zinc-950 text-white">
 
       {showProgress && (
-        <DiagnosisProgress />
+        <div className="print:hidden">
+  <DiagnosisProgress />
+</div>
       )}
 
 
