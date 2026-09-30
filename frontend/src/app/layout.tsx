@@ -119,6 +119,9 @@ export const viewport:
 
   colorScheme:
     "dark",
+
+  viewportFit:
+    "cover",
 };
 
 
