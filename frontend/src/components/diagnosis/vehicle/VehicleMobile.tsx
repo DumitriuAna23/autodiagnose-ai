@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   FormEvent,
@@ -285,7 +285,7 @@ function FuelIcon({
           rounded
           border
           border-current/30
-          text-[12px]
+          text-[7px]
           font-bold
         "
       >
@@ -577,40 +577,40 @@ export default function VehicleMobile() {
         "PASUL 1 AL DIAGNOZEI",
 
       title:
-        "ConfigureazÄƒ vehiculul",
+        "Configurează vehiculul",
 
       description:
-        "CompleteazÄƒ datele vehiculului exact pe care Ã®l diagnostichezi.",
+        "Completează datele vehiculului exact pe care îl diagnostichezi.",
 
       selectedVehicle:
         "VEHICUL SELECTAT",
 
       selectedFromLibrary:
-        "Model din bibliotecÄƒ",
+        "Model din bibliotecă",
 
       manualModelBadge:
         "Model manual",
 
       changeVehicle:
-        "SchimbÄƒ",
+        "Schimbă",
 
       detailsTitle:
         "Detalii vehicul",
 
       year:
-        "An fabricaÈ›ie",
+        "An fabricație",
 
       yearPlaceholder:
         "Alege anul",
 
       yearUnknown:
-        "Nu È™tiu anul exact",
+        "Nu știu anul exact",
 
       fuel:
         "Tip combustibil",
 
       petrol:
-        "BenzinÄƒ",
+        "Benzină",
 
       diesel:
         "Diesel",
@@ -622,19 +622,19 @@ export default function VehicleMobile() {
         "Electric",
 
       fuelHelp:
-        "Nu eÈ™ti sigur?",
+        "Nu ești sigur?",
 
       additionalInfo:
-        "Alte informaÈ›ii",
+        "Alte informații",
 
       optional:
-        "OpÈ›ional",
+        "Opțional",
 
       additionalInfoPlaceholder:
-        "2.0 TDI, 150 CP, automatÄƒ, Stage 1, reparaÈ›ii recente...",
+        "2.0 TDI, 150 CP, automată, Stage 1, reparații recente...",
 
       additionalInfoHelp:
-        "Motor, putere, cutie, tracÈ›iune, modificÄƒri sau reparaÈ›ii recente.",
+        "Motor, putere, cutie, tracțiune, modificări sau reparații recente.",
 
       infoMotor:
         "motor",
@@ -646,13 +646,13 @@ export default function VehicleMobile() {
         "cutie",
 
       infoDrive:
-        "tracÈ›iune",
+        "tracțiune",
 
       infoMods:
-        "modificÄƒri",
+        "modificări",
 
       infoRepairs:
-        "reparaÈ›ii recente",
+        "reparații recente",
 
       summary:
         "Date diagnostic",
@@ -673,25 +673,25 @@ export default function VehicleMobile() {
         "Necunoscut",
 
       continue:
-        "ContinuÄƒ la simptome",
+        "Continuă la simptome",
 
       requiredManufacturer:
-        "SelecteazÄƒ o marcÄƒ validÄƒ.",
+        "Selectează o marcă validă.",
 
       requiredModel:
-        "SelecteazÄƒ sau introdu modelul vehiculului.",
+        "Selectează sau introdu modelul vehiculului.",
 
       requiredFuel:
-        "SelecteazÄƒ tipul de combustibil.",
+        "Selectează tipul de combustibil.",
 
       invalidYear:
-        "SelecteazÄƒ un an valid.",
+        "Selectează un an valid.",
 
       confirmation:
         "CONFIRMARE VEHICUL",
 
       confirmationTitle:
-        "VerificÄƒ vehiculul",
+        "Verifică vehiculul",
 
       confirmationDescription:
         "Aceste date vor fi folosite drept context pentru diagnostic.",
@@ -703,34 +703,34 @@ export default function VehicleMobile() {
         "Model manual",
 
       exactMatchDescription:
-        "Marca È™i modelul au fost selectate din catalog.",
+        "Marca și modelul au fost selectate din catalog.",
 
       partialMatchDescription:
-        "Modelul a fost introdus manual, astfel Ã®ncÃ¢t concluziile specifice vor fi tratate mai prudent.",
+        "Modelul a fost introdus manual, astfel încât concluziile specifice vor fi tratate mai prudent.",
 
       back:
-        "ÃŽnapoi",
+        "Înapoi",
 
       confirm:
-        "ConfirmÄƒ È™i continuÄƒ",
+        "Confirmă și continuă",
 
       dataWarningTitle:
-        "VerificÄƒ informaÈ›iile",
+        "Verifică informațiile",
 
       dataWarningDescription:
-        "Unele informaÈ›ii se pot contrazice.",
+        "Unele informații se pot contrazice.",
 
       fuelHelpTitle:
         "Cum identifici tipul de combustibil?",
 
       fuelHelpIntro:
-        "VerificÄƒ eticheta de la clapeta rezervorului, certificatul sau informaÈ›iile vehiculului.",
+        "Verifică eticheta de la clapeta rezervorului, certificatul sau informațiile vehiculului.",
 
       gotIt:
-        "Am Ã®nÈ›eles",
+        "Am înțeles",
 
       catalogProfile:
-        "Profil gamÄƒ",
+        "Profil gamă",
 
       available:
         "Disponibil",
@@ -1311,9 +1311,9 @@ export default function VehicleMobile() {
 
     const combustionKeywords = [
       "diesel",
-      "motorinÄƒ",
+      "motorină",
       "motorina",
-      "benzinÄƒ",
+      "benzină",
       "benzina",
       "petrol",
       "gasoline",
@@ -1345,9 +1345,9 @@ export default function VehicleMobile() {
 
 
     const manualTransmissionKeywords = [
-      "cutie manualÄƒ",
+      "cutie manuală",
       "cutie manuala",
-      "transmisie manualÄƒ",
+      "transmisie manuală",
       "transmisie manuala",
       "manual transmission",
       "manual gearbox",
@@ -1355,9 +1355,9 @@ export default function VehicleMobile() {
 
 
     const automaticTransmissionKeywords = [
-      "cutie automatÄƒ",
+      "cutie automată",
       "cutie automata",
-      "transmisie automatÄƒ",
+      "transmisie automată",
       "transmisie automata",
       "automatic transmission",
       "automatic gearbox",
@@ -1373,7 +1373,7 @@ export default function VehicleMobile() {
 
     const hybridPetrolKeywords = [
       "hybrid petrol",
-      "hibrid benzinÄƒ",
+      "hibrid benzină",
       "hibrid benzina",
       "petrol hybrid",
       "gasoline hybrid",
@@ -1389,7 +1389,7 @@ export default function VehicleMobile() {
     ) {
       warnings.push(
         language === "ro"
-          ? "Ai selectat un vehicul electric, dar informaÈ›iile suplimentare menÈ›ioneazÄƒ elemente specifice unui motor termic."
+          ? "Ai selectat un vehicul electric, dar informațiile suplimentare menționează elemente specifice unui motor termic."
           : "You selected an electric vehicle, but the additional information mentions combustion-engine-specific elements."
       );
     }
@@ -1404,7 +1404,7 @@ export default function VehicleMobile() {
     ) {
       warnings.push(
         language === "ro"
-          ? "Ai selectat benzinÄƒ, dar informaÈ›iile suplimentare descriu un sistem hibrid diesel."
+          ? "Ai selectat benzină, dar informațiile suplimentare descriu un sistem hibrid diesel."
           : "You selected petrol, but the additional information describes a diesel hybrid system."
       );
     }
@@ -1419,7 +1419,7 @@ export default function VehicleMobile() {
     ) {
       warnings.push(
         language === "ro"
-          ? "Ai selectat diesel, dar informaÈ›iile suplimentare descriu un sistem hibrid pe benzinÄƒ."
+          ? "Ai selectat diesel, dar informațiile suplimentare descriu un sistem hibrid pe benzină."
           : "You selected diesel, but the additional information describes a petrol hybrid system."
       );
     }
@@ -1435,7 +1435,7 @@ export default function VehicleMobile() {
     ) {
       warnings.push(
         language === "ro"
-          ? "Motorul este descris simultan ca aspirat È™i turbo/biturbo."
+          ? "Motorul este descris simultan ca aspirat și turbo/biturbo."
           : "The engine is described as both naturally aspirated and turbo/biturbo."
       );
     }
@@ -1451,7 +1451,7 @@ export default function VehicleMobile() {
     ) {
       warnings.push(
         language === "ro"
-          ? "Transmisia este descrisÄƒ simultan ca manualÄƒ È™i automatÄƒ."
+          ? "Transmisia este descrisă simultan ca manuală și automată."
           : "The transmission is described as both manual and automatic."
       );
     }
@@ -1527,7 +1527,7 @@ export default function VehicleMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[7px]
                 font-semibold
                 uppercase
                 tracking-[0.16em]
@@ -1556,7 +1556,7 @@ export default function VehicleMobile() {
             <p
               className="
                 mt-1.5
-                text-[12px]
+                text-[9px]
                 leading-4
                 text-zinc-600
               "
@@ -1581,7 +1581,7 @@ export default function VehicleMobile() {
               bg-white/[0.02]
               px-2.5
               py-2
-              text-[12px]
+              text-[8px]
               font-semibold
               text-zinc-500
             "
@@ -1660,7 +1660,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6.5px]
                     font-semibold
                     uppercase
                     tracking-[0.12em]
@@ -1702,7 +1702,7 @@ export default function VehicleMobile() {
                       border
                       px-2
                       py-1
-                      text-[12px]
+                      text-[6px]
                       font-semibold
 
                       ${
@@ -1723,7 +1723,7 @@ export default function VehicleMobile() {
                     <span
                       className="
                         truncate
-                        text-[12px]
+                        text-[7px]
                         text-zinc-600
                       "
                     >
@@ -1749,7 +1749,7 @@ export default function VehicleMobile() {
                 className="
                   cursor-pointer
                   select-none
-                  text-[12px]
+                  text-[7px]
                   font-semibold
                   text-zinc-600
                 "
@@ -1762,7 +1762,7 @@ export default function VehicleMobile() {
               <p
                 className="
                   mt-2
-                  text-[12px]
+                  text-[8px]
                   leading-3.5
                   text-zinc-600
                 "
@@ -1797,7 +1797,7 @@ export default function VehicleMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[9px]
                 font-semibold
                 text-zinc-200
               "
@@ -1817,7 +1817,7 @@ export default function VehicleMobile() {
             >
               <label
                 className="
-                  text-[12px]
+                  text-[8px]
                   font-semibold
                   text-zinc-500
                 "
@@ -1863,7 +1863,7 @@ export default function VehicleMobile() {
                     border-white/[0.07]
                     bg-[#0b111d]
                     px-3
-                    text-[12px]
+                    text-[10px]
                     text-white
                     outline-none
                     disabled:opacity-35
@@ -1905,7 +1905,7 @@ export default function VehicleMobile() {
                     border
                     border-white/[0.06]
                     px-2.5
-                    text-[12px]
+                    text-[7px]
                     text-zinc-500
                   "
                 >
@@ -1973,7 +1973,7 @@ export default function VehicleMobile() {
               >
                 <label
                   className="
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-zinc-500
                   "
@@ -1991,7 +1991,7 @@ export default function VehicleMobile() {
                     )
                   }
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     text-blue-300/55
                   "
@@ -2076,7 +2076,7 @@ export default function VehicleMobile() {
                         <span
                           className="
                             truncate
-                            text-[12px]
+                            text-[7px]
                             font-semibold
                           "
                         >
@@ -2122,7 +2122,7 @@ export default function VehicleMobile() {
                 <div>
                   <p
                     className="
-                      text-[12px]
+                      text-[9px]
                       font-semibold
                       text-zinc-200
                     "
@@ -2135,7 +2135,7 @@ export default function VehicleMobile() {
                   <p
                     className="
                       mt-0.5
-                      text-[12px]
+                      text-[7px]
                       text-zinc-600
                     "
                   >
@@ -2152,7 +2152,7 @@ export default function VehicleMobile() {
                     border-white/[0.05]
                     px-2
                     py-1
-                    text-[12px]
+                    text-[6px]
                     uppercase
                     text-zinc-700
                   "
@@ -2193,7 +2193,7 @@ export default function VehicleMobile() {
                         border-white/[0.05]
                         px-2
                         py-1
-                        text-[12px]
+                        text-[6px]
                         text-zinc-600
                       "
                     >
@@ -2230,7 +2230,7 @@ export default function VehicleMobile() {
                   bg-[#0b111d]
                   px-3
                   py-2.5
-                  text-[12px]
+                  text-[10px]
                   leading-4
                   text-white
                   outline-none
@@ -2254,7 +2254,7 @@ export default function VehicleMobile() {
                 >
                   <p
                     className="
-                      text-[12px]
+                      text-[8px]
                       font-semibold
                       text-amber-200
                     "
@@ -2274,12 +2274,12 @@ export default function VehicleMobile() {
                         }
                         className="
                           mt-1
-                          text-[12px]
+                          text-[7px]
                           leading-3.5
                           text-amber-100/65
                         "
                       >
-                        â€¢{" "}
+                        •{" "}
                         {
                           warning
                         }
@@ -2306,7 +2306,7 @@ export default function VehicleMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[7px]
                 font-semibold
                 uppercase
                 tracking-[0.12em]
@@ -2340,7 +2340,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     uppercase
                     text-zinc-700
                   "
@@ -2354,7 +2354,7 @@ export default function VehicleMobile() {
                   className="
                     mt-1
                     truncate
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2375,7 +2375,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     uppercase
                     text-zinc-700
                   "
@@ -2389,7 +2389,7 @@ export default function VehicleMobile() {
                   className="
                     mt-1
                     truncate
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2411,7 +2411,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     uppercase
                     text-zinc-700
                   "
@@ -2425,7 +2425,7 @@ export default function VehicleMobile() {
                   className="
                     mt-1
                     truncate
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2448,7 +2448,7 @@ export default function VehicleMobile() {
                   bg-red-400/[0.03]
                   px-3
                   py-2
-                  text-[12px]
+                  text-[8px]
                   text-red-200
                 "
               >
@@ -2469,7 +2469,7 @@ export default function VehicleMobile() {
                 rounded-[11px]
                 bg-blue-500
                 px-3.5
-                text-[12px]
+                text-[10px]
                 font-semibold
                 text-white
                 shadow-[0_10px_25px_rgba(37,99,235,0.15)]
@@ -2482,7 +2482,7 @@ export default function VehicleMobile() {
               </span>
 
               <span>
-                â†’
+                →
               </span>
             </button>
           </section>
@@ -2544,7 +2544,7 @@ export default function VehicleMobile() {
               <div>
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     uppercase
                     tracking-[0.12em]
@@ -2571,7 +2571,7 @@ export default function VehicleMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[9px]
                     leading-4
                     text-zinc-600
                   "
@@ -2602,7 +2602,7 @@ export default function VehicleMobile() {
                   text-zinc-500
                 "
               >
-                Ã—
+                ×
               </button>
             </div>
 
@@ -2637,13 +2637,13 @@ export default function VehicleMobile() {
                     "petrol"
                       ? language ===
                         "ro"
-                        ? "ÃŽn acte poate apÄƒrea BenzinÄƒ; la pompÄƒ E5/E10."
+                        ? "În acte poate apărea Benzină; la pompă E5/E10."
                         : "Documents may show Petrol; common labels are E5/E10."
                       : option.value ===
                         "diesel"
                       ? language ===
                         "ro"
-                        ? "ÃŽn acte sau la clapetÄƒ poate apÄƒrea Diesel / MotorinÄƒ."
+                        ? "În acte sau la clapetă poate apărea Diesel / Motorină."
                         : "Documents or fuel door may show Diesel."
                       : option.value ===
                         "hybrid"
@@ -2653,7 +2653,7 @@ export default function VehicleMobile() {
                         : "Combustion engine plus electric system; HEV or PHEV."
                       : language ===
                         "ro"
-                      ? "Propulsie electricÄƒ È™i port de Ã®ncÄƒrcare."
+                      ? "Propulsie electrică și port de încărcare."
                       : "Electric propulsion with a traction-battery charging port.";
 
 
@@ -2693,7 +2693,7 @@ export default function VehicleMobile() {
                       <p
                         className="
                           mt-2
-                          text-[12px]
+                          text-[9px]
                           font-semibold
                         "
                       >
@@ -2703,7 +2703,7 @@ export default function VehicleMobile() {
                       <p
                         className="
                           mt-1
-                          text-[12px]
+                          text-[7px]
                           leading-3.5
                           text-zinc-600
                         "
@@ -2732,7 +2732,7 @@ export default function VehicleMobile() {
                 w-full
                 rounded-[10px]
                 bg-white
-                text-[12px]
+                text-[9px]
                 font-semibold
                 text-black
               "
@@ -2800,7 +2800,7 @@ export default function VehicleMobile() {
               <div>
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     uppercase
                     tracking-[0.12em]
@@ -2827,7 +2827,7 @@ export default function VehicleMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[8px]
                     leading-3.5
                     text-zinc-600
                   "
@@ -2859,7 +2859,7 @@ export default function VehicleMobile() {
                   text-zinc-500
                 "
               >
-                Ã—
+                ×
               </button>
             </div>
 
@@ -2941,7 +2941,7 @@ export default function VehicleMobile() {
                     border
                     px-2
                     py-1
-                    text-[12px]
+                    text-[6px]
                     font-semibold
 
                     ${
@@ -2979,7 +2979,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     uppercase
                     text-zinc-700
                   "
@@ -2992,7 +2992,7 @@ export default function VehicleMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[9px]
                     font-semibold
                     text-zinc-300
                   "
@@ -3017,7 +3017,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     uppercase
                     text-zinc-700
                   "
@@ -3030,7 +3030,7 @@ export default function VehicleMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[9px]
                     font-semibold
                     text-zinc-300
                   "
@@ -3058,7 +3058,7 @@ export default function VehicleMobile() {
                     cursor-pointer
                     px-3
                     py-2
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     text-zinc-600
                   "
@@ -3075,7 +3075,7 @@ export default function VehicleMobile() {
                     px-3
                     py-2.5
                     whitespace-pre-wrap
-                    text-[12px]
+                    text-[8px]
                     leading-3.5
                     text-zinc-500
                   "
@@ -3102,7 +3102,7 @@ export default function VehicleMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-amber-200
                   "
@@ -3122,12 +3122,12 @@ export default function VehicleMobile() {
                       }
                       className="
                         mt-1
-                        text-[12px]
+                        text-[7px]
                         leading-3.5
                         text-amber-100/65
                       "
                     >
-                      â€¢{" "}
+                      •{" "}
                       {
                         warning
                       }
@@ -3158,7 +3158,7 @@ export default function VehicleMobile() {
                   rounded-[10px]
                   border
                   border-white/[0.07]
-                  text-[12px]
+                  text-[9px]
                   font-semibold
                   text-zinc-400
                 "
@@ -3178,7 +3178,7 @@ export default function VehicleMobile() {
                   min-h-[40px]
                   rounded-[10px]
                   bg-blue-500
-                  text-[12px]
+                  text-[9px]
                   font-semibold
                   text-white
                 "
@@ -3194,4 +3194,3 @@ export default function VehicleMobile() {
     </main>
   );
 }
-

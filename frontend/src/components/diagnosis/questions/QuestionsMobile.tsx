@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   useEffect,
@@ -93,7 +93,7 @@ const questions:
 
     title: {
       ro:
-        "Cum a Ã®nceput problema?",
+        "Cum a început problema?",
 
       en:
         "How did the problem begin?",
@@ -101,7 +101,7 @@ const questions:
 
     description: {
       ro:
-        "Momentul apariÈ›iei poate diferenÈ›ia o defecÈ›iune bruscÄƒ de una care s-a agravat Ã®n timp.",
+        "Momentul apariției poate diferenția o defecțiune bruscă de una care s-a agravat în timp.",
 
       en:
         "The onset can help distinguish a sudden fault from one that developed gradually.",
@@ -122,7 +122,7 @@ const questions:
 
         hint: {
           ro:
-            "A apÄƒrut dintr-o datÄƒ",
+            "A apărut dintr-o dată",
 
           en:
             "It appeared all at once",
@@ -143,7 +143,7 @@ const questions:
 
         hint: {
           ro:
-            "S-a accentuat Ã®n timp",
+            "S-a accentuat în timp",
 
           en:
             "It became worse over time",
@@ -156,7 +156,7 @@ const questions:
 
         label: {
           ro:
-            "DupÄƒ un eveniment",
+            "După un eveniment",
 
           en:
             "After an event",
@@ -164,7 +164,7 @@ const questions:
 
         hint: {
           ro:
-            "DupÄƒ reparaÈ›ie, alimentare, impact etc.",
+            "După reparație, alimentare, impact etc.",
 
           en:
             "After repair, refueling, impact, etc.",
@@ -177,7 +177,7 @@ const questions:
 
         label: {
           ro:
-            "Nu È™tiu",
+            "Nu știu",
 
           en:
             "I don't know",
@@ -192,7 +192,7 @@ const questions:
 
     title: {
       ro:
-        "CÃ¢t de des apare?",
+        "Cât de des apare?",
 
       en:
         "How often does it happen?",
@@ -200,7 +200,7 @@ const questions:
 
     description: {
       ro:
-        "FrecvenÈ›a ajutÄƒ motorul de diagnostic sÄƒ diferenÈ›ieze problemele permanente de cele intermitente.",
+        "Frecvența ajută motorul de diagnostic să diferențieze problemele permanente de cele intermitente.",
 
       en:
         "Frequency helps the diagnostic engine distinguish persistent faults from intermittent ones.",
@@ -221,7 +221,7 @@ const questions:
 
         hint: {
           ro:
-            "Problema este prezentÄƒ constant",
+            "Problema este prezentă constant",
 
           en:
             "The problem is constantly present",
@@ -242,7 +242,7 @@ const questions:
 
         hint: {
           ro:
-            "Apare È™i dispare",
+            "Apare și dispare",
 
           en:
             "It comes and goes",
@@ -255,7 +255,7 @@ const questions:
 
         label: {
           ro:
-            "S-a Ã®ntÃ¢mplat o singurÄƒ datÄƒ",
+            "S-a întâmplat o singură dată",
 
           en:
             "It happened once",
@@ -268,7 +268,7 @@ const questions:
 
         label: {
           ro:
-            "Nu È™tiu",
+            "Nu știu",
 
           en:
             "I don't know",
@@ -283,7 +283,7 @@ const questions:
 
     title: {
       ro:
-        "S-a schimbat comportamentul maÈ™inii?",
+        "S-a schimbat comportamentul mașinii?",
 
       en:
         "Has the vehicle's performance changed?",
@@ -291,7 +291,7 @@ const questions:
 
     description: {
       ro:
-        "Poate fi vorba de putere redusÄƒ, rÄƒspuns mai lent, ralanti instabil sau alt comportament diferit.",
+        "Poate fi vorba de putere redusă, răspuns mai lent, ralanti instabil sau alt comportament diferit.",
 
       en:
         "This can include reduced power, slower response, unstable idle or other noticeable behavior changes.",
@@ -333,7 +333,7 @@ const questions:
 
         hint: {
           ro:
-            "MaÈ™ina se comportÄƒ normal Ã®n rest",
+            "Mașina se comportă normal în rest",
 
           en:
             "The vehicle otherwise behaves normally",
@@ -361,7 +361,7 @@ const questions:
 
     title: {
       ro:
-        "CÃ¢nd este cel mai evident simptomul?",
+        "Când este cel mai evident simptomul?",
 
       en:
         "When is the symptom most noticeable?",
@@ -369,10 +369,10 @@ const questions:
 
     description: {
       ro:
-        "Alege situaÈ›ia care se apropie cel mai mult. DacÄƒ nu poÈ›i identifica una, poÈ›i selecta â€žNu È™tiuâ€.",
+        "Alege situația care se apropie cel mai mult. Dacă nu poți identifica una, poți selecta „Nu știu”.",
 
       en:
-        "Choose the situation that fits best. If you cannot identify one, select â€œI don't knowâ€.",
+        "Choose the situation that fits best. If you cannot identify one, select “I don't know”.",
     },
 
     options: [
@@ -382,7 +382,7 @@ const questions:
 
         label: {
           ro:
-            "La acceleraÈ›ie",
+            "La accelerație",
 
           en:
             "During acceleration",
@@ -434,7 +434,7 @@ const questions:
 
         label: {
           ro:
-            "La frÃ¢nare",
+            "La frânare",
 
           en:
             "During braking",
@@ -460,7 +460,7 @@ const questions:
 
         label: {
           ro:
-            "La vitezÄƒ mai mare",
+            "La viteză mai mare",
 
           en:
             "At higher speed",
@@ -473,7 +473,7 @@ const questions:
 
         label: {
           ro:
-            "FÄƒrÄƒ un tipar clar",
+            "Fără un tipar clar",
 
           en:
             "No clear pattern",
@@ -486,7 +486,7 @@ const questions:
 
         label: {
           ro:
-            "Nu È™tiu",
+            "Nu știu",
 
           en:
             "I don't know",
@@ -501,7 +501,7 @@ const questions:
 
     title: {
       ro:
-        "Este aprins vreun martor Ã®n bord?",
+        "Este aprins vreun martor în bord?",
 
       en:
         "Is a dashboard warning light on?",
@@ -509,7 +509,7 @@ const questions:
 
     description: {
       ro:
-        "Un martor poate oferi un indiciu suplimentar chiar dacÄƒ nu ai un cod DTC disponibil.",
+        "Un martor poate oferi un indiciu suplimentar chiar dacă nu ai un cod DTC disponibil.",
 
       en:
         "A warning light can provide additional evidence even when no DTC code is available.",
@@ -570,7 +570,7 @@ const categoryLabels:
   > = {
   power: {
     ro:
-      "LipsÄƒ de putere / acceleraÈ›ie",
+      "Lipsă de putere / accelerație",
 
     en:
       "Loss of power / acceleration",
@@ -581,7 +581,7 @@ const categoryLabels:
 
   starting: {
     ro:
-      "Pornire / funcÈ›ionare motor",
+      "Pornire / funcționare motor",
 
     en:
       "Starting / engine running",
@@ -592,7 +592,7 @@ const categoryLabels:
 
   noise: {
     ro:
-      "Zgomot / vibraÈ›ii",
+      "Zgomot / vibrații",
 
     en:
       "Noise / vibration",
@@ -614,7 +614,7 @@ const categoryLabels:
 
   warning: {
     ro:
-      "Martor Ã®n bord",
+      "Martor în bord",
 
     en:
       "Dashboard warning",
@@ -625,7 +625,7 @@ const categoryLabels:
 
   brakes: {
     ro:
-      "FrÃ¢nare / direcÈ›ie",
+      "Frânare / direcție",
 
     en:
       "Braking / steering",
@@ -636,7 +636,7 @@ const categoryLabels:
 
   temperature: {
     ro:
-      "TemperaturÄƒ / supraÃ®ncÄƒlzire",
+      "Temperatură / supraîncălzire",
 
     en:
       "Temperature / overheating",
@@ -911,7 +911,7 @@ export default function QuestionsMobile() {
         "Diagnostic signal",
 
       signalDescription:
-        "Each answer adds context to the current symptom. You can choose â€œI don't knowâ€ whenever you are unsure.",
+        "Each answer adds context to the current symptom. You can choose “I don't know” whenever you are unsure.",
 
       selectAnswer:
         "Choose one answer to continue.",
@@ -938,16 +938,16 @@ export default function QuestionsMobile() {
 
     ro: {
       eyebrow:
-        "ÃŽNTREBÄ‚RI ADAPTIVE",
+        "ÎNTREBĂRI ADAPTIVE",
 
       title:
-        "Hai sÄƒ restrÃ¢ngem cauzele",
+        "Hai să restrângem cauzele",
 
       description:
-        "CÃ¢teva Ã®ntrebÄƒri È›intite ajutÄƒ AutoDiagnose AI sÄƒ cÃ¢ntÄƒreascÄƒ mai corect indiciile.",
+        "Câteva întrebări țintite ajută AutoDiagnose AI să cântărească mai corect indiciile.",
 
       question:
-        "ÃŽntrebarea",
+        "Întrebarea",
 
       of:
         "din",
@@ -959,37 +959,37 @@ export default function QuestionsMobile() {
         "Simptom curent",
 
       symptomsInCase:
-        "Simptome Ã®n caz",
+        "Simptome în caz",
 
       answered:
-        "RÄƒspunsuri",
+        "Răspunsuri",
 
       diagnosticSignal:
         "Semnal diagnostic",
 
       signalDescription:
-        "Fiecare rÄƒspuns adaugÄƒ context simptomului curent. PoÈ›i alege â€žNu È™tiuâ€ ori de cÃ¢te ori nu eÈ™ti sigur.",
+        "Fiecare răspuns adaugă context simptomului curent. Poți alege „Nu știu” ori de câte ori nu ești sigur.",
 
       selectAnswer:
-        "Alege un rÄƒspuns pentru a continua.",
+        "Alege un răspuns pentru a continua.",
 
       back:
-        "ÃŽnapoi",
+        "Înapoi",
 
       next:
-        "UrmÄƒtoarea Ã®ntrebare",
+        "Următoarea întrebare",
 
       finish:
-        "SalveazÄƒ rÄƒspunsurile",
+        "Salvează răspunsurile",
 
       noDescription:
-        "Descrierea simptomului nu este disponibilÄƒ.",
+        "Descrierea simptomului nu este disponibilă.",
 
       ready:
         "Context complet",
 
       incomplete:
-        "AÈ™teaptÄƒ rÄƒspunsuri",
+        "Așteaptă răspunsuri",
     },
   }[
     language
@@ -1259,7 +1259,7 @@ export default function QuestionsMobile() {
       >
         <p
           className="
-            text-[12px]
+            text-[9px]
             text-zinc-600
           "
         >
@@ -1306,7 +1306,7 @@ export default function QuestionsMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[7px]
                 font-semibold
                 uppercase
                 tracking-[0.16em]
@@ -1338,7 +1338,7 @@ export default function QuestionsMobile() {
               className="
                 mt-1.5
                 max-w-[330px]
-                text-[12px]
+                text-[9px]
                 leading-4
                 text-zinc-600
               "
@@ -1374,7 +1374,7 @@ export default function QuestionsMobile() {
                 1}
               <span
                 className="
-                  text-[12px]
+                  text-[8px]
                   text-zinc-700
                 "
               >
@@ -1388,7 +1388,7 @@ export default function QuestionsMobile() {
             <p
               className="
                 mt-1
-                text-[12px]
+                text-[5.5px]
                 uppercase
                 tracking-[0.08em]
                 text-zinc-700
@@ -1434,7 +1434,7 @@ export default function QuestionsMobile() {
                 border
                 border-blue-400/15
                 bg-blue-500/[0.06]
-                text-[12px]
+                text-[7px]
                 font-bold
                 tracking-[0.07em]
                 text-blue-200
@@ -1454,7 +1454,7 @@ export default function QuestionsMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[5.5px]
                   font-semibold
                   uppercase
                   tracking-[0.1em]
@@ -1471,7 +1471,7 @@ export default function QuestionsMobile() {
                 className="
                   mt-0.5
                   truncate
-                  text-[12px]
+                  text-[9px]
                   font-semibold
                   text-zinc-300
                 "
@@ -1488,7 +1488,7 @@ export default function QuestionsMobile() {
                 className="
                   mt-0.5
                   truncate
-                  text-[12px]
+                  text-[7px]
                   text-zinc-700
                 "
               >
@@ -1506,7 +1506,7 @@ export default function QuestionsMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[5.5px]
                   uppercase
                   text-zinc-700
                 "
@@ -1519,7 +1519,7 @@ export default function QuestionsMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[11px]
                   font-semibold
                   text-zinc-400
                 "
@@ -1588,7 +1588,7 @@ export default function QuestionsMobile() {
                       justify-center
                       rounded-[10px]
                       border
-                      text-[12px]
+                      text-[8px]
                       font-semibold
                       transition
 
@@ -1602,7 +1602,7 @@ export default function QuestionsMobile() {
                     `}
                   >
                     {answered
-                      ? "âœ“"
+                      ? "✓"
                       : index +
                         1}
                   </button>
@@ -1669,7 +1669,7 @@ export default function QuestionsMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[7px]
                 font-semibold
                 uppercase
                 tracking-[0.15em]
@@ -1688,7 +1688,7 @@ export default function QuestionsMobile() {
 
             <span
               className="
-                text-[12px]
+                text-[6.5px]
                 font-medium
                 text-zinc-700
               "
@@ -1729,7 +1729,7 @@ export default function QuestionsMobile() {
           <p
             className="
               mt-1.5
-              text-[12px]
+              text-[8.5px]
               leading-4
               text-zinc-600
             "
@@ -1856,7 +1856,7 @@ export default function QuestionsMobile() {
                         <span
                           className={`
                             block
-                            text-[12px]
+                            text-[9px]
                             font-semibold
                             leading-3.5
 
@@ -1880,7 +1880,7 @@ export default function QuestionsMobile() {
                             className="
                               mt-0.5
                               block
-                              text-[12px]
+                              text-[6.5px]
                               leading-3
                               text-zinc-700
                             "
@@ -1911,7 +1911,7 @@ export default function QuestionsMobile() {
                 bg-red-400/[0.035]
                 px-2.5
                 py-2
-                text-[12px]
+                text-[7.5px]
                 text-red-300
               "
             >
@@ -1973,7 +1973,7 @@ export default function QuestionsMobile() {
 
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     uppercase
                     tracking-[0.1em]
@@ -1990,7 +1990,7 @@ export default function QuestionsMobile() {
               <p
                 className="
                   mt-1
-                  text-[12px]
+                  text-[8px]
                   font-medium
                   text-zinc-400
                 "
@@ -2021,7 +2021,7 @@ export default function QuestionsMobile() {
                 }
                 <span
                   className="
-                    text-[12px]
+                    text-[7px]
                     text-zinc-700
                   "
                 >
@@ -2066,19 +2066,19 @@ export default function QuestionsMobile() {
               className="
                 cursor-pointer
                 select-none
-                text-[12px]
+                text-[6.5px]
                 text-zinc-700
               "
             >
               {language === "ro"
-                ? "De ce conteazÄƒ?"
+                ? "De ce contează?"
                 : "Why does this matter?"}
             </summary>
 
             <p
               className="
                 mt-1.5
-                text-[12px]
+                text-[7px]
                 leading-3.5
                 text-zinc-600
               "
@@ -2113,12 +2113,12 @@ export default function QuestionsMobile() {
               border-white/[0.07]
               bg-white/[0.018]
               px-3
-              text-[12px]
+              text-[9px]
               font-semibold
               text-zinc-500
             "
           >
-            â† {text.back}
+            ← {text.back}
           </button>
 
 
@@ -2135,7 +2135,7 @@ export default function QuestionsMobile() {
               rounded-[11px]
               bg-blue-500
               px-3.5
-              text-[12px]
+              text-[9px]
               font-semibold
               text-white
               shadow-[0_10px_25px_rgba(37,99,235,0.16)]
@@ -2150,7 +2150,7 @@ export default function QuestionsMobile() {
             </span>
 
             <span>
-              â†’
+              →
             </span>
           </button>
         </div>
@@ -2158,4 +2158,3 @@ export default function QuestionsMobile() {
     </main>
   );
 }
-

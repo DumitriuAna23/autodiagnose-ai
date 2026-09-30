@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   FormEvent,
@@ -366,70 +366,70 @@ export default function SymptomsMobile() {
         "COLECTARE SIMPTOME",
 
       title:
-        "Ce observi la maÈ™inÄƒ?",
+        "Ce observi la mașină?",
 
       description:
-        "Alege simptomul cel mai apropiat, descrie ce se Ã®ntÃ¢mplÄƒ È™i adaugÄƒ codurile DTC dacÄƒ le ai deja.",
+        "Alege simptomul cel mai apropiat, descrie ce se întâmplă și adaugă codurile DTC dacă le ai deja.",
 
       currentVehicle:
         "Vehicul curent",
 
       exactMatch:
-        "Potrivire exactÄƒ",
+        "Potrivire exactă",
 
       partialMatch:
-        "Potrivire parÈ›ialÄƒ",
+        "Potrivire parțială",
 
       previousSymptoms:
-        "Simptome deja adÄƒugate",
+        "Simptome deja adăugate",
 
       recorded:
-        "Ã®nregistrate",
+        "înregistrate",
 
       chooseCategory:
         "Alege simptomul cel mai apropiat",
 
       power:
-        "LipsÄƒ de putere sau acceleraÈ›ie slabÄƒ",
+        "Lipsă de putere sau accelerație slabă",
 
       starting:
-        "ProblemÄƒ la pornire sau funcÈ›ionarea motorului",
+        "Problemă la pornire sau funcționarea motorului",
 
       noise:
-        "Zgomot sau vibraÈ›ii neobiÈ™nuite",
+        "Zgomot sau vibrații neobișnuite",
 
       smoke:
-        "Fum sau miros neobiÈ™nuit",
+        "Fum sau miros neobișnuit",
 
       warning:
-        "Martor aprins Ã®n bord",
+        "Martor aprins în bord",
 
       brakes:
-        "ProblemÄƒ la frÃ¢nare sau direcÈ›ie",
+        "Problemă la frânare sau direcție",
 
       temperature:
-        "SupraÃ®ncÄƒlzire sau problemÄƒ de temperaturÄƒ",
+        "Supraîncălzire sau problemă de temperatură",
 
       other:
-        "AltÄƒ problemÄƒ",
+        "Altă problemă",
 
       duplicate:
-        "Categoria existÄƒ deja Ã®n caz. ContinuÄƒ doar dacÄƒ este o manifestare diferitÄƒ.",
+        "Categoria există deja în caz. Continuă doar dacă este o manifestare diferită.",
 
       describe:
-        "Descrie ce se Ã®ntÃ¢mplÄƒ",
+        "Descrie ce se întâmplă",
 
       describePlaceholder:
-        "Exemplu: MaÈ™ina nu mai trage cÃ¢nd accelerez Ã®n rampÄƒ È™i uneori se aprinde martorul motor.",
+        "Exemplu: Mașina nu mai trage când accelerez în rampă și uneori se aprinde martorul motor.",
 
       descriptionHelp:
-        "Ce ar trebui sÄƒ descriu?",
+        "Ce ar trebui să descriu?",
 
       dtc:
         "Coduri DTC",
 
       optional:
-        "OpÈ›ional",
+        "Opțional",
 
       dtcPlaceholder:
         "P0299, P0401",
@@ -438,16 +438,16 @@ export default function SymptomsMobile() {
         "Ce este un cod DTC?",
 
       requiredCategory:
-        "SelecteazÄƒ simptomul care seamÄƒnÄƒ cel mai mult cu problema.",
+        "Selectează simptomul care seamănă cel mai mult cu problema.",
 
       requiredDescription:
-        "Descrie ce observi Ã®nainte de a continua.",
+        "Descrie ce observi înainte de a continua.",
 
       invalidDtc:
         "Unul sau mai multe coduri DTC nu par valide. Exemplu: P0299.",
 
       continue:
-        "ContinuÄƒ cÄƒtre Ã®ntrebÄƒri",
+        "Continuă către întrebări",
 
       snapshot:
         "Rezumat caz",
@@ -465,7 +465,7 @@ export default function SymptomsMobile() {
         "Niciun cod DTC introdus",
 
       symptomsInCase:
-        "Simptome Ã®n caz",
+        "Simptome în caz",
 
       fuel:
         "Combustibil",
@@ -480,13 +480,13 @@ export default function SymptomsMobile() {
         "Datele vehiculului nu sunt disponibile.",
 
       changeVehicle:
-        "SchimbÄƒ vehiculul",
+        "Schimbă vehiculul",
 
       descriptionHelpTitle:
         "Descrie simptomul, nu diagnosticul",
 
       descriptionHelpDescription:
-        "Nu ai nevoie de termeni tehnici. Descrie doar ceea ce poÈ›i observa.",
+        "Nu ai nevoie de termeni tehnici. Descrie doar ceea ce poți observa.",
 
       whatYouSee:
         "Ce vezi",
@@ -495,25 +495,25 @@ export default function SymptomsMobile() {
         "Ce auzi",
 
       whatYouFeel:
-        "Ce simÈ›i",
+        "Ce simți",
 
       whatYouSmell:
-        "Ce miroÈ™i",
+        "Ce miroși",
 
       whenItHappens:
-        "CÃ¢nd apare",
+        "Când apare",
 
       dtcHelpTitle:
         "Ce este un cod DTC?",
 
       dtcHelpDescription:
-        "Un Diagnostic Trouble Code este citit din vehicul cu un tester de diagnozÄƒ OBD-II.",
+        "Un Diagnostic Trouble Code este citit din vehicul cu un tester de diagnoză OBD-II.",
 
       typicalFormat:
         "Format tipic",
 
       dtcExplanation:
-        "PoÈ›i introduce unul sau mai multe coduri separate prin spaÈ›iu, virgulÄƒ sau punct È™i virgulÄƒ.",
+        "Poți introduce unul sau mai multe coduri separate prin spațiu, virgulă sau punct și virgulă.",
     },
   };
 
@@ -547,8 +547,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "AcceleraÈ›ie Â· cuplu"
-          : "Acceleration Â· torque",
+          ? "Accelerație · cuplu"
+          : "Acceleration · torque",
     },
 
     {
@@ -563,8 +563,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "Pornire Â· ralanti"
-          : "Starting Â· idle",
+          ? "Pornire · ralanti"
+          : "Starting · idle",
     },
 
     {
@@ -579,8 +579,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "Sunet Â· vibraÈ›ii"
-          : "Sound Â· vibration",
+          ? "Sunet · vibrații"
+          : "Sound · vibration",
     },
 
     {
@@ -595,8 +595,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "Fum Â· miros"
-          : "Smoke Â· smell",
+          ? "Fum · miros"
+          : "Smoke · smell",
     },
 
     {
@@ -611,8 +611,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "Martori Â· mesaje"
-          : "Lights Â· messages",
+          ? "Martori · mesaje"
+          : "Lights · messages",
     },
 
     {
@@ -627,8 +627,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "FrÃ¢ne Â· direcÈ›ie"
-          : "Brakes Â· steering",
+          ? "Frâne · direcție"
+          : "Brakes · steering",
     },
 
     {
@@ -643,8 +643,8 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "TemperaturÄƒ Â· rÄƒcire"
-          : "Temperature Â· cooling",
+          ? "Temperatură · răcire"
+          : "Temperature · cooling",
     },
 
     {
@@ -659,7 +659,7 @@ export default function SymptomsMobile() {
 
       hint:
         language === "ro"
-          ? "AltÄƒ manifestare"
+          ? "Altă manifestare"
           : "Other behavior",
     },
   ];
@@ -953,7 +953,7 @@ export default function SymptomsMobile() {
     if (
       fuel === "petrol"
     ) {
-      return "BenzinÄƒ";
+      return "Benzină";
     }
 
     if (
@@ -1015,7 +1015,7 @@ export default function SymptomsMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[7px]
                 font-semibold
                 uppercase
                 tracking-[0.16em]
@@ -1045,7 +1045,7 @@ export default function SymptomsMobile() {
               className="
                 mt-1.5
                 max-w-[360px]
-                text-[12px]
+                text-[9px]
                 leading-4
                 text-zinc-600
               "
@@ -1085,7 +1085,7 @@ export default function SymptomsMobile() {
             <p
               className="
                 mt-1
-                text-[12px]
+                text-[5.5px]
                 uppercase
                 tracking-[0.08em]
                 text-zinc-700
@@ -1128,7 +1128,7 @@ export default function SymptomsMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     font-semibold
                     uppercase
                     tracking-[0.1em]
@@ -1144,7 +1144,7 @@ export default function SymptomsMobile() {
                   className="
                     mt-0.5
                     truncate
-                    text-[12px]
+                    text-[10px]
                     font-semibold
                     text-zinc-200
                   "
@@ -1169,13 +1169,13 @@ export default function SymptomsMobile() {
               >
                 <span
                   className="
-                    text-[12px]
+                    text-[7px]
                     text-zinc-600
                   "
                 >
                   {vehicle.year ??
                     text.unknown}
-                  {" Â· "}
+                  {" · "}
                   {
                     getFuelLabel(
                       vehicle.fuel
@@ -1210,7 +1210,7 @@ export default function SymptomsMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[8px]
                   text-zinc-600
                 "
               >
@@ -1227,7 +1227,7 @@ export default function SymptomsMobile() {
                   )
                 }
                 className="
-                  text-[12px]
+                  text-[7px]
                   font-semibold
                   text-blue-300
                 "
@@ -1235,7 +1235,7 @@ export default function SymptomsMobile() {
                 {
                   text.changeVehicle
                 }{" "}
-                â†’
+                →
               </button>
             </div>
           )}
@@ -1270,7 +1270,7 @@ export default function SymptomsMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[8px]
                   font-semibold
                   text-zinc-400
                 "
@@ -1288,7 +1288,7 @@ export default function SymptomsMobile() {
                   bg-blue-500/[0.04]
                   px-2
                   py-1
-                  text-[12px]
+                  text-[6px]
                   font-semibold
                   text-blue-200/60
                 "
@@ -1342,7 +1342,7 @@ export default function SymptomsMobile() {
                         rounded-full
                         border
                         border-blue-400/10
-                        text-[12px]
+                        text-[6px]
                         font-semibold
                         text-blue-200
                       "
@@ -1362,7 +1362,7 @@ export default function SymptomsMobile() {
                       <p
                         className="
                           truncate
-                          text-[12px]
+                          text-[8px]
                           font-semibold
                           text-zinc-400
                         "
@@ -1378,7 +1378,7 @@ export default function SymptomsMobile() {
                         className="
                           mt-0.5
                           truncate
-                          text-[12px]
+                          text-[7px]
                           text-zinc-700
                         "
                       >
@@ -1408,7 +1408,7 @@ export default function SymptomsMobile() {
           <section>
             <p
               className="
-                text-[12px]
+                text-[9px]
                 font-semibold
                 text-zinc-300
               "
@@ -1500,7 +1500,7 @@ export default function SymptomsMobile() {
                           justify-center
                           rounded-[9px]
                           border
-                          text-[12px]
+                          text-[7px]
                           font-bold
                           tracking-[0.06em]
 
@@ -1528,7 +1528,7 @@ export default function SymptomsMobile() {
                           className={`
                             block
                             line-clamp-2
-                            text-[12px]
+                            text-[8.5px]
                             font-medium
                             leading-[1.25]
 
@@ -1549,7 +1549,7 @@ export default function SymptomsMobile() {
                             mt-0.5
                             block
                             truncate
-                            text-[12px]
+                            text-[5.5px]
                             uppercase
                             tracking-[0.06em]
                             text-zinc-700
@@ -1595,7 +1595,7 @@ export default function SymptomsMobile() {
 
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     leading-3.5
                     text-amber-100/65
                   "
@@ -1631,7 +1631,7 @@ export default function SymptomsMobile() {
             >
               <label
                 className="
-                  text-[12px]
+                  text-[9px]
                   font-semibold
                   text-zinc-300
                 "
@@ -1649,7 +1649,7 @@ export default function SymptomsMobile() {
                   )
                 }
                 className="
-                  text-[12px]
+                  text-[7px]
                   font-semibold
                   text-blue-300/60
                 "
@@ -1690,7 +1690,7 @@ export default function SymptomsMobile() {
                 bg-black/15
                 px-3
                 py-2.5
-                text-[12px]
+                text-[9px]
                 leading-4
                 text-zinc-200
                 outline-none
@@ -1738,7 +1738,7 @@ export default function SymptomsMobile() {
                 >
                   <p
                     className="
-                      text-[12px]
+                      text-[9px]
                       font-semibold
                       text-zinc-300
                     "
@@ -1755,7 +1755,7 @@ export default function SymptomsMobile() {
                       border-white/[0.05]
                       px-2
                       py-0.5
-                      text-[12px]
+                      text-[5.5px]
                       uppercase
                       tracking-[0.08em]
                       text-zinc-700
@@ -1783,7 +1783,7 @@ export default function SymptomsMobile() {
                         bg-blue-500/[0.06]
                         px-2
                         py-1
-                        text-[12px]
+                        text-[6px]
                         font-semibold
                         text-blue-200
                       "
@@ -1796,7 +1796,7 @@ export default function SymptomsMobile() {
 
                   <span
                     className="
-                      text-[12px]
+                      text-[8px]
                       text-zinc-700
                     "
                   >
@@ -1828,7 +1828,7 @@ export default function SymptomsMobile() {
                     )
                   }
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     text-blue-300/60
                   "
@@ -1870,7 +1870,7 @@ export default function SymptomsMobile() {
                   bg-black/15
                   px-3
                   font-mono
-                  text-[12px]
+                  text-[9px]
                   uppercase
                   tracking-[0.08em]
                   text-zinc-200
@@ -1907,7 +1907,7 @@ export default function SymptomsMobile() {
                           px-2
                           py-1
                           font-mono
-                          text-[12px]
+                          text-[7px]
                           font-semibold
 
                           ${
@@ -1951,7 +1951,7 @@ export default function SymptomsMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[7px]
                   font-semibold
                   uppercase
                   tracking-[0.12em]
@@ -1965,7 +1965,7 @@ export default function SymptomsMobile() {
 
               <span
                 className="
-                  text-[12px]
+                  text-[6px]
                   text-zinc-700
                 "
               >
@@ -2006,7 +2006,7 @@ export default function SymptomsMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[5.5px]
                     uppercase
                     text-zinc-700
                   "
@@ -2020,7 +2020,7 @@ export default function SymptomsMobile() {
                   className="
                     mt-1
                     truncate
-                    text-[12px]
+                    text-[7.5px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2042,7 +2042,7 @@ export default function SymptomsMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[5.5px]
                     uppercase
                     text-zinc-700
                   "
@@ -2053,7 +2053,7 @@ export default function SymptomsMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[10px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2075,7 +2075,7 @@ export default function SymptomsMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[5.5px]
                     uppercase
                     text-zinc-700
                   "
@@ -2089,7 +2089,7 @@ export default function SymptomsMobile() {
                   className="
                     mt-1
                     truncate
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2111,7 +2111,7 @@ export default function SymptomsMobile() {
                   bg-red-400/[0.035]
                   px-2.5
                   py-2
-                  text-[12px]
+                  text-[7.5px]
                   leading-3.5
                   text-red-300
                 "
@@ -2133,7 +2133,7 @@ export default function SymptomsMobile() {
                 rounded-[11px]
                 bg-blue-500
                 px-3.5
-                text-[12px]
+                text-[9px]
                 font-semibold
                 text-white
                 shadow-[0_10px_25px_rgba(37,99,235,0.16)]
@@ -2146,7 +2146,7 @@ export default function SymptomsMobile() {
               </span>
 
               <span>
-                â†’
+                →
               </span>
             </button>
           </section>
@@ -2222,7 +2222,7 @@ export default function SymptomsMobile() {
 
                 <span
                   className="
-                    text-[12px]
+                    text-[9px]
                     text-zinc-400
                   "
                 >
@@ -2269,7 +2269,7 @@ export default function SymptomsMobile() {
         >
           <p
             className="
-              text-[12px]
+              text-[7px]
               font-semibold
               uppercase
               tracking-[0.12em]
@@ -2297,7 +2297,7 @@ export default function SymptomsMobile() {
           <p
             className="
               mt-2
-              text-[12px]
+              text-[9px]
               leading-4
               text-zinc-500
             "
@@ -2311,4 +2311,3 @@ export default function SymptomsMobile() {
     </main>
   );
 }
-

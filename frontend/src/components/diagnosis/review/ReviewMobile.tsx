@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   useEffect,
@@ -113,7 +113,7 @@ const categoryLabels:
       "Loss of power / acceleration",
 
     ro:
-      "LipsÄƒ de putere / acceleraÈ›ie",
+      "Lipsă de putere / accelerație",
 
     code:
       "PWR",
@@ -124,7 +124,7 @@ const categoryLabels:
       "Starting / engine running",
 
     ro:
-      "Pornire / funcÈ›ionare motor",
+      "Pornire / funcționare motor",
 
     code:
       "ENG",
@@ -135,7 +135,7 @@ const categoryLabels:
       "Noise / vibration",
 
     ro:
-      "Zgomot / vibraÈ›ii",
+      "Zgomot / vibrații",
 
     code:
       "NVH",
@@ -157,7 +157,7 @@ const categoryLabels:
       "Dashboard warning",
 
     ro:
-      "Martor Ã®n bord",
+      "Martor în bord",
 
     code:
       "MIL",
@@ -168,7 +168,7 @@ const categoryLabels:
       "Braking / steering",
 
     ro:
-      "FrÃ¢nare / direcÈ›ie",
+      "Frânare / direcție",
 
     code:
       "CHS",
@@ -179,7 +179,7 @@ const categoryLabels:
       "Temperature / overheating",
 
     ro:
-      "TemperaturÄƒ / supraÃ®ncÄƒlzire",
+      "Temperatură / supraîncălzire",
 
     code:
       "TMP",
@@ -211,7 +211,7 @@ const questionLabels:
       "How the problem began",
 
     ro:
-      "Cum a Ã®nceput problema",
+      "Cum a început problema",
   },
 
   frequency: {
@@ -219,7 +219,7 @@ const questionLabels:
       "How often it happens",
 
     ro:
-      "CÃ¢t de des apare",
+      "Cât de des apare",
   },
 
   performance_change: {
@@ -227,7 +227,7 @@ const questionLabels:
       "Vehicle behavior changed",
 
     ro:
-      "Comportamentul maÈ™inii s-a schimbat",
+      "Comportamentul mașinii s-a schimbat",
   },
 
   conditions: {
@@ -235,7 +235,7 @@ const questionLabels:
       "When the symptom is most noticeable",
 
     ro:
-      "CÃ¢nd este simptomul cel mai evident",
+      "Când este simptomul cel mai evident",
   },
 
   warning_light: {
@@ -243,7 +243,7 @@ const questionLabels:
       "Dashboard warning light",
 
     ro:
-      "Martor aprins Ã®n bord",
+      "Martor aprins în bord",
   },
 
   warning_behavior: {
@@ -259,7 +259,7 @@ const questionLabels:
       "When power loss is noticeable",
 
     ro:
-      "CÃ¢nd apare lipsa de putere",
+      "Când apare lipsa de putere",
   },
 
   limp_mode: {
@@ -267,7 +267,7 @@ const questionLabels:
       "Strong acceleration limitation",
 
     ro:
-      "Limitare puternicÄƒ a acceleraÈ›iei",
+      "Limitare puternică a accelerației",
   },
 
   crank_behavior: {
@@ -291,7 +291,7 @@ const questionLabels:
       "When noise or vibration occurs",
 
     ro:
-      "CÃ¢nd apare zgomotul sau vibraÈ›ia",
+      "Când apare zgomotul sau vibrația",
   },
 
   smoke_color: {
@@ -315,7 +315,7 @@ const questionLabels:
       "Braking / steering behavior",
 
     ro:
-      "Comportamentul frÃ¢nÄƒrii / direcÈ›iei",
+      "Comportamentul frânării / direcției",
   },
 
   temperature_behavior: {
@@ -331,7 +331,7 @@ const questionLabels:
       "Main problem area",
 
     ro:
-      "Zona principalÄƒ a problemei",
+      "Zona principală a problemei",
   },
 };
 
@@ -365,7 +365,7 @@ const answerLabels:
       "After an event",
 
     ro:
-      "DupÄƒ un eveniment",
+      "După un eveniment",
   },
 
   unknown: {
@@ -373,7 +373,7 @@ const answerLabels:
       "Not sure",
 
     ro:
-      "Nu È™tiu",
+      "Nu știu",
   },
 
   always: {
@@ -397,7 +397,7 @@ const answerLabels:
       "Only once",
 
     ro:
-      "O singurÄƒ datÄƒ",
+      "O singură dată",
   },
 
   yes: {
@@ -429,7 +429,7 @@ const answerLabels:
       "Flashing",
 
     ro:
-      "ClipeÈ™te",
+      "Clipește",
   },
 
   acceleration: {
@@ -437,7 +437,7 @@ const answerLabels:
       "During acceleration",
 
     ro:
-      "La acceleraÈ›ie",
+      "La accelerație",
   },
 
   uphill: {
@@ -445,7 +445,7 @@ const answerLabels:
       "When driving uphill",
 
     ro:
-      "ÃŽn rampÄƒ",
+      "În rampă",
   },
 
   high_speed: {
@@ -453,7 +453,7 @@ const answerLabels:
       "At higher speed / RPM",
 
     ro:
-      "La vitezÄƒ / turaÈ›ie mai mare",
+      "La viteză / turație mai mare",
   },
 
   highway: {
@@ -461,7 +461,7 @@ const answerLabels:
       "At higher speed",
 
     ro:
-      "La vitezÄƒ mai mare",
+      "La viteză mai mare",
   },
 
   idle: {
@@ -493,7 +493,7 @@ const answerLabels:
       "During braking",
 
     ro:
-      "La frÃ¢nare",
+      "La frânare",
   },
 
   turning: {
@@ -509,7 +509,7 @@ const answerLabels:
       "No clear pattern",
 
     ro:
-      "FÄƒrÄƒ un tipar clar",
+      "Fără un tipar clar",
   },
 
   cranks: {
@@ -517,7 +517,7 @@ const answerLabels:
       "Engine turns but does not start",
 
     ro:
-      "Motorul se Ã®nvÃ¢rte, dar nu porneÈ™te",
+      "Motorul se învârte, dar nu pornește",
   },
 
   click: {
@@ -533,7 +533,7 @@ const answerLabels:
       "Almost nothing happens",
 
     ro:
-      "Aproape nu se Ã®ntÃ¢mplÄƒ nimic",
+      "Aproape nu se întâmplă nimic",
   },
 
   starts_then_stalls: {
@@ -541,7 +541,7 @@ const answerLabels:
       "Starts and then stops",
 
     ro:
-      "PorneÈ™te È™i apoi se opreÈ™te",
+      "Pornește și apoi se oprește",
   },
 
   cold: {
@@ -557,7 +557,7 @@ const answerLabels:
       "Warm",
 
     ro:
-      "CaldÄƒ",
+      "Caldă",
   },
 
   both: {
@@ -573,7 +573,7 @@ const answerLabels:
       "Increases with speed",
 
     ro:
-      "CreÈ™te odatÄƒ cu viteza",
+      "Crește odată cu viteza",
   },
 
   black: {
@@ -597,7 +597,7 @@ const answerLabels:
       "Blue / blue-grey",
 
     ro:
-      "Albastru / albÄƒstrui",
+      "Albastru / albăstrui",
   },
 
   exhaust: {
@@ -605,7 +605,7 @@ const answerLabels:
       "Exhaust",
 
     ro:
-      "EÈ™apament",
+      "Eșapament",
   },
 
   engine_bay: {
@@ -621,7 +621,7 @@ const answerLabels:
       "Soft brake pedal",
 
     ro:
-      "PedalÄƒ de frÃ¢nÄƒ moale",
+      "Pedală de frână moale",
   },
 
   hard_pedal: {
@@ -629,7 +629,7 @@ const answerLabels:
       "Hard brake pedal",
 
     ro:
-      "PedalÄƒ de frÃ¢nÄƒ tare",
+      "Pedală de frână tare",
   },
 
   pulling: {
@@ -637,7 +637,7 @@ const answerLabels:
       "Vehicle pulls to one side",
 
     ro:
-      "MaÈ™ina trage Ã®ntr-o parte",
+      "Mașina trage într-o parte",
   },
 
   steering: {
@@ -645,7 +645,7 @@ const answerLabels:
       "Abnormal steering",
 
     ro:
-      "DirecÈ›ie anormalÄƒ",
+      "Direcție anormală",
   },
 
   noise: {
@@ -653,7 +653,7 @@ const answerLabels:
       "Noise during braking",
 
     ro:
-      "Zgomot la frÃ¢nare",
+      "Zgomot la frânare",
   },
 
   gauge_high: {
@@ -661,7 +661,7 @@ const answerLabels:
       "Temperature gauge rises high",
 
     ro:
-      "Indicatorul de temperaturÄƒ urcÄƒ mult",
+      "Indicatorul de temperatură urcă mult",
   },
 
   warning: {
@@ -669,7 +669,7 @@ const answerLabels:
       "Temperature warning",
 
     ro:
-      "Martor de temperaturÄƒ",
+      "Martor de temperatură",
   },
 
   steam: {
@@ -685,7 +685,7 @@ const answerLabels:
       "Coolant loss",
 
     ro:
-      "Pierdere lichid de rÄƒcire",
+      "Pierdere lichid de răcire",
   },
 
   engine: {
@@ -693,7 +693,7 @@ const answerLabels:
       "Engine / acceleration",
 
     ro:
-      "Motor / acceleraÈ›ie",
+      "Motor / accelerație",
   },
 
   driving: {
@@ -701,7 +701,7 @@ const answerLabels:
       "While driving",
 
     ro:
-      "ÃŽn timpul deplasÄƒrii",
+      "În timpul deplasării",
   },
 
   electrical: {
@@ -717,7 +717,7 @@ const answerLabels:
       "Inside the cabin",
 
     ro:
-      "ÃŽn interiorul maÈ™inii",
+      "În interiorul mașinii",
   },
 };
 
@@ -1205,19 +1205,19 @@ export default function ReviewMobile() {
         "VERIFICARE CAZ",
 
       title:
-        "Totul este pregÄƒtit pentru analizÄƒ.",
+        "Totul este pregătit pentru analiză.",
 
       description:
-        "VerificÄƒ informaÈ›iile Ã®nainte ca AutoDiagnose AI sÄƒ construiascÄƒ cazul de diagnostic.",
+        "Verifică informațiile înainte ca AutoDiagnose AI să construiască cazul de diagnostic.",
 
       caseReady:
-        "CAZ PREGÄ‚TIT",
+        "CAZ PREGĂTIT",
 
       vehicleProfile:
         "Vehicul",
 
       changeVehicle:
-        "SchimbÄƒ",
+        "Schimbă",
 
       fuel:
         "Combustibil",
@@ -1229,10 +1229,10 @@ export default function ReviewMobile() {
         "Potrivire",
 
       exact:
-        "ExactÄƒ",
+        "Exactă",
 
       partial:
-        "ParÈ›ialÄƒ",
+        "Parțială",
 
       unknown:
         "Necunoscut",
@@ -1247,13 +1247,13 @@ export default function ReviewMobile() {
         "Simptom",
 
       addSymptom:
-        "AdaugÄƒ simptom",
+        "Adaugă simptom",
 
       diagnosticContext:
-        "RÄƒspunsuri adaptive",
+        "Răspunsuri adaptive",
 
       noAnswers:
-        "Nu au fost Ã®nregistrate rÄƒspunsuri adaptive pentru acest simptom.",
+        "Nu au fost înregistrate răspunsuri adaptive pentru acest simptom.",
 
       dtc:
         "Dovezi DTC",
@@ -1262,10 +1262,10 @@ export default function ReviewMobile() {
         "Nu au fost introduse coduri DTC",
 
       optional:
-        "OpÈ›ional",
+        "Opțional",
 
       analysisInput:
-        "Date pentru analizÄƒ",
+        "Date pentru analiză",
 
       vehicleReady:
         "Vehicul",
@@ -1280,10 +1280,10 @@ export default function ReviewMobile() {
         "Dovezi DTC",
 
       ready:
-        "PregÄƒtit",
+        "Pregătit",
 
       captured:
-        "ÃŽnregistrat",
+        "Înregistrat",
 
       notProvided:
         "Neintrodus",
@@ -1295,43 +1295,43 @@ export default function ReviewMobile() {
         "Simptome",
 
       answersCount:
-        "RÄƒspunsuri",
+        "Răspunsuri",
 
       dtcCount:
         "DTC",
 
       start:
-        "ÃŽncepe analiza de diagnostic",
+        "Începe analiza de diagnostic",
 
       sending:
-        "Se pregÄƒteÈ™te analiza...",
+        "Se pregătește analiza...",
 
       startHint:
-        "Cazul va fi salvat automat Ã®n istoricul tÄƒu de diagnostic.",
+        "Cazul va fi salvat automat în istoricul tău de diagnostic.",
 
       sendError:
         "Cazul de diagnostic nu a putut fi trimis.",
 
       serverError:
-        "Nu ne putem conecta la serverul de diagnostic. ÃŽncearcÄƒ din nou.",
+        "Nu ne putem conecta la serverul de diagnostic. Încearcă din nou.",
 
       sessionError:
-        "Sesiunea nu mai este validÄƒ. AutentificÄƒ-te din nou È™i reÃ®ncearcÄƒ.",
+        "Sesiunea nu mai este validă. Autentifică-te din nou și reîncearcă.",
 
       validationError:
-        "Unele date ale cazului au fost respinse de server. VerificÄƒ informaÈ›iile È™i Ã®ncearcÄƒ din nou.",
+        "Unele date ale cazului au fost respinse de server. Verifică informațiile și încearcă din nou.",
 
       missing:
         "Cazul de diagnostic este incomplet.",
 
       backVehicle:
-        "ÃŽnapoi la identificarea vehiculului",
+        "Înapoi la identificarea vehiculului",
 
       question:
-        "ÃŽntrebare",
+        "Întrebare",
 
       answer:
-        "RÄƒspuns",
+        "Răspuns",
 
       details:
         "Detalii verificare",
@@ -1384,7 +1384,7 @@ export default function ReviewMobile() {
     if (
       !vehicle
     ) {
-      return "â€”";
+      return "—";
     }
 
 
@@ -1394,7 +1394,7 @@ export default function ReviewMobile() {
     ) {
       return language ===
         "ro"
-        ? "BenzinÄƒ"
+        ? "Benzină"
         : "Petrol";
     }
 
@@ -1765,7 +1765,7 @@ export default function ReviewMobile() {
           <p
             className="
               mt-3
-              text-[12px]
+              text-[11px]
               font-semibold
               text-zinc-300
             "
@@ -1789,12 +1789,12 @@ export default function ReviewMobile() {
               rounded-[10px]
               bg-blue-500
               px-4
-              text-[12px]
+              text-[9px]
               font-semibold
               text-white
             "
           >
-            â† {text.backVehicle}
+            ← {text.backVehicle}
           </button>
         </div>
       </main>
@@ -1873,7 +1873,7 @@ export default function ReviewMobile() {
                 text-blue-200
               "
             >
-              âœ“
+              ✓
             </div>
 
 
@@ -1893,7 +1893,7 @@ export default function ReviewMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     font-semibold
                     uppercase
                     tracking-[0.15em]
@@ -1914,7 +1914,7 @@ export default function ReviewMobile() {
                     bg-emerald-400/[0.04]
                     px-2
                     py-1
-                    text-[12px]
+                    text-[5.5px]
                     font-semibold
                     text-emerald-300
                   "
@@ -1944,7 +1944,7 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-1.5
-                  text-[12px]
+                  text-[8px]
                   leading-3.5
                   text-zinc-600
                 "
@@ -1994,7 +1994,7 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[5px]
                   uppercase
                   text-zinc-700
                 "
@@ -2026,7 +2026,7 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[5px]
                   uppercase
                   text-zinc-700
                 "
@@ -2060,7 +2060,7 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[5px]
                   uppercase
                   text-zinc-700
                 "
@@ -2094,7 +2094,7 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[5px]
                   uppercase
                   text-zinc-700
                 "
@@ -2134,14 +2134,14 @@ export default function ReviewMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[6px]
                   font-semibold
                   uppercase
                   tracking-[0.12em]
                   text-blue-300/50
                 "
               >
-                01 Â· {
+                01 · {
                   text.vehicleProfile
                 }
               </p>
@@ -2180,7 +2180,7 @@ export default function ReviewMobile() {
                 border-white/[0.06]
                 px-2.5
                 py-1.5
-                text-[12px]
+                text-[6.5px]
                 font-semibold
                 text-zinc-600
               "
@@ -2249,7 +2249,7 @@ export default function ReviewMobile() {
                 >
                   <p
                     className="
-                      text-[12px]
+                      text-[5px]
                       uppercase
                       text-zinc-700
                     "
@@ -2263,7 +2263,7 @@ export default function ReviewMobile() {
                     className="
                       mt-1
                       truncate
-                      text-[12px]
+                      text-[7.5px]
                       font-semibold
                       text-zinc-400
                     "
@@ -2291,7 +2291,7 @@ export default function ReviewMobile() {
                 className="
                   cursor-pointer
                   list-none
-                  text-[12px]
+                  text-[6.5px]
                   font-semibold
                   text-zinc-600
                 "
@@ -2305,7 +2305,7 @@ export default function ReviewMobile() {
                 className="
                   mt-2
                   whitespace-pre-wrap
-                  text-[12px]
+                  text-[7.5px]
                   leading-3.5
                   text-zinc-600
                 "
@@ -2343,14 +2343,14 @@ export default function ReviewMobile() {
             <div>
               <p
                 className="
-                  text-[12px]
+                  text-[6px]
                   font-semibold
                   uppercase
                   tracking-[0.12em]
                   text-blue-300/50
                 "
               >
-                02 Â· {
+                02 · {
                   text.dtc
                 }
               </p>
@@ -2358,11 +2358,11 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[6px]
                   text-zinc-700
                 "
               >
-                OBD-II Â· {
+                OBD-II · {
                   text.optional
                 }
               </p>
@@ -2396,7 +2396,7 @@ export default function ReviewMobile() {
                         px-2
                         py-1
                         font-mono
-                        text-[12px]
+                        text-[6.5px]
                         font-semibold
                         text-cyan-100
                       "
@@ -2409,7 +2409,7 @@ export default function ReviewMobile() {
             ) : (
               <span
                 className="
-                  text-[12px]
+                  text-[6.5px]
                   text-zinc-700
                 "
               >
@@ -2445,14 +2445,14 @@ export default function ReviewMobile() {
             <div>
               <p
                 className="
-                  text-[12px]
+                  text-[6px]
                   font-semibold
                   uppercase
                   tracking-[0.12em]
                   text-blue-300/50
                 "
               >
-                03 Â· {
+                03 · {
                   text.symptoms
                 }
               </p>
@@ -2460,7 +2460,7 @@ export default function ReviewMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[6.5px]
                   text-zinc-700
                 "
               >
@@ -2487,7 +2487,7 @@ export default function ReviewMobile() {
                 border-white/[0.06]
                 px-2.5
                 py-1.5
-                text-[12px]
+                text-[6.5px]
                 font-semibold
                 text-blue-300/70
               "
@@ -2563,7 +2563,7 @@ export default function ReviewMobile() {
                             border
                             border-blue-400/10
                             bg-blue-500/[0.035]
-                            text-[12px]
+                            text-[6px]
                             font-bold
                             tracking-[0.06em]
                             text-blue-200
@@ -2590,7 +2590,7 @@ export default function ReviewMobile() {
                           >
                             <span
                               className="
-                                text-[12px]
+                                text-[5.5px]
                                 uppercase
                                 text-zinc-700
                               "
@@ -2617,7 +2617,7 @@ export default function ReviewMobile() {
 
                             <span
                               className="
-                                text-[12px]
+                                text-[5.5px]
                                 text-zinc-700
                               "
                             >
@@ -2635,7 +2635,7 @@ export default function ReviewMobile() {
                             className="
                               mt-0.5
                               truncate
-                              text-[12px]
+                              text-[8.5px]
                               font-semibold
                               text-zinc-400
                             "
@@ -2652,7 +2652,7 @@ export default function ReviewMobile() {
                             className="
                               mt-0.5
                               truncate
-                              text-[12px]
+                              text-[6.5px]
                               text-zinc-700
                             "
                           >
@@ -2665,7 +2665,7 @@ export default function ReviewMobile() {
 
                         <span
                           className="
-                            text-[12px]
+                            text-[9px]
                             text-zinc-700
                           "
                         >
@@ -2685,7 +2685,7 @@ export default function ReviewMobile() {
                     >
                       <p
                         className="
-                          text-[12px]
+                          text-[6px]
                           font-semibold
                           uppercase
                           tracking-[0.1em]
@@ -2729,7 +2729,7 @@ export default function ReviewMobile() {
                                     min-w-0
                                     flex-1
                                     truncate
-                                    text-[12px]
+                                    text-[6.5px]
                                     text-zinc-600
                                   "
                                 >
@@ -2744,7 +2744,7 @@ export default function ReviewMobile() {
                                 <span
                                   className="
                                     shrink-0
-                                    text-[12px]
+                                    text-[6.5px]
                                     font-semibold
                                     text-zinc-300
                                   "
@@ -2763,7 +2763,7 @@ export default function ReviewMobile() {
                         <p
                           className="
                             mt-1.5
-                            text-[12px]
+                            text-[6.5px]
                             text-zinc-700
                           "
                         >
@@ -2812,7 +2812,7 @@ export default function ReviewMobile() {
               <div>
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     text-zinc-400
                   "
@@ -2825,7 +2825,7 @@ export default function ReviewMobile() {
                 <p
                   className="
                     mt-0.5
-                    text-[12px]
+                    text-[5.5px]
                     text-zinc-700
                   "
                 >
@@ -2842,7 +2842,7 @@ export default function ReviewMobile() {
 
               <span
                 className="
-                  text-[12px]
+                  text-[9px]
                   text-zinc-700
                 "
               >
@@ -2947,7 +2947,7 @@ export default function ReviewMobile() {
                         items-center
                         justify-center
                         rounded-full
-                        text-[12px]
+                        text-[6px]
                         font-bold
 
                         ${
@@ -2959,8 +2959,8 @@ export default function ReviewMobile() {
                     >
                       {
                         item.active
-                          ? "âœ“"
-                          : "â€”"
+                          ? "✓"
+                          : "—"
                       }
                     </span>
 
@@ -2973,7 +2973,7 @@ export default function ReviewMobile() {
                       <p
                         className="
                           truncate
-                          text-[12px]
+                          text-[6.5px]
                           font-semibold
                           text-zinc-500
                         "
@@ -2986,7 +2986,7 @@ export default function ReviewMobile() {
                       <p
                         className={`
                           mt-0.5
-                          text-[12px]
+                          text-[5.5px]
 
                           ${
                             item.active
@@ -3061,7 +3061,7 @@ export default function ReviewMobile() {
 
               <span
                 className="
-                  text-[12px]
+                  text-[6px]
                   font-semibold
                   uppercase
                   tracking-[0.12em]
@@ -3093,7 +3093,7 @@ export default function ReviewMobile() {
                 rounded-[11px]
                 bg-blue-500
                 px-3.5
-                text-[12px]
+                text-[9px]
                 font-semibold
                 text-white
                 shadow-[0_10px_26px_rgba(37,99,235,0.20)]
@@ -3108,7 +3108,7 @@ export default function ReviewMobile() {
               </span>
 
               <span>
-                â†’
+                →
               </span>
             </button>
 
@@ -3116,7 +3116,7 @@ export default function ReviewMobile() {
             <p
               className="
                 mt-1.5
-                text-[12px]
+                text-[6.5px]
                 leading-3
                 text-zinc-600
               "
@@ -3137,7 +3137,7 @@ export default function ReviewMobile() {
                   bg-red-400/[0.045]
                   px-2.5
                   py-2
-                  text-[12px]
+                  text-[7px]
                   leading-3.5
                   text-red-200
                 "
@@ -3153,4 +3153,3 @@ export default function ReviewMobile() {
     </main>
   );
 }
-

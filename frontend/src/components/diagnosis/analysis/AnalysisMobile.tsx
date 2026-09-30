@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   useEffect,
@@ -221,7 +221,7 @@ function getSeverityLabel(
     > = {
     low: {
       ro:
-        "ScÄƒzutÄƒ",
+        "Scăzută",
 
       en:
         "Low",
@@ -237,7 +237,7 @@ function getSeverityLabel(
 
     high: {
       ro:
-        "RidicatÄƒ",
+        "Ridicată",
 
       en:
         "High",
@@ -291,7 +291,7 @@ function getUrgencyLabel(
   const labels = {
     monitor: {
       ro:
-        "MonitorizeazÄƒ",
+        "Monitorizează",
 
       en:
         "Monitor",
@@ -299,7 +299,7 @@ function getUrgencyLabel(
 
     service_soon: {
       ro:
-        "Verificare recomandatÄƒ",
+        "Verificare recomandată",
 
       en:
         "Service soon",
@@ -307,7 +307,7 @@ function getUrgencyLabel(
 
     stop_driving: {
       ro:
-        "OpreÈ™te deplasarea",
+        "Oprește deplasarea",
 
       en:
         "Stop driving",
@@ -360,7 +360,7 @@ function getEvidenceStrengthLabel(
   const labels = {
     limited: {
       ro:
-        "LimitatÄƒ",
+        "Limitată",
 
       en:
         "Limited",
@@ -368,7 +368,7 @@ function getEvidenceStrengthLabel(
 
     moderate: {
       ro:
-        "ModeratÄƒ",
+        "Moderată",
 
       en:
         "Moderate",
@@ -376,7 +376,7 @@ function getEvidenceStrengthLabel(
 
     strong: {
       ro:
-        "PuternicÄƒ",
+        "Puternică",
 
       en:
         "Strong",
@@ -477,7 +477,7 @@ function getEvidenceSourceCountLabel(
   ) {
     return safeCount ===
       1
-      ? "1 sursÄƒ independentÄƒ"
+      ? "1 sursă independentă"
       : `${safeCount} surse independente`;
   }
 
@@ -505,7 +505,7 @@ function getEvidenceSourceLabel(
     > = {
     base: {
       ro:
-        "Scor de bazÄƒ",
+        "Scor de bază",
 
       en:
         "Base score",
@@ -529,7 +529,7 @@ function getEvidenceSourceLabel(
 
     adaptive: {
       ro:
-        "RÄƒspunsuri adaptive",
+        "Răspunsuri adaptive",
 
       en:
         "Adaptive answers",
@@ -749,7 +749,7 @@ export default function AnalysisMobile() {
       setAnalysisError(
         currentLanguage ===
         "ro"
-          ? "Analiza nu a putut fi generatÄƒ. ÃŽncearcÄƒ din nou."
+          ? "Analiza nu a putut fi generată. Încearcă din nou."
           : "The analysis could not be generated. Please try again."
       );
 
@@ -1073,55 +1073,55 @@ export default function AnalysisMobile() {
         "MOTOR DE DIAGNOSTIC",
 
       complete:
-        "ANALIZÄ‚ FINALIZATÄ‚",
+        "ANALIZĂ FINALIZATĂ",
 
       title:
         "Am identificat cauzele probabile",
 
       description:
-        "Rezultate ordonate dupÄƒ relevanÈ›a pentru dovezile disponibile.",
+        "Rezultate ordonate după relevanța pentru dovezile disponibile.",
 
       loadingTitle:
         "Construim imaginea de diagnostic",
 
       loadingDescription:
-        "CorelÄƒm vehiculul, simptomele, DTC-urile È™i rÄƒspunsurile adaptive.",
+        "Corelăm vehiculul, simptomele, DTC-urile și răspunsurile adaptive.",
 
       errorTitle:
-        "Cazul de diagnostic nu a putut fi Ã®ncÄƒrcat",
+        "Cazul de diagnostic nu a putut fi încărcat",
 
       errorDescription:
         "Cazul nu este disponibil sau sesiunea nu mai are acces la el.",
 
       back:
-        "ÃŽnapoi la verificare",
+        "Înapoi la verificare",
 
       primary:
-        "Ipoteza principalÄƒ",
+        "Ipoteza principală",
 
       selectedHypothesis:
-        "Ipoteza selectatÄƒ",
+        "Ipoteza selectată",
 
       relevance:
-        "Scor de relevanÈ›Äƒ",
+        "Scor de relevanță",
 
       comparison:
-        "ComparaÈ›ia ipotezelor",
+        "Comparația ipotezelor",
 
       comparisonDescription:
-        "ComparÄƒ scorul de relevanÈ›Äƒ al cauzelor identificate.",
+        "Compară scorul de relevanță al cauzelor identificate.",
 
       evidenceProfile:
-        "ContribuÈ›ia dovezilor",
+        "Contribuția dovezilor",
 
       evidenceProfileDescription:
-        "InfluenÈ›a semnalelor din caz asupra ipotezei selectate.",
+        "Influența semnalelor din caz asupra ipotezei selectate.",
 
       severity:
         "Severitate",
 
       urgency:
-        "UrgenÈ›Äƒ",
+        "Urgență",
 
       evidence:
         "Dovezi",
@@ -1130,52 +1130,52 @@ export default function AnalysisMobile() {
         "De ce acest scor?",
 
       checks:
-        "VerificÄƒri",
+        "Verificări",
 
       technical:
-        "BazÄƒ tehnicÄƒ",
+        "Bază tehnică",
 
       scoreExplanation:
-        "ExplicaÈ›ia scorului",
+        "Explicația scorului",
 
       scoreDescription:
         "Vezi ce semnale din caz au contribuit la rezultat.",
 
       checksTitle:
-        "VerificÄƒri recomandate",
+        "Verificări recomandate",
 
       checksDescription:
-        "FoloseÈ™te aceste verificÄƒri pentru a confirma sau elimina aceastÄƒ posibilÄƒ cauzÄƒ.",
+        "Folosește aceste verificări pentru a confirma sau elimina această posibilă cauză.",
 
       technicalTitle:
-        "BazÄƒ tehnicÄƒ",
+        "Bază tehnică",
 
       technicalDescription:
-        "Regula de diagnostic È™i referinÈ›ele tehnice folosite de AutoDiagnose AI.",
+        "Regula de diagnostic și referințele tehnice folosite de AutoDiagnose AI.",
 
       rawScore:
         "Scor calculat",
 
       finalScore:
-        "Scor afiÈ™at",
+        "Scor afișat",
 
       cappedScore:
-        "Scorul afiÈ™at este limitat la maximum 100/100.",
+        "Scorul afișat este limitat la maximum 100/100.",
 
       scoreDisclaimer:
-        "Acesta este un scor de relevanÈ›Äƒ bazat pe dovezile disponibile, nu o probabilitate statisticÄƒ de defectare.",
+        "Acesta este un scor de relevanță bazat pe dovezile disponibile, nu o probabilitate statistică de defectare.",
 
       noTechnical:
-        "Nu existÄƒ referinÈ›e tehnice suplimentare pentru acest rezultat.",
+        "Nu există referințe tehnice suplimentare pentru acest rezultat.",
 
       rule:
-        "RegulÄƒ de diagnostic",
+        "Regulă de diagnostic",
 
       usedInCase:
-        "Folosit Ã®n acest caz",
+        "Folosit în acest caz",
 
       next:
-        "PaÈ™i recomandaÈ›i",
+        "Pași recomandați",
 
       nextDescription:
         "Un traseu scurt de verificare bazat pe cele mai puternice semnale.",
@@ -1187,22 +1187,22 @@ export default function AnalysisMobile() {
         "Calitatea datelor",
 
       warningsTitle:
-        "VerificÄƒ datele introduse",
+        "Verifică datele introduse",
 
       warningsDescription:
-        "Aceste informaÈ›ii pot influenÈ›a interpretarea rezultatului.",
+        "Aceste informații pot influența interpretarea rezultatului.",
 
       limited:
-        "Mai multe date ar Ã®ntÄƒri rezultatul",
+        "Mai multe date ar întări rezultatul",
 
       limitedDescription:
         "Rezultatele actuale au dovezi independente limitate.",
 
       noFindings:
-        "Nu a fost identificatÄƒ o cauzÄƒ suficient de relevantÄƒ.",
+        "Nu a fost identificată o cauză suficient de relevantă.",
 
       retry:
-        "ReÃ®ncearcÄƒ analiza",
+        "Reîncearcă analiza",
 
       report:
         "Raport complet",
@@ -1226,16 +1226,16 @@ export default function AnalysisMobile() {
         "Coduri DTC",
 
       answers:
-        "RÄƒspunsuri adaptive",
+        "Răspunsuri adaptive",
 
       none:
         "Niciunul",
 
       diagnosticNotice:
-        "Suport pentru decizie, nu diagnostic de reparaÈ›ie confirmat.",
+        "Suport pentru decizie, nu diagnostic de reparație confirmat.",
 
       disclaimer:
-        "ConfirmÄƒ defecÈ›iunile prin inspecÈ›ie tehnicÄƒ, mÄƒsurÄƒtori È™i documentaÈ›ia producÄƒtorului Ã®nainte de reparaÈ›ii.",
+        "Confirmă defecțiunile prin inspecție tehnică, măsurători și documentația producătorului înainte de reparații.",
 
       sourceCount:
         "Surse dovezi",
@@ -1592,7 +1592,7 @@ export default function AnalysisMobile() {
           <p
             className="
               mt-4
-              text-[12px]
+              text-[7px]
               font-semibold
               uppercase
               tracking-[0.16em]
@@ -1622,7 +1622,7 @@ export default function AnalysisMobile() {
           <p
             className="
               mt-2
-              text-[12px]
+              text-[8px]
               leading-4
               text-zinc-600
             "
@@ -1701,7 +1701,7 @@ export default function AnalysisMobile() {
           <p
             className="
               mt-1.5
-              text-[12px]
+              text-[8px]
               leading-4
               text-zinc-600
             "
@@ -1725,11 +1725,11 @@ export default function AnalysisMobile() {
               rounded-[10px]
               bg-blue-500
               px-4
-              text-[12px]
+              text-[9px]
               font-semibold
             "
           >
-            â† {
+            ← {
               text.back
             }
           </button>
@@ -1822,7 +1822,7 @@ export default function AnalysisMobile() {
 
                 <p
                   className="
-                    text-[12px]
+                    text-[6px]
                     font-semibold
                     uppercase
                     tracking-[0.14em]
@@ -1855,7 +1855,7 @@ export default function AnalysisMobile() {
                 className="
                   mt-1.5
                   max-w-[320px]
-                  text-[12px]
+                  text-[8px]
                   leading-3.5
                   text-zinc-600
                 "
@@ -1882,7 +1882,7 @@ export default function AnalysisMobile() {
                 bg-white/[0.015]
                 px-2.5
                 py-2
-                text-[12px]
+                text-[6.5px]
                 font-semibold
                 text-zinc-500
               "
@@ -1919,7 +1919,7 @@ export default function AnalysisMobile() {
               <p
                 className="
                   truncate
-                  text-[12px]
+                  text-[8.5px]
                   font-semibold
                   text-zinc-300
                 "
@@ -1932,7 +1932,7 @@ export default function AnalysisMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[6px]
                   text-zinc-700
                 "
               >
@@ -1940,9 +1940,9 @@ export default function AnalysisMobile() {
                   diagnosticCase
                     .vehicle
                     .year ??
-                  "â€”"
+                  "—"
                 }
-                {" Â· "}
+                {" · "}
                 {
                   caseSignalCount
                 }{" "}
@@ -1967,7 +1967,7 @@ export default function AnalysisMobile() {
                   bg-white/[0.025]
                   px-1.5
                   py-1
-                  text-[12px]
+                  text-[5.5px]
                   text-zinc-500
                 "
               >
@@ -1985,7 +1985,7 @@ export default function AnalysisMobile() {
                   bg-white/[0.025]
                   px-1.5
                   py-1
-                  text-[12px]
+                  text-[5.5px]
                   text-zinc-500
                 "
               >
@@ -2003,7 +2003,7 @@ export default function AnalysisMobile() {
                   bg-white/[0.025]
                   px-1.5
                   py-1
-                  text-[12px]
+                  text-[5.5px]
                   text-zinc-500
                 "
               >
@@ -2034,7 +2034,7 @@ export default function AnalysisMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[8px]
                 leading-4
                 text-red-200
               "
@@ -2060,7 +2060,7 @@ export default function AnalysisMobile() {
                 border-red-300/15
                 px-3
                 py-2
-                text-[12px]
+                text-[7px]
                 font-semibold
                 text-red-100
               "
@@ -2144,7 +2144,7 @@ export default function AnalysisMobile() {
               <div>
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     uppercase
                     tracking-[0.12em]
@@ -2159,7 +2159,7 @@ export default function AnalysisMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[11px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2172,7 +2172,7 @@ export default function AnalysisMobile() {
                 <p
                   className="
                     mt-1
-                    text-[12px]
+                    text-[7px]
                     leading-3.5
                     text-zinc-600
                   "
@@ -2223,7 +2223,7 @@ export default function AnalysisMobile() {
                   >
                     <p
                       className="
-                        text-[12px]
+                        text-[7px]
                         font-semibold
                         text-sky-100
                       "
@@ -2237,7 +2237,7 @@ export default function AnalysisMobile() {
                       className="
                         mt-1
                         line-clamp-2
-                        text-[12px]
+                        text-[6px]
                         leading-3
                         text-sky-100/55
                       "
@@ -2270,7 +2270,7 @@ export default function AnalysisMobile() {
                   >
                     <p
                       className="
-                        text-[12px]
+                        text-[7px]
                         font-semibold
                         text-amber-100
                       "
@@ -2283,7 +2283,7 @@ export default function AnalysisMobile() {
                     <p
                       className="
                         mt-1
-                        text-[12px]
+                        text-[6px]
                         text-amber-100/55
                       "
                     >
@@ -2399,7 +2399,7 @@ export default function AnalysisMobile() {
                         <span
                           className="
                             mt-0.5
-                            text-[12px]
+                            text-[6px]
                             text-zinc-600
                           "
                         >
@@ -2418,7 +2418,7 @@ export default function AnalysisMobile() {
                   >
                     <p
                       className="
-                        text-[12px]
+                        text-[6px]
                         font-semibold
                         uppercase
                         tracking-[0.13em]
@@ -2456,7 +2456,7 @@ export default function AnalysisMobile() {
                       className="
                         mt-1.5
                         line-clamp-3
-                        text-[12px]
+                        text-[7.5px]
                         leading-3.5
                         text-zinc-500
                       "
@@ -2486,7 +2486,7 @@ export default function AnalysisMobile() {
                       px-1.5
                       py-1.5
                       text-center
-                      text-[12px]
+                      text-[5.5px]
                       font-semibold
 
                       ${getSeverityClasses(
@@ -2512,7 +2512,7 @@ export default function AnalysisMobile() {
                       px-1.5
                       py-1.5
                       text-center
-                      text-[12px]
+                      text-[5.5px]
                       font-semibold
 
                       ${getUrgencyClasses(
@@ -2538,7 +2538,7 @@ export default function AnalysisMobile() {
                       px-1.5
                       py-1.5
                       text-center
-                      text-[12px]
+                      text-[5.5px]
                       font-semibold
 
                       ${getEvidenceStrengthClasses(
@@ -2568,7 +2568,7 @@ export default function AnalysisMobile() {
                       border
                       px-2.5
                       py-2
-                      text-[12px]
+                      text-[6.5px]
                       leading-3.5
 
                       ${getUrgencyClasses(
@@ -2609,7 +2609,7 @@ export default function AnalysisMobile() {
                       border-blue-400/12
                       bg-blue-500/[0.04]
                       px-2
-                      text-[12px]
+                      text-[6.5px]
                       font-semibold
                       text-blue-100
                     "
@@ -2634,7 +2634,7 @@ export default function AnalysisMobile() {
                       border
                       border-white/[0.06]
                       px-2
-                      text-[12px]
+                      text-[6.5px]
                       font-semibold
                       text-zinc-400
                     "
@@ -2670,7 +2670,7 @@ export default function AnalysisMobile() {
                       border
                       border-white/[0.06]
                       px-2
-                      text-[12px]
+                      text-[6.5px]
                       font-semibold
                       text-zinc-400
                       disabled:opacity-30
@@ -2688,7 +2688,7 @@ export default function AnalysisMobile() {
                     relative
                     mt-2
                     text-center
-                    text-[12px]
+                    text-[5.5px]
                     text-zinc-700
                   "
                 >
@@ -2729,7 +2729,7 @@ export default function AnalysisMobile() {
                   <div>
                     <p
                       className="
-                        text-[12px]
+                        text-[7px]
                         font-semibold
                         text-zinc-300
                       "
@@ -2742,7 +2742,7 @@ export default function AnalysisMobile() {
                     <p
                       className="
                         mt-0.5
-                        text-[12px]
+                        text-[5.5px]
                         text-zinc-700
                       "
                     >
@@ -2754,11 +2754,11 @@ export default function AnalysisMobile() {
 
                   <span
                     className="
-                      text-[12px]
+                      text-[5.5px]
                       text-zinc-700
                     "
                   >
-                    0 â€” 100
+                    0 — 100
                   </span>
                 </div>
 
@@ -2813,7 +2813,7 @@ export default function AnalysisMobile() {
                                 min-w-0
                                 flex-1
                                 truncate
-                                text-[12px]
+                                text-[7.5px]
                                 font-semibold
 
                                 ${
@@ -2836,7 +2836,7 @@ export default function AnalysisMobile() {
                             <span
                               className={`
                                 shrink-0
-                                text-[12px]
+                                text-[7px]
                                 font-semibold
 
                                 ${
@@ -2891,7 +2891,7 @@ export default function AnalysisMobile() {
                 <p
                   className="
                     mt-2
-                    text-[12px]
+                    text-[5.5px]
                     leading-3
                     text-zinc-700
                   "
@@ -2921,7 +2921,7 @@ export default function AnalysisMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     text-zinc-300
                   "
@@ -2934,7 +2934,7 @@ export default function AnalysisMobile() {
                 <p
                   className="
                     mt-0.5
-                    text-[12px]
+                    text-[5.5px]
                     text-zinc-700
                   "
                 >
@@ -2988,7 +2988,7 @@ export default function AnalysisMobile() {
                             <span
                               className="
                                 truncate
-                                text-[12px]
+                                text-[6.5px]
                                 text-zinc-500
                               "
                             >
@@ -3000,7 +3000,7 @@ export default function AnalysisMobile() {
 
                             <span
                               className={`
-                                text-[12px]
+                                text-[6.5px]
                                 font-semibold
 
                                 ${
@@ -3083,7 +3083,7 @@ export default function AnalysisMobile() {
                   <div>
                     <p
                       className="
-                        text-[12px]
+                        text-[7px]
                         font-semibold
                         text-violet-200
                       "
@@ -3096,7 +3096,7 @@ export default function AnalysisMobile() {
                     <p
                       className="
                         mt-0.5
-                        text-[12px]
+                        text-[5.5px]
                         text-zinc-700
                       "
                     >
@@ -3118,7 +3118,7 @@ export default function AnalysisMobile() {
                       }
                       className="
                         shrink-0
-                        text-[12px]
+                        text-[6px]
                         font-semibold
                         text-violet-200
                       "
@@ -3173,7 +3173,7 @@ export default function AnalysisMobile() {
                               border
                               border-violet-300/10
                               bg-violet-300/[0.04]
-                              text-[12px]
+                              text-[6px]
                               font-semibold
                               text-violet-100
                             "
@@ -3192,7 +3192,7 @@ export default function AnalysisMobile() {
                           >
                             <p
                               className="
-                                text-[12px]
+                                text-[7.5px]
                                 font-semibold
                                 text-zinc-300
                               "
@@ -3206,7 +3206,7 @@ export default function AnalysisMobile() {
                               className="
                                 mt-0.5
                                 line-clamp-2
-                                text-[12px]
+                                text-[6.5px]
                                 leading-3
                                 text-zinc-600
                               "
@@ -3308,7 +3308,7 @@ export default function AnalysisMobile() {
                       className="
                         mt-0.5
                         truncate
-                        text-[12px]
+                        text-[5px]
                         text-zinc-700
                       "
                     >
@@ -3339,7 +3339,7 @@ export default function AnalysisMobile() {
                 className="
                   cursor-pointer
                   list-none
-                  text-[12px]
+                  text-[6.5px]
                   font-semibold
                   text-zinc-500
                 "
@@ -3352,7 +3352,7 @@ export default function AnalysisMobile() {
               <p
                 className="
                   mt-1.5
-                  text-[12px]
+                  text-[6.5px]
                   leading-3.5
                   text-zinc-700
                 "
@@ -3414,7 +3414,7 @@ export default function AnalysisMobile() {
                     rounded-[10px]
                     bg-blue-500
                     px-3.5
-                    text-[12px]
+                    text-[8px]
                     font-semibold
                     text-white
                     shadow-[0_10px_26px_rgba(37,99,235,0.18)]
@@ -3427,7 +3427,7 @@ export default function AnalysisMobile() {
                   </span>
 
                   <span>
-                    â†’
+                    →
                   </span>
                 </button>
 
@@ -3452,7 +3452,7 @@ export default function AnalysisMobile() {
                       rounded-[9px]
                       border
                       border-white/[0.055]
-                      text-[12px]
+                      text-[6.5px]
                       font-semibold
                       text-zinc-500
                     "
@@ -3475,7 +3475,7 @@ export default function AnalysisMobile() {
                       rounded-[9px]
                       border
                       border-white/[0.055]
-                      text-[12px]
+                      text-[6.5px]
                       font-semibold
                       text-zinc-500
                     "
@@ -3496,7 +3496,7 @@ export default function AnalysisMobile() {
                       rounded-[9px]
                       border
                       border-white/[0.055]
-                      text-[12px]
+                      text-[6.5px]
                       font-semibold
                       text-zinc-500
                     "
@@ -3584,7 +3584,7 @@ export default function AnalysisMobile() {
                       rounded-[9px]
                       border
                       px-2
-                      text-[12px]
+                      text-[7px]
                       font-semibold
 
                       ${
@@ -3645,7 +3645,7 @@ export default function AnalysisMobile() {
                           >
                             <p
                               className="
-                                text-[12px]
+                                text-[8px]
                                 font-medium
                                 text-zinc-300
                               "
@@ -3658,7 +3658,7 @@ export default function AnalysisMobile() {
                             <p
                               className="
                                 mt-0.5
-                                text-[12px]
+                                text-[6px]
                                 text-zinc-600
                               "
                             >
@@ -3675,7 +3675,7 @@ export default function AnalysisMobile() {
                           <span
                             className={`
                               shrink-0
-                              text-[12px]
+                              text-[9px]
                               font-semibold
 
                               ${
@@ -3719,7 +3719,7 @@ export default function AnalysisMobile() {
                   >
                     <span
                       className="
-                        text-[12px]
+                        text-[8px]
                         text-zinc-500
                       "
                     >
@@ -3730,7 +3730,7 @@ export default function AnalysisMobile() {
 
                     <span
                       className="
-                        text-[12px]
+                        text-[11px]
                         font-semibold
                       "
                     >
@@ -3755,7 +3755,7 @@ export default function AnalysisMobile() {
                   >
                     <span
                       className="
-                        text-[12px]
+                        text-[8px]
                         font-semibold
                         text-zinc-300
                       "
@@ -3789,7 +3789,7 @@ export default function AnalysisMobile() {
                     <p
                       className="
                         mt-2
-                        text-[12px]
+                        text-[6.5px]
                         text-zinc-600
                       "
                     >
@@ -3804,7 +3804,7 @@ export default function AnalysisMobile() {
                 <p
                   className="
                     mt-2
-                    text-[12px]
+                    text-[6.5px]
                     leading-3.5
                     text-zinc-600
                   "
@@ -3857,7 +3857,7 @@ export default function AnalysisMobile() {
                             rounded-full
                             border
                             border-blue-400/10
-                            text-[12px]
+                            text-[6px]
                             font-semibold
                             text-blue-200
                           "
@@ -3868,7 +3868,7 @@ export default function AnalysisMobile() {
 
                         <p
                           className="
-                            text-[12px]
+                            text-[8px]
                             leading-4
                             text-zinc-400
                           "
@@ -3900,7 +3900,7 @@ export default function AnalysisMobile() {
                   >
                     <p
                       className="
-                        text-[12px]
+                        text-[6px]
                         uppercase
                         tracking-[0.1em]
                         text-blue-200/60
@@ -3915,7 +3915,7 @@ export default function AnalysisMobile() {
                       className="
                         mt-1.5
                         font-mono
-                        text-[12px]
+                        text-[8px]
                         font-semibold
                         text-blue-100
                       "
@@ -3966,7 +3966,7 @@ export default function AnalysisMobile() {
                             >
                               <p
                                 className="
-                                  text-[12px]
+                                  text-[8px]
                                   font-semibold
                                   text-zinc-300
                                 "
@@ -3987,7 +3987,7 @@ export default function AnalysisMobile() {
                                     border-emerald-400/10
                                     px-1.5
                                     py-0.5
-                                    text-[12px]
+                                    text-[5px]
                                     text-emerald-200
                                   "
                                 >
@@ -4003,7 +4003,7 @@ export default function AnalysisMobile() {
                               className="
                                 mt-1
                                 font-mono
-                                text-[12px]
+                                text-[6.5px]
                                 text-cyan-200/70
                               "
                             >
@@ -4017,7 +4017,7 @@ export default function AnalysisMobile() {
                               <p
                                 className="
                                   mt-1.5
-                                  text-[12px]
+                                  text-[7px]
                                   leading-3.5
                                   text-zinc-600
                                 "
@@ -4035,7 +4035,7 @@ export default function AnalysisMobile() {
                   <p
                     className="
                       mt-2
-                      text-[12px]
+                      text-[8px]
                       text-zinc-600
                     "
                   >
@@ -4091,7 +4091,7 @@ export default function AnalysisMobile() {
                   bg-amber-400/[0.035]
                   px-3
                   py-2.5
-                  text-[12px]
+                  text-[8px]
                   leading-4
                   text-amber-100
                 "
@@ -4160,7 +4160,7 @@ export default function AnalysisMobile() {
                     rounded-full
                     border
                     border-violet-400/10
-                    text-[12px]
+                    text-[7px]
                     font-semibold
                     text-violet-200
                   "
@@ -4174,7 +4174,7 @@ export default function AnalysisMobile() {
                 <div>
                   <p
                     className="
-                      text-[12px]
+                      text-[9px]
                       font-semibold
                       text-zinc-200
                     "
@@ -4187,7 +4187,7 @@ export default function AnalysisMobile() {
                   <p
                     className="
                       mt-1
-                      text-[12px]
+                      text-[8px]
                       leading-4
                       text-zinc-500
                     "
@@ -4200,7 +4200,7 @@ export default function AnalysisMobile() {
                   <p
                     className="
                       mt-1
-                      text-[12px]
+                      text-[7px]
                       leading-3.5
                       text-zinc-700
                     "
@@ -4236,7 +4236,7 @@ export default function AnalysisMobile() {
         }
         description={
           caseId
-            ? `${text.caseData} Â· ${caseId}`
+            ? `${text.caseData} · ${caseId}`
             : text.caseData
         }
       >
@@ -4307,7 +4307,7 @@ export default function AnalysisMobile() {
                 <p
                   className="
                     mt-0.5
-                    text-[12px]
+                    text-[6px]
                     text-zinc-600
                   "
                 >
@@ -4332,7 +4332,7 @@ export default function AnalysisMobile() {
         >
           <p
             className="
-              text-[12px]
+              text-[6px]
               font-semibold
               uppercase
               tracking-[0.1em]
@@ -4373,7 +4373,7 @@ export default function AnalysisMobile() {
                   >
                     <span
                       className="
-                        text-[12px]
+                        text-[6.5px]
                         font-semibold
                         text-blue-200
                       "
@@ -4384,7 +4384,7 @@ export default function AnalysisMobile() {
 
                     <p
                       className="
-                        text-[12px]
+                        text-[7px]
                         leading-3.5
                         text-zinc-500
                       "
@@ -4411,7 +4411,7 @@ export default function AnalysisMobile() {
         >
           <p
             className="
-              text-[12px]
+              text-[6px]
               font-semibold
               uppercase
               tracking-[0.1em]
@@ -4453,7 +4453,7 @@ export default function AnalysisMobile() {
                         px-2
                         py-1
                         font-mono
-                        text-[12px]
+                        text-[6.5px]
                         text-cyan-100
                       "
                     >
@@ -4466,7 +4466,7 @@ export default function AnalysisMobile() {
             ) : (
               <span
                 className="
-                  text-[12px]
+                  text-[7px]
                   text-zinc-600
                 "
               >
@@ -4481,4 +4481,3 @@ export default function AnalysisMobile() {
     </main>
   );
 }
-

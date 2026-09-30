@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   useEffect,
@@ -66,7 +66,7 @@ const categoryLabels:
       "Loss of power / acceleration",
 
     ro:
-      "LipsÄƒ de putere / acceleraÈ›ie",
+      "Lipsă de putere / accelerație",
 
     code:
       "PWR",
@@ -77,7 +77,7 @@ const categoryLabels:
       "Starting / engine running",
 
     ro:
-      "Pornire / funcÈ›ionare motor",
+      "Pornire / funcționare motor",
 
     code:
       "ENG",
@@ -88,7 +88,7 @@ const categoryLabels:
       "Noise / vibration",
 
     ro:
-      "Zgomot / vibraÈ›ii",
+      "Zgomot / vibrații",
 
     code:
       "NVH",
@@ -110,7 +110,7 @@ const categoryLabels:
       "Dashboard warning",
 
     ro:
-      "Martor Ã®n bord",
+      "Martor în bord",
 
     code:
       "MIL",
@@ -121,7 +121,7 @@ const categoryLabels:
       "Braking / steering",
 
     ro:
-      "FrÃ¢nare / direcÈ›ie",
+      "Frânare / direcție",
 
     code:
       "CHS",
@@ -132,7 +132,7 @@ const categoryLabels:
       "Temperature / overheating",
 
     ro:
-      "TemperaturÄƒ / supraÃ®ncÄƒlzire",
+      "Temperatură / supraîncălzire",
 
     code:
       "TMP",
@@ -435,10 +435,10 @@ export default function SymptomCompleteMobile() {
         "SIMPTOM FINALIZAT",
 
       title:
-        "Simptomul este pregÄƒtit.",
+        "Simptomul este pregătit.",
 
       description:
-        "Simptomul È™i rÄƒspunsurile adaptive au fost salvate.",
+        "Simptomul și răspunsurile adaptive au fost salvate.",
 
       saved:
         "Salvat",
@@ -456,55 +456,55 @@ export default function SymptomCompleteMobile() {
         "DTC",
 
       noDtc:
-        "FÄƒrÄƒ coduri DTC",
+        "Fără coduri DTC",
 
       recordedSymptoms:
-        "Simptome Ã®nregistrate",
+        "Simptome înregistrate",
 
       current:
         "Curent",
 
       addTitle:
-        "AdaugÄƒ alt simptom",
+        "Adaugă alt simptom",
 
       addDescription:
-        "RaporteazÄƒ Ã®ncÄƒ o problemÄƒ È™i analizeazÄƒ simptomele Ã®mpreunÄƒ.",
+        "Raportează încă o problemă și analizează simptomele împreună.",
 
       addAction:
-        "AdaugÄƒ simptom",
+        "Adaugă simptom",
 
       finishTitle:
-        "Am adÄƒugat toate simptomele",
+        "Am adăugat toate simptomele",
 
       finishDescription:
-        "VerificÄƒ Ã®ntregul caz Ã®nainte de Ã®nceperea analizei.",
+        "Verifică întregul caz înainte de începerea analizei.",
 
       finishAction:
-        "ContinuÄƒ la verificare",
+        "Continuă la verificare",
 
       back:
-        "ÃŽnapoi la simptome",
+        "Înapoi la simptome",
 
       missing:
-        "Simptomul curent nu a putut fi Ã®ncÄƒrcat.",
+        "Simptomul curent nu a putut fi încărcat.",
 
       delete:
-        "È˜terge simptomul",
+        "Șterge simptomul",
 
       deleteEyebrow:
-        "È˜TERGERE SIMPTOM",
+        "ȘTERGERE SIMPTOM",
 
       deleteTitle:
-        "È˜tergi acest simptom?",
+        "Ștergi acest simptom?",
 
       deleteDescription:
-        "Simptomul È™i rÄƒspunsurile adaptive asociate lui vor fi eliminate din acest caz de diagnostic.",
+        "Simptomul și răspunsurile adaptive asociate lui vor fi eliminate din acest caz de diagnostic.",
 
       cancel:
-        "RenunÈ›Äƒ",
+        "Renunță",
 
       confirmDelete:
-        "È˜terge simptomul",
+        "Șterge simptomul",
 
       details:
         "Detalii caz",
@@ -712,7 +712,7 @@ export default function SymptomCompleteMobile() {
         >
           <p
             className="
-              text-[12px]
+              text-[10px]
               leading-4
               text-zinc-500
             "
@@ -736,12 +736,12 @@ export default function SymptomCompleteMobile() {
               rounded-[10px]
               bg-blue-500
               px-4
-              text-[12px]
+              text-[9px]
               font-semibold
               text-white
             "
           >
-            â† {text.back}
+            ← {text.back}
           </button>
         </div>
       </main>
@@ -820,7 +820,7 @@ export default function SymptomCompleteMobile() {
                 text-emerald-300
               "
             >
-              âœ“
+              ✓
             </div>
 
 
@@ -840,7 +840,7 @@ export default function SymptomCompleteMobile() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[6.5px]
                     font-semibold
                     uppercase
                     tracking-[0.14em]
@@ -861,12 +861,12 @@ export default function SymptomCompleteMobile() {
                     bg-emerald-400/[0.04]
                     px-2
                     py-1
-                    text-[12px]
+                    text-[6px]
                     font-semibold
                     text-emerald-300/80
                   "
                 >
-                  âœ“ {text.saved}
+                  ✓ {text.saved}
                 </span>
               </div>
 
@@ -890,7 +890,7 @@ export default function SymptomCompleteMobile() {
               <p
                 className="
                   mt-1
-                  text-[12px]
+                  text-[8px]
                   leading-3.5
                   text-zinc-500
                 "
@@ -935,7 +935,7 @@ export default function SymptomCompleteMobile() {
                 border
                 border-emerald-400/12
                 bg-emerald-400/[0.05]
-                text-[12px]
+                text-[7px]
                 font-bold
                 tracking-[0.07em]
                 text-emerald-200
@@ -955,7 +955,7 @@ export default function SymptomCompleteMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[6px]
                   font-semibold
                   uppercase
                   tracking-[0.1em]
@@ -972,7 +972,7 @@ export default function SymptomCompleteMobile() {
                 className="
                   mt-0.5
                   truncate
-                  text-[12px]
+                  text-[11px]
                   font-semibold
                   text-zinc-200
                 "
@@ -989,7 +989,7 @@ export default function SymptomCompleteMobile() {
                 className="
                   mt-1
                   line-clamp-2
-                  text-[12px]
+                  text-[8px]
                   leading-3.5
                   text-zinc-600
                 "
@@ -1025,7 +1025,7 @@ export default function SymptomCompleteMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[6px]
                 uppercase
                 tracking-[0.08em]
                 text-zinc-700
@@ -1064,7 +1064,7 @@ export default function SymptomCompleteMobile() {
           >
             <p
               className="
-                text-[12px]
+                text-[6px]
                 uppercase
                 tracking-[0.08em]
                 text-zinc-700
@@ -1138,7 +1138,7 @@ export default function SymptomCompleteMobile() {
             <p
               className="
                 mt-2
-                text-[12px]
+                text-[10px]
                 font-semibold
                 text-zinc-200
               "
@@ -1153,7 +1153,7 @@ export default function SymptomCompleteMobile() {
               className="
                 mt-1
                 line-clamp-2
-                text-[12px]
+                text-[7px]
                 leading-3
                 text-zinc-600
               "
@@ -1170,7 +1170,7 @@ export default function SymptomCompleteMobile() {
                 flex
                 items-center
                 justify-between
-                text-[12px]
+                text-[7px]
                 font-semibold
                 text-blue-300
               "
@@ -1182,7 +1182,7 @@ export default function SymptomCompleteMobile() {
               </span>
 
               <span>
-                â†’
+                →
               </span>
             </div>
           </button>
@@ -1214,19 +1214,19 @@ export default function SymptomCompleteMobile() {
                 border
                 border-blue-400/18
                 bg-blue-500/[0.10]
-                text-[12px]
+                text-[10px]
                 font-bold
                 text-blue-100
               "
             >
-              âœ“
+              ✓
             </div>
 
 
             <p
               className="
                 mt-2
-                text-[12px]
+                text-[10px]
                 font-semibold
                 text-white
               "
@@ -1241,7 +1241,7 @@ export default function SymptomCompleteMobile() {
               className="
                 mt-1
                 line-clamp-2
-                text-[12px]
+                text-[7px]
                 leading-3
                 text-zinc-500
               "
@@ -1258,7 +1258,7 @@ export default function SymptomCompleteMobile() {
                 flex
                 items-center
                 justify-between
-                text-[12px]
+                text-[7px]
                 font-semibold
                 text-blue-100
               "
@@ -1270,7 +1270,7 @@ export default function SymptomCompleteMobile() {
               </span>
 
               <span>
-                â†’
+                →
               </span>
             </div>
           </button>
@@ -1304,7 +1304,7 @@ export default function SymptomCompleteMobile() {
             <div>
               <p
                 className="
-                  text-[12px]
+                  text-[8px]
                   font-semibold
                   text-zinc-400
                 "
@@ -1317,14 +1317,14 @@ export default function SymptomCompleteMobile() {
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[6px]
                   text-zinc-700
                 "
               >
                 {
                   text.recordedSymptoms
                 }
-                {" Â· "}
+                {" · "}
                 {dtcCodes.length >
                 0
                   ? `${dtcCodes.length} DTC`
@@ -1334,7 +1334,7 @@ export default function SymptomCompleteMobile() {
 
             <span
               className="
-                text-[12px]
+                text-[9px]
                 text-zinc-700
               "
             >
@@ -1377,7 +1377,7 @@ export default function SymptomCompleteMobile() {
                         px-2
                         py-1
                         font-mono
-                        text-[12px]
+                        text-[6.5px]
                         font-semibold
                         text-blue-200
                       "
@@ -1451,7 +1451,7 @@ export default function SymptomCompleteMobile() {
                           items-center
                           justify-center
                           rounded-[7px]
-                          text-[12px]
+                          text-[6px]
                           font-semibold
 
                           ${
@@ -1484,7 +1484,7 @@ export default function SymptomCompleteMobile() {
                           <p
                             className="
                               truncate
-                              text-[12px]
+                              text-[8px]
                               font-semibold
                               text-zinc-400
                             "
@@ -1506,7 +1506,7 @@ export default function SymptomCompleteMobile() {
                                 border-emerald-400/10
                                 px-1.5
                                 py-0.5
-                                text-[12px]
+                                text-[5px]
                                 font-semibold
                                 text-emerald-300
                               "
@@ -1523,7 +1523,7 @@ export default function SymptomCompleteMobile() {
                           className="
                             mt-0.5
                             truncate
-                            text-[12px]
+                            text-[6.5px]
                             text-zinc-700
                           "
                         >
@@ -1577,12 +1577,12 @@ export default function SymptomCompleteMobile() {
           }
           className="
             mt-3
-            text-[12px]
+            text-[7px]
             font-medium
             text-zinc-700
           "
         >
-          â† {text.back}
+          ← {text.back}
         </button>
       </div>
 
@@ -1622,7 +1622,7 @@ export default function SymptomCompleteMobile() {
             >
               <p
                 className="
-                  text-[12px]
+                  text-[10px]
                   font-semibold
                   text-zinc-200
                 "
@@ -1639,7 +1639,7 @@ export default function SymptomCompleteMobile() {
               <p
                 className="
                   mt-1
-                  text-[12px]
+                  text-[8px]
                   leading-3.5
                   text-zinc-600
                 "
@@ -1672,7 +1672,7 @@ export default function SymptomCompleteMobile() {
                   border
                   border-white/[0.07]
                   bg-white/[0.015]
-                  text-[12px]
+                  text-[9px]
                   font-semibold
                   text-zinc-300
                 "
@@ -1696,7 +1696,7 @@ export default function SymptomCompleteMobile() {
                   border
                   border-red-400/15
                   bg-red-400/[0.07]
-                  text-[12px]
+                  text-[9px]
                   font-semibold
                   text-red-200
                 "
@@ -1712,4 +1712,3 @@ export default function SymptomCompleteMobile() {
     </main>
   );
 }
-
